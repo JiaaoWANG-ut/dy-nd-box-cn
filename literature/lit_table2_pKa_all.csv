@@ -1,0 +1,257 @@
+Ln,step,table_order,pKa,pKa_error,source,ref_number,citation,dG_kJmol_298K
+La,1,0,7.4,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",42.24
+La,1,1,7.77,,experiment,74,"Chirkst, D. E.; Lobacheva, O. L.; Dzhevaga, N. V. Thermodynamic Properties of Lanthanum(III) and Holmium(III) Hydroxo Compounds. Russ. J. Phys. Chem. A 2011, 85 (11), 1872–1875. https://doi.org/10.1134/S0036024411110057.",44.35
+La,1,2,8.14,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",46.46
+La,1,3,8.4,0.9,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",47.95
+La,1,4,8.4,,experiment,76,"Wheelwright, E. J.; Spedding, F. H.; Schwarzenbach, G. The Stability of the Rare Earth Complexes with Ethylenediaminetetraacetic Acid. J. Am. Chem. Soc. 1953, 75 (17), 4196–4201.",47.95
+La,1,5,8.5,,experiment,2,"Smith, R. M.; Martell, A. E. Critical Stability Constants: Inorganic Complexes; Springer, 1976; Vol. 4.",48.52
+La,1,6,8.5,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",48.52
+La,1,7,8.52,,experiment,78,"İçhedef, Ç.; Şişmanoğlu, T.; Teksöz, S. Hydrolytic Behavior of La3+ and Sm3+ at Various Temperatures. J. Solution Chem. 2018, 47 (2), 220–230. https://doi.org/10.1007/s10953-018-0727-y.",48.63
+La,1,8,8.53,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",48.69
+La,1,9,8.6,,experiment,81,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—VIII: Lanthanum (III) in Perchlorate Medium. Talanta 1987, 34 (10), 861–864.",49.09
+La,1,10,8.81,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",50.29
+La,1,11,8.87,,experiment,83,"Ramírez-García, J. J.; Solache-Ríos, M.; Jiménez-Reyes, M.; Rojas-Hernández, A. Solubility and Hydrolysis of La, Pr, Eu, Er, and Lu in 1 M NaCl Ionic Strength at 303 K. J. Solution Chem. 2003, 32 (10), 879–896. https://doi.org/10.1023/B:JOSL.0000013431.95283.56.",50.63
+La,1,12,8.89,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",50.74
+La,1,13,9.1,,experiment,85,"Usherenko, L. N.; Skorik, N. A. Ion Hydrolysis of Rare-Earth Elements, Yttrium, Scandium and Thorium in Water and Water-Ethanol Mixtures. Zhurnal Neorg. Khimii 1972, 17 (11), 2918--+.",51.94
+La,1,14,9.2,,experiment,86,"Ciavatta, L.; Iuliano, M.; Porto, R. The Hydrolysis of the La (III) Ion in Aqueous Perchlorate Solution at 60 C. Polyhedron 1987, 6 (6), 1283–1290.",52.51
+La,1,15,9.33,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",53.26
+La,1,16,9.94,,experiment,88,"Luo, Q.-H., Shen, M.-C., Bao, X.-L., Ding, Y. A Study on Hydrolytic Polymerization of Lanthanide Ions. Chin. J. Chem. 1990, 5, 412–422.",56.74
+La,1,17,10.0,,experiment,89,"Amaya, T.; Kakihana, H.; Maeda, M. The Hydrolysis of Y3+, La3+, Gd3+, and Er3+ Ions in an Aqueous Solution Containing 3 M (Li) ClO4 as an Ionic Medium. Bull. Chem. Soc. Jpn. 1973, 46 (6), 1720–1723.",57.08
+La,1,18,10.0,,experiment,90,"Moeller, T. Observations on the Rare Earths. LV. Hydrolysis Studies upon Yttrium, and Certain Rare Earth (III) Sulfate Solutions at 25° C. J. Phys. Chem. 1946, 50 (3), 242–250.",57.08
+La,1,19,10.1,,experiment,91,"Biedermann, G.; Ciavatta, L. Studies on the Hydrolysis of Metal Ions, Part 35. The Hydrolysis of the Lanthanum Ion, La3+; 1961.",57.65
+La,1,20,10.3,,experiment,92,"Burkov, K. A.; Busko, E. A.; Pichugina, I. V. State of Lanthanum, Praeseodymium and Ytterbium Ions in Aqueous Solution. Russ. J. Inorg. Chem. 1982, 27, 643– 647.",58.79
+La,2,0,13.4,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",76.49
+La,2,1,17.9,,experiment,81,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—VIII: Lanthanum (III) in Perchlorate Medium. Talanta 1987, 34 (10), 861–864.",102.17
+La,3,0,19.6,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",111.88
+La,3,1,26.12,,experiment,80,"Fatin-Rouge, N.; Bünzli, J. C. G. Thermodynamic and Structural Study of Inclusion Complexes between Trivalent Lanthanide Ions and Native Cyclodextrins. Inorganica Chim. Acta 1999, 293 (1), 53–60. https://doi.org/10.1016/S0020-1693(99)00227-3.",149.09
+La,3,2,26.56,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",151.60
+La,3,3,26.84,,experiment,78,"İçhedef, Ç.; Şişmanoğlu, T.; Teksöz, S. Hydrolytic Behavior of La3+ and Sm3+ at Various Temperatures. J. Solution Chem. 2018, 47 (2), 220–230. https://doi.org/10.1007/s10953-018-0727-y.",153.20
+La,3,4,27.3,,experiment,81,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—VIII: Lanthanum (III) in Perchlorate Medium. Talanta 1987, 34 (10), 861–864.",155.83
+Ce,1,0,8.02,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",45.78
+Ce,1,1,8.1,,experiment,93,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Cerium (III). Talanta 1978, 25 (3), 147–150.",46.23
+Ce,1,2,8.31,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",47.43
+Ce,1,3,8.34,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",47.60
+Ce,1,4,8.34,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",47.60
+Ce,1,5,8.43,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",48.12
+Ce,1,6,8.8,0.3,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",50.23
+Ce,1,7,9.1,,experiment,95,"Ciavatta, L.; Porto, R.; Vasca, E. The Hydrolysis of the Cerium (III) Ion, Ce3+, in Aqueous Perchlorate Solutions at 50° C. Polyhedron 1988, 7 (15), 1355–1361.",51.94
+Ce,1,8,9.3,,experiment,96,"Sillen, L. G.; Martell, A. E.; Bjerrum, J. Stability Constants of Metal-Ion Complexes.; 1964.",53.08
+Ce,2,0,16.3,,experiment,93,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Cerium (III). Talanta 1978, 25 (3), 147–150.",93.04
+Ce,2,1,17.1,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",97.61
+Ce,3,0,20.0,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",114.16
+Ce,3,1,23.65,,experiment,94,"Teksöz, S.; Acar, Ç.; Ünak, P. Hydrolytic Behavior of Th4+, UO22+, and Ce3+ Ions at Various Temperatures. J. Chem. Eng. Data 2009, 54 (4), 1183–1188. https://doi.org/10.1021/je800601m.",134.99
+Ce,3,2,26.0,,experiment,93,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Cerium (III). Talanta 1978, 25 (3), 147–150.",148.41
+Ce,3,3,26.25,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",149.84
+Pr,1,0,7.1,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",40.53
+Pr,1,1,7.86,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",44.86
+Pr,1,2,8.1,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",46.23
+Pr,1,3,8.3,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",47.38
+Pr,1,4,8.32,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",47.49
+Pr,1,5,8.32,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",47.49
+Pr,1,6,8.5,,experiment,96,"Sillen, L. G.; Martell, A. E.; Bjerrum, J. Stability Constants of Metal-Ion Complexes.; 1964.",48.52
+Pr,1,7,8.5,,experiment,97,"Tobias, R. S.; Garrett, A. B. The Thermodynamic Properties of Neodymium Hydroxide Nd (OH) 3, in Acid, Neutral and Alkaline Solutions at 25°; the Hydrolysis of the Neodymium and Praseodymium Ions, Nd3+, Pr3+. J. Am. Chem. Soc. 1958, 80 (14), 3532–3537.",48.52
+Pr,1,8,8.54,,experiment,83,"Ramírez-García, J. J.; Solache-Ríos, M.; Jiménez-Reyes, M.; Rojas-Hernández, A. Solubility and Hydrolysis of La, Pr, Eu, Er, and Lu in 1 M NaCl Ionic Strength at 303 K. J. Solution Chem. 2003, 32 (10), 879–896. https://doi.org/10.1023/B:JOSL.0000013431.95283.56.",48.75
+Pr,1,9,8.82,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",50.34
+Pr,1,10,8.94,,experiment,98,"González-Mendoza, R.; López-González, H.; Rojas-Hernández, A. Spectrophotometric Determination of the First Hydrolysis Constant of Praseodymium (III). Journal of the Mexican Chemical Society. 2010, pp 51–58. https://doi.org/10.29356/jmcs.v54i1.965.",51.03
+Pr,1,11,9.0,0.5,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",51.37
+Pr,1,12,9.0,,experiment,90,"Moeller, T. Observations on the Rare Earths. LV. Hydrolysis Studies upon Yttrium, and Certain Rare Earth (III) Sulfate Solutions at 25° C. J. Phys. Chem. 1946, 50 (3), 242–250.",51.37
+Pr,1,13,9.5,,experiment,92,"Burkov, K. A.; Busko, E. A.; Pichugina, I. V. State of Lanthanum, Praeseodymium and Ytterbium Ions in Aqueous Solution. Russ. J. Inorg. Chem. 1982, 27, 643– 647.",54.23
+Pr,2,0,14.0,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",79.91
+Pr,3,0,20.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",118.73
+Pr,3,1,25.66,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",146.47
+Nd,1,0,7.0,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",39.96
+Nd,1,1,7.76,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",44.29
+Nd,1,2,8.0,,experiment,2,"Smith, R. M.; Martell, A. E. Critical Stability Constants: Inorganic Complexes; Springer, 1976; Vol. 4.",45.66
+Nd,1,3,8.0,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.66
+Nd,1,4,8.1,,experiment,99,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides. 7. Neodymium (III) in Perchlorate Medium. Talanta 1984, 31 (9), 731–733.",46.23
+Nd,1,5,8.13,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",46.41
+Nd,1,6,8.18,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",46.69
+Nd,1,7,8.24,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",47.03
+Nd,1,8,8.3,0.5,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",47.38
+Nd,1,9,8.5,,experiment,96,"Sillen, L. G.; Martell, A. E.; Bjerrum, J. Stability Constants of Metal-Ion Complexes.; 1964.",48.52
+Nd,1,10,8.5,,experiment,97,"Tobias, R. S.; Garrett, A. B. The Thermodynamic Properties of Neodymium Hydroxide Nd (OH) 3, in Acid, Neutral and Alkaline Solutions at 25°; the Hydrolysis of the Neodymium and Praseodymium Ions, Nd3+, Pr3+. J. Am. Chem. Soc. 1958, 80 (14), 3532–3537.",48.52
+Nd,1,11,8.7,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",49.66
+Nd,1,12,9.0,,experiment,90,"Moeller, T. Observations on the Rare Earths. LV. Hydrolysis Studies upon Yttrium, and Certain Rare Earth (III) Sulfate Solutions at 25° C. J. Phys. Chem. 1946, 50 (3), 242–250.",51.37
+Nd,1,13,9.4,,experiment,104,"Burkov, K. A.; Lilich, L. S.; Ngo, N. D.; Smirnov, A. Y. Potentiometry of Hydrolysis of Neodymium Ions (Nd3+) in 3 Mol (Na)ClO4 Solution. Russ. J. Inorg. Chem. 1973, 18, 1513–1518.",53.66
+Nd,1,14,9.46,,experiment,88,"Luo, Q.-H., Shen, M.-C., Bao, X.-L., Ding, Y. A Study on Hydrolytic Polymerization of Lanthanide Ions. Chin. J. Chem. 1990, 5, 412–422.",54.00
+Nd,2,0,9.2,,experiment,100,"Wood, S. A., Palmer, D. A., Wesolowski, D. J., & Bénézeth, P. A. The Aqueous Geochemistry of the Rare Earth Elements and Yttrium. Part XI. The Solubility of Nd (OH) 3 and Hydrolysis of Nd3+ from 30 to 290 C at Saturated Water Vapor Pressure with in-Situ PHm Measurement. Water–rock Interact. ore Depos. Environ. geochemistry a Tribut. to David Crerar 2002, 7, 229–256.",52.51
+Nd,2,1,12.9,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",73.63
+Nd,2,2,16.2,,experiment,99,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides. 7. Neodymium (III) in Perchlorate Medium. Talanta 1984, 31 (9), 731–733.",92.47
+Nd,2,3,17.35,,experiment,103,"Neck, V.; Altmaier, M.; Rabung, T.; Lützenkirchen, J.; Fanghänel, T. Thermodynamics of Trivalent Actinides and Neodymium in NaCl, MgCl 2, and CaCl2 Solutions: Solubility, Hydrolysis, and Ternary Ca-M(III)-OH Complexes. Pure Appl. Chem. 2009, 81 (9), 1555–1568. https://doi.org/10.1351/PAC-CON-08- 09-05.",99.03
+Nd,3,0,17.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",101.60
+Nd,3,1,23.54,,experiment,80,"Fatin-Rouge, N.; Bünzli, J. C. G. Thermodynamic and Structural Study of Inclusion Complexes between Trivalent Lanthanide Ions and Native Cyclodextrins. Inorganica Chim. Acta 1999, 293 (1), 53–60. https://doi.org/10.1016/S0020-1693(99)00227-3.",134.37
+Nd,3,2,23.8,,experiment,101,"Makino, H., Yajima, T., Yoshikawa, H., Yui, M., and Sasaki, N. Neodymium(III) Hydrolysis Constants and Solubilities of Nd(III) Hydroxide. Nippon Kagaku Kaishi 1993, 5, 445–450.",135.85
+Nd,3,3,23.9,,experiment,102,"Silva, R. J. Thermodynamic Properties of Chemical Species in Nuclear Waste. Topical Report. The Solubilities of Crystalline Neodymium and Americium Trihydroxides. 1982.",136.42
+Nd,3,4,24.0,,experiment,100,"Wood, S. A., Palmer, D. A., Wesolowski, D. J., & Bénézeth, P. A. The Aqueous Geochemistry of the Rare Earth Elements and Yttrium. Part XI. The Solubility of Nd (OH) 3 and Hydrolysis of Nd3+ from 30 to 290 C at Saturated Water Vapor Pressure with in-Situ PHm Measurement. Water–rock Interact. ore Depos. Environ. geochemistry a Tribut. to David Crerar 2002, 7, 229–256.",136.99
+Nd,3,5,24.3,,experiment,99,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides. 7. Neodymium (III) in Perchlorate Medium. Talanta 1984, 31 (9), 731–733.",138.70
+Nd,3,6,25.16,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",143.61
+Nd,3,7,26.2,,experiment,103,"Neck, V.; Altmaier, M.; Rabung, T.; Lützenkirchen, J.; Fanghänel, T. Thermodynamics of Trivalent Actinides and Neodymium in NaCl, MgCl 2, and CaCl2 Solutions: Solubility, Hydrolysis, and Ternary Ca-M(III)-OH Complexes. Pure Appl. Chem. 2009, 81 (9), 1555–1568. https://doi.org/10.1351/PAC-CON-08- 09-05.",149.55
+Pm,1,0,6.5,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",37.10
+Pm,1,1,8.7,0.5,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",49.66
+Pm,2,0,12.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",73.06
+Pm,3,0,19.9,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",113.59
+Sm,1,0,4.4,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",25.12
+Sm,1,1,7.0,0.1,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",39.96
+Sm,1,2,7.11,,experiment,78,"İçhedef, Ç.; Şişmanoğlu, T.; Teksöz, S. Hydrolytic Behavior of La3+ and Sm3+ at Various Temperatures. J. Solution Chem. 2018, 47 (2), 220–230. https://doi.org/10.1007/s10953-018-0727-y.",40.58
+Sm,1,3,7.5,,experiment,105,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—II Samarium (III) in Perchlorate Medium. Talanta 1979, 26 (12), 1105–1109.",42.81
+Sm,1,4,7.6,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",43.38
+Sm,1,5,7.84,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",44.75
+Sm,1,6,7.84,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",44.75
+Sm,1,7,7.9,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.09
+Sm,1,8,8.02,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",45.78
+Sm,1,9,8.61,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",49.15
+Sm,1,10,8.9,,experiment,90,"Moeller, T. Observations on the Rare Earths. LV. Hydrolysis Studies upon Yttrium, and Certain Rare Earth (III) Sulfate Solutions at 25° C. J. Phys. Chem. 1946, 50 (3), 242–250.",50.80
+Sm,2,0,10.9,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",62.22
+Sm,2,1,15.0,,experiment,105,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—II Samarium (III) in Perchlorate Medium. Talanta 1979, 26 (12), 1105–1109.",85.62
+Sm,2,2,15.84,,experiment,78,"İçhedef, Ç.; Şişmanoğlu, T.; Teksöz, S. Hydrolytic Behavior of La3+ and Sm3+ at Various Temperatures. J. Solution Chem. 2018, 47 (2), 220–230. https://doi.org/10.1007/s10953-018-0727-y.",90.41
+Sm,3,0,16.7,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",95.32
+Sm,3,1,22.7,,experiment,105,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—II Samarium (III) in Perchlorate Medium. Talanta 1979, 26 (12), 1105–1109.",129.57
+Sm,3,2,23.44,,experiment,78,"İçhedef, Ç.; Şişmanoğlu, T.; Teksöz, S. Hydrolytic Behavior of La3+ and Sm3+ at Various Temperatures. J. Solution Chem. 2018, 47 (2), 220–230. https://doi.org/10.1007/s10953-018-0727-y.",133.80
+Sm,3,3,24.62,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",140.53
+Eu,1,0,4.8,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",27.40
+Eu,1,1,6.7,,experiment,106,"M’Halla, J., Chemla, M., Bury, R., and David, F. Étude Conductimétrique de l’hydrolyse Des Ions Lanthanides Dans l’eau. J. Chim. Phys. 1988, 85, 121–133.",38.24
+Eu,1,2,7.3,,experiment,107,"Caceci, M. S.; Choppin, G. R. The Determination of the First Hydrolysis Constant of Eu (Lll) and Am (Lll). Radiochim. Acta 1983, 33 (2–3), 101–104.",41.67
+Eu,1,3,7.49,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",42.75
+Eu,1,4,7.49,,experiment,108,"Jiménez-Reyes, M.; Solache-Ríos, M.; Rojas-Hernández, A. Application of the Specific Ion Interaction Theory to the Solubility Product and First Hydrolysis Constant of Europium. J. Solution Chem. 2006, 35 (2), 201–214. https://doi.org/10.1007/s10953-006-9363-z.",42.75
+Eu,1,5,7.66,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",43.72
+Eu,1,6,7.76,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",44.29
+Eu,1,7,7.8,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",44.52
+Eu,1,8,7.91,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",45.15
+Eu,1,9,8.0,,experiment,85,"Usherenko, L. N.; Skorik, N. A. Ion Hydrolysis of Rare-Earth Elements, Yttrium, Scandium and Thorium in Water and Water-Ethanol Mixtures. Zhurnal Neorg. Khimii 1972, 17 (11), 2918--+.",45.66
+Eu,1,10,8.08,,experiment,109,"Lundqvist, R.; Chen, A.-T.; Suurkuusk, J.; Wadsö, I.; Sokolov, V. B.; Spiridonov, V. P.; Strand, T. G. Hydrophilic Complexes of the Actinides. I. Carbonates of Trivalent Americium and Europium. Acta Chemica Scandinavica. 1982, pp 741– 750. https://doi.org/10.3891/acta.chem.scand.36a-0741.",46.12
+Eu,1,11,8.1,,experiment,110,"Nair, G. M.; Chander, K.; Joshi, J. K. Hydrolysis Constants of Plutonium (Lll) and Americium (Lll). Radiochim. Acta 1982, 30 (1), 37–40.",46.23
+Eu,1,12,8.2,,experiment,111,"Ramírez-García, J. J.; Jiménez-Reyes, M.; Solache-Ríos, M.; Fernández-Ramírez, E.; López-González, H.; Rojas-Hernández, A. Solubility and First Hidrolysis Constants of Europium at Different Ionic Strength and 303 K. J. Radioanal. Nucl. Chem. 2003, 257 (2), 299–303. https://doi.org/10.1023/A:1024723527305.",46.81
+Eu,1,13,8.31,,experiment,112,"Chirkst, D. E.; Lobacheva, O. L.; Berlinskii, I. V.; Sulimova, M. I. The Thermodynamic Properties of Hydroxo Compounds and the Mechanism of Ion Flotation for Cerium, Europium, and Yttrium. Russ. J. Phys. Chem. A 2009, 83 (12), 2022–2027. https://doi.org/10.1134/S0036024409120036.",47.43
+Eu,1,14,8.34,,experiment,83,"Ramírez-García, J. J.; Solache-Ríos, M.; Jiménez-Reyes, M.; Rojas-Hernández, A. Solubility and Hydrolysis of La, Pr, Eu, Er, and Lu in 1 M NaCl Ionic Strength at 303 K. J. Solution Chem. 2003, 32 (10), 879–896. https://doi.org/10.1023/B:JOSL.0000013431.95283.56.",47.60
+Eu,1,15,8.58,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",48.97
+Eu,1,16,8.7,,experiment,113,"Schmidt, K. H.; Sullivan, J. C.; Gordon, S.; Thompson, R. C. Determination of Hydrolysis Constants of Metal Cations by a Transient Conductivity Method. Inorg. Nucl. Chem. Lett 1978, 14 (11), 429–434.",49.66
+Eu,1,17,10.1,0.2,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",57.65
+Eu,2,0,19.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",113.02
+Eu,3,0,23.9,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",136.42
+Eu,3,1,24.34,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",138.93
+Gd,1,0,7.1,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",40.53
+Gd,1,1,7.3,,experiment,114,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—III Gadolinium (III) in Perchlorate Medium. Talanta 1980, 27 (12), 1047–1050.",41.67
+Gd,1,2,7.36,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",42.01
+Gd,1,3,7.83,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",44.69
+Gd,1,4,7.87,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",44.92
+Gd,1,5,7.87,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",44.92
+Gd,1,6,7.87,,experiment,115,"Garcia Rodenas, L. and Liberman, S. J. Hydrolysis of Gadolinium(III) in Light and Heavy Water. Talanta 1991, 38, 313–318.",44.92
+Gd,1,7,8.0,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.66
+Gd,1,8,8.2,,experiment,89,"Amaya, T.; Kakihana, H.; Maeda, M. The Hydrolysis of Y3+, La3+, Gd3+, and Er3+ Ions in an Aqueous Solution Containing 3 M (Li) ClO4 as an Ionic Medium. Bull. Chem. Soc. Jpn. 1973, 46 (6), 1720–1723.",46.81
+Gd,1,9,8.3,,experiment,85,"Usherenko, L. N.; Skorik, N. A. Ion Hydrolysis of Rare-Earth Elements, Yttrium, Scandium and Thorium in Water and Water-Ethanol Mixtures. Zhurnal Neorg. Khimii 1972, 17 (11), 2918--+.",47.38
+Gd,1,10,8.44,,experiment,116,"Moutte, A. and Guillaumont, R. Complexes Citriques d’actinium et de Curium. Rev. Chim. Miner. 1969, 6, 603–610.",48.18
+Gd,1,11,8.4,0.4,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",47.95
+Gd,1,12,8.62,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",49.20
+Gd,1,13,9.2,,experiment,117,"Ngo, N. D.; Burkov, K. A. State of Gadolineum Ions in Aqueous Solution. Russ. J. Inorg. Chem. 1974, 19, 1249–1251.",52.51
+Gd,2,0,15.16,,experiment,115,"Garcia Rodenas, L. and Liberman, S. J. Hydrolysis of Gadolinium(III) in Light and Heavy Water. Talanta 1991, 38, 313–318.",86.53
+Gd,2,1,15.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",90.19
+Gd,2,2,15.82,,experiment,116,"Moutte, A. and Guillaumont, R. Complexes Citriques d’actinium et de Curium. Rev. Chim. Miner. 1969, 6, 603–610.",90.30
+Gd,3,0,17.2,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",98.18
+Gd,3,1,21.9,,experiment,114,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—III Gadolinium (III) in Perchlorate Medium. Talanta 1980, 27 (12), 1047–1050.",125.01
+Gd,3,2,22.16,,experiment,80,"Fatin-Rouge, N.; Bünzli, J. C. G. Thermodynamic and Structural Study of Inclusion Complexes between Trivalent Lanthanide Ions and Native Cyclodextrins. Inorganica Chim. Acta 1999, 293 (1), 53–60. https://doi.org/10.1016/S0020-1693(99)00227-3.",126.49
+Gd,3,3,23.92,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",136.54
+Tb,1,0,5.2,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",29.68
+Tb,1,1,7.18,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",40.98
+Tb,1,2,7.55,,experiment,115,"Garcia Rodenas, L. and Liberman, S. J. Hydrolysis of Gadolinium(III) in Light and Heavy Water. Talanta 1991, 38, 313–318.",43.10
+Tb,1,3,7.6,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",43.38
+Tb,1,4,7.64,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",43.61
+Tb,1,5,7.74,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",44.18
+Tb,1,6,7.9,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.09
+Tb,1,7,8.43,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",48.12
+Tb,1,8,8.44,,experiment,116,"Moutte, A. and Guillaumont, R. Complexes Citriques d’actinium et de Curium. Rev. Chim. Miner. 1969, 6, 603–610.",48.18
+Tb,1,9,9.1,0.5,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",51.94
+Tb,2,0,15.4,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",87.90
+Tb,3,0,20.4,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",116.44
+Tb,3,1,23.43,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",133.74
+Dy,1,0,5.6,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",31.96
+Dy,1,1,7.5,,experiment,118,"Vasca, E.; Ferri, D.; Manfredi, C.; Fantasma, F.; Caruso, T.; Fontanella, C.; Vero, S. On the Hydrolysis of the Dysprosium(III) Ion. Chem. Speciat. Bioavailab. 2004, 16 (1–2), 71–77. https://doi.org/10.3184/095422904782775135.",42.81
+Dy,1,2,7.53,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",42.98
+Dy,1,3,7.59,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",43.32
+Dy,1,4,7.72,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",44.07
+Dy,1,5,8.0,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.66
+Dy,1,6,8.37,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",47.78
+Dy,1,7,9.1,0.1,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",51.94
+Dy,2,0,16.1,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",91.90
+Dy,3,0,21.2,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",121.01
+Dy,3,1,22.92,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",130.83
+Ho,1,0,5.7,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",32.54
+Ho,1,1,6.8,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",38.81
+Ho,1,2,7.43,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",42.41
+Ho,1,3,7.56,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",43.15
+Ho,1,4,7.66,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",43.72
+Ho,1,5,7.85,,experiment,74,"Chirkst, D. E.; Lobacheva, O. L.; Dzhevaga, N. V. Thermodynamic Properties of Lanthanum(III) and Holmium(III) Hydroxo Compounds. Russ. J. Phys. Chem. A 2011, 85 (11), 1872–1875. https://doi.org/10.1134/S0036024411110057.",44.81
+Ho,1,6,8.0,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.66
+Ho,1,7,8.14,,experiment,119,"Stepanchikova, S. A.; Biteikina, R. P. Spectrophotometric Study of Holmium Complexation in KOH Solutions at 25°C. Russ. J. Inorg. Chem. 2006, 51 (8), 1315–1319. https://doi.org/10.1134/S0036023606080201.",46.46
+Ho,1,8,8.31,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",47.43
+Ho,1,9,8.4,0.5,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",47.95
+Ho,2,0,15.2,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",86.76
+Ho,2,1,16.25,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",92.76
+Ho,3,0,18.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",107.31
+Ho,3,1,22.71,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",129.63
+Er,1,0,5.5,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",31.39
+Er,1,1,6.3,,experiment,120,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—V: Erbium (III) in Perchlorate Medium. Talanta 1983, 30 (2), 131–133.",35.96
+Er,1,2,6.56,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",37.44
+Er,1,3,7.2,0.9,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",41.10
+Er,1,4,7.46,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",42.58
+Er,1,5,7.52,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",42.92
+Er,1,6,7.63,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",43.55
+Er,1,7,7.9,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",45.09
+Er,1,8,8.16,,experiment,83,"Ramírez-García, J. J.; Solache-Ríos, M.; Jiménez-Reyes, M.; Rojas-Hernández, A. Solubility and Hydrolysis of La, Pr, Eu, Er, and Lu in 1 M NaCl Ionic Strength at 303 K. J. Solution Chem. 2003, 32 (10), 879–896. https://doi.org/10.1023/B:JOSL.0000013431.95283.56.",46.58
+Er,1,9,8.26,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",47.15
+Er,1,10,8.4,,experiment,88,"Luo, Q.-H., Shen, M.-C., Bao, X.-L., Ding, Y. A Study on Hydrolytic Polymerization of Lanthanide Ions. Chin. J. Chem. 1990, 5, 412–422.",47.95
+Er,1,11,9.0,,experiment,121,"Rizkalla, E. N.; Choppin, G. R. Chapter 103 Hydration and Hydrolysis of Lanthanides. Handb. Phys. Chem. Rare Earths 1991, 15, 393–442. https://doi.org/10.1016/S0168-1273(05)80009-1.",51.37
+Er,2,0,11.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",67.35
+Er,2,1,14.5,,experiment,2,"Smith, R. M.; Martell, A. E. Critical Stability Constants: Inorganic Complexes; Springer, 1976; Vol. 4.",82.77
+Er,2,2,16.15,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",92.18
+Er,2,3,17.4,,experiment,89,"Amaya, T.; Kakihana, H.; Maeda, M. The Hydrolysis of Y3+, La3+, Gd3+, and Er3+ Ions in an Aqueous Solution Containing 3 M (Li) ClO4 as an Ionic Medium. Bull. Chem. Soc. Jpn. 1973, 46 (6), 1720–1723.",99.32
+Er,3,0,15.9,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",90.76
+Er,3,1,22.23,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",126.89
+Er,3,2,23.1,,experiment,2,"Smith, R. M.; Martell, A. E. Critical Stability Constants: Inorganic Complexes; Springer, 1976; Vol. 4.",131.86
+Tm,1,0,4.4,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",25.12
+Tm,1,1,6.36,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",36.30
+Tm,1,2,7.34,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",41.90
+Tm,1,3,7.39,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",42.18
+Tm,1,4,7.51,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",42.87
+Tm,1,5,7.7,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",43.95
+Tm,1,6,8.22,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",46.92
+Tm,1,7,8.58,,experiment,122,"Stepanchikova, S. A.; Biteykina, R. P.; Sava, A. A. An Experimental Study of Hydrolytic Behavior of Thulium in Basic and Near-Neutral Solutions. Open J. Inorg. Chem. 2013, 03 (02), 42–47. https://doi.org/10.4236/ojic.2013.32006.",48.97
+Tm,1,8,8.9,0.0,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",50.80
+Tm,2,0,12.1,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",69.07
+Tm,2,1,15.98,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",91.21
+Tm,3,0,15.8,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",90.19
+Tm,3,1,21.91,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",125.06
+Yb,1,0,4.3,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",24.54
+Yb,1,1,6.24,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",35.62
+Yb,1,2,7.24,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",41.33
+Yb,1,3,7.31,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",41.73
+Yb,1,4,7.45,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",42.52
+Yb,1,5,7.7,,experiment,123,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—IV Ytterbium (III) in Perchlorate Medium. Talanta 1982, 29 (3), 219–222.",43.95
+Yb,1,6,7.7,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",43.95
+Yb,1,7,8.0,,experiment,85,"Usherenko, L. N.; Skorik, N. A. Ion Hydrolysis of Rare-Earth Elements, Yttrium, Scandium and Thorium in Water and Water-Ethanol Mixtures. Zhurnal Neorg. Khimii 1972, 17 (11), 2918--+.",45.66
+Yb,1,8,8.19,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",46.75
+Yb,1,9,8.4,,experiment,124,"Lvanov-Emin, B. N.; Egorov, A. M.; Romanyuk, V. I.; Siforova, E. N. Formation Constants of Anion Hydroxo-Complexes of Elements of Group-III in Periodic System. Russ. J. Inorg. Chem. 1970, 15, 1224.",47.95
+Yb,1,10,8.2,0.3,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",46.81
+Yb,1,11,8.6,,experiment,92,"Burkov, K. A.; Busko, E. A.; Pichugina, I. V. State of Lanthanum, Praeseodymium and Ytterbium Ions in Aqueous Solution. Russ. J. Inorg. Chem. 1982, 27, 643– 647.",49.09
+Yb,2,0,15.1,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",86.19
+Yb,2,1,15.5,,experiment,123,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—IV Ytterbium (III) in Perchlorate Medium. Talanta 1982, 29 (3), 219–222.",88.47
+Yb,2,2,15.59,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",88.99
+Yb,3,0,18.3,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",104.46
+Yb,3,1,20.68,,experiment,80,"Fatin-Rouge, N.; Bünzli, J. C. G. Thermodynamic and Structural Study of Inclusion Complexes between Trivalent Lanthanide Ions and Native Cyclodextrins. Inorganica Chim. Acta 1999, 293 (1), 53–60. https://doi.org/10.1016/S0020-1693(99)00227-3.",118.04
+Yb,3,2,21.72,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",123.98
+Yb,3,3,23.2,,experiment,123,"Kragten, J.; Decnop-Weever, L. G. Hydroxide Complexes of Lanthanides—IV Ytterbium (III) in Perchlorate Medium. Talanta 1982, 29 (3), 219–222.",132.43
+Lu,1,0,3.5,,experiment,73,"Guillaumont, R.; Desire, B.; Galin, M. Première Constante d’hydrolyse Des Lanthanides. Radiochem. Radioanal. Lett 1971, 8 (3), 189–197.",19.98
+Lu,1,1,6.04,,experiment,75,"Nazarenko, V. A., Antonovich, V. P., and Nevskaya, E. M. Hydrolysis of Metal Ions in Dilute Solutions; Atomizdat: Moscow, 1979.",34.48
+Lu,1,2,6.6,,experiment,96,"Sillen, L. G.; Martell, A. E.; Bjerrum, J. Stability Constants of Metal-Ion Complexes.; 1964.",37.67
+Lu,1,3,7.27,,experiment,82,"Klungness, G. D.; Byrne, R. H. Comparative Hydrolysis Behavior of the Rare Earths and Yttrium: The Influence of Temperature and Ionic Strength. Polyhedron 2000, 19 (1), 99–107. https://doi.org/10.1016/S0277-5387(99)00332-0.",41.50
+Lu,1,4,7.33,,experiment,84,"Ekberg, Christian, Brown, P. L. Scandium , Yttrium and the Lanthanide Metals. 2016, No. 1966.",41.84
+Lu,1,5,7.41,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",42.30
+Lu,1,6,7.6,,experiment,77,"Mishustin, A. I. Estimate of the Stability Constants of Trivalent Actinide and Lanthanide Complexes with O-Donor Ligands in Aqueous Solutions. Russ. J. Inorg. Chem. 2010, 55 (5), 746–752. https://doi.org/10.1134/S0036023610050141.",43.38
+Lu,1,7,7.7,,experiment,85,"Usherenko, L. N.; Skorik, N. A. Ion Hydrolysis of Rare-Earth Elements, Yttrium, Scandium and Thorium in Water and Water-Ethanol Mixtures. Zhurnal Neorg. Khimii 1972, 17 (11), 2918--+.",43.95
+Lu,1,8,7.9,0.9,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",45.09
+Lu,1,9,8.0,,experiment,125,"López-González, H.; Jiménez-Reyes, M.; Solache-Ríos, M.; Rojas-Hernández, A. Solubility and Hydrolysis of Lutetium at Different [Lu3+] Initial. J. Radioanal. Nucl. Chem. 2007, 274 (1), 103–108. https://doi.org/10.1007/s10967-006-6910-4.",45.66
+Lu,1,10,8.11,,experiment,83,"Ramírez-García, J. J.; Solache-Ríos, M.; Jiménez-Reyes, M.; Rojas-Hernández, A. Solubility and Hydrolysis of La, Pr, Eu, Er, and Lu in 1 M NaCl Ionic Strength at 303 K. J. Solution Chem. 2003, 32 (10), 879–896. https://doi.org/10.1023/B:JOSL.0000013431.95283.56.",46.29
+Lu,1,11,8.17,,experiment,87,"Frolova, U. K.; Kumok, V. N.; Serebrennikov, V. V. Hydrolysis of Ions of the Rare Earth Elements and Yttrium in Aqueous Solutions. Khim. i Khim. Tekhnol 1966, 9, 176–179.",46.63
+Lu,2,0,14.0,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",79.91
+Lu,2,1,15.21,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",86.82
+Lu,3,0,17.1,,this_work_calc,,"Shiery, Cooper, Cantu, Inorg. Chem. 2021, 60, 10257 (calculated)",97.61
+Lu,3,1,21.43,,experiment,79,"Yakubovich, Y. Y.; Alekseev, V. G. Hydrolysis Constants of Tervalent Lanthanum and Lanthanide Ions in 0.1 M KNO3 Solution. Russ. J. Inorg. Chem. 2012, 57 (6), 911–915. https://doi.org/10.1134/S0036023612060265.",122.32

@@ -1,0 +1,76 @@
+{
+  "description": "Stepwise Ln-OH (de)coordination kinetics and occupancy thermodynamics",
+  "state": "n = number of hydroxide O (one nearest H) within r_c of Ln (clamped to 3)",
+  "sampling_fs": 20.0,
+  "committed_transitions": "centred mode filter of width W then runs shorter than W/2 absorbed",
+  "scenarios": [
+    {
+      "name": "primary",
+      "filter_window_ps": 0.5,
+      "rc_override_A": null,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "W0.2",
+      "filter_window_ps": 0.2,
+      "rc_override_A": null,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "W1.0",
+      "filter_window_ps": 1.0,
+      "rc_override_A": null,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "W2.0",
+      "filter_window_ps": 2.0,
+      "rc_override_A": null,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "rc2.90",
+      "filter_window_ps": 0.5,
+      "rc_override_A": 2.9,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "rc3.30",
+      "filter_window_ps": 0.5,
+      "rc_override_A": 3.3,
+      "analysis_start_ps": 10.0
+    },
+    {
+      "name": "start1",
+      "filter_window_ps": 0.5,
+      "rc_override_A": null,
+      "analysis_start_ps": 1.0
+    },
+    {
+      "name": "start50",
+      "filter_window_ps": 0.5,
+      "rc_override_A": null,
+      "analysis_start_ps": 50.0
+    },
+    {
+      "name": "start90",
+      "filter_window_ps": 0.5,
+      "rc_override_A": null,
+      "analysis_start_ps": 90.0
+    }
+  ],
+  "thermo_start_ps": {
+    "solution": 10.0,
+    "graphite": 50.0
+  },
+  "block_ps": 10.0,
+  "n_bootstrap": 2000,
+  "eyring": "dG_act = RT ln(kB T / (h k))",
+  "pKw": 14.0,
+  "standard_state": "dG0_d = dG_occ - RT ln((4-n) c1 / 1 M); pKa_eq = pKw - dG0_d/(RT ln10)",
+  "c_single_M": {
+    "solution": 0.4224487442114719,
+    "graphite": 0.3593557499461221
+  },
+  "excluded_trajectories": 91
+}

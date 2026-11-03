@@ -1,0 +1,20 @@
+metal,system,c_single_M,source,kind,pKa1,pKa2,pKa3,P0,P1,P2,P3,mean_n_OH
+Nd,solution,0.4224,"Shiery2021 Table 1 (DFT, 298.15 K)",predicted from pKa,8.3,12.9,17.8,1.35e-07,0.0859,0.914,6.12e-05,1.914
+Nd,solution,0.4224,Kragten 1984 (Table 2 ref 99) as listed,predicted from pKa,8.1,16.2,24.3,9.88e-07,0.995,0.0053,1.12e-13,1.005
+Nd,solution,0.4224,Kragten 1984 read as cumulative (stepwise 8.1/8.1/8.1),predicted from pKa,8.1,8.1,8.1,4.41e-18,4.44e-12,2.98e-06,1,3.0
+Nd,solution,0.4224,this work: DPA4C-Plus (solution),MD occupancy (300 K),,,,0.6866,0.162,0.1364,0.015,0.48
+Nd,solution,0.4224,this work: DPA4-Pro (solution),MD occupancy (300 K),,,,0.0,0.0,0.0001,0.9999,3.0
+Nd,solution,0.4224,this work: MACE-POLAR-1-M (solution),MD occupancy (300 K),,,,0.0,0.0,0.0117,0.9883,2.988
+Nd,solution,0.4224,this work: UMA-s-1.2.1 (solution),MD occupancy (300 K),,,,0.0,0.0,0.0,1.0,3.0
+Nd,graphite,0.3594,"Shiery2021 Table 1 (DFT, 298.15 K)",predicted from pKa,8.3,12.9,17.8,1.84e-07,0.0995,0.9,5.13e-05,1.901
+Nd,graphite,0.3594,Kragten 1984 (Table 2 ref 99) as listed,predicted from pKa,8.1,16.2,24.3,1.16e-06,0.995,0.00451,8.13e-14,1.005
+Nd,graphite,0.3594,Kragten 1984 read as cumulative (stepwise 8.1/8.1/8.1),predicted from pKa,8.1,8.1,8.1,7.16e-18,6.13e-12,3.5e-06,1,3.0
+Nd,graphite,0.3594,this work: DPA4C-Plus (graphite),MD occupancy (300 K),,,,0.1897,0.4779,0.2912,0.0412,1.184
+Nd,graphite,0.3594,this work: UMA-s-1.2.1 (graphite),MD occupancy (300 K),,,,0.0,0.0017,0.0244,0.9739,2.972
+Dy,solution,0.4224,"Shiery2021 Table 1 (DFT, 298.15 K)",predicted from pKa,9.1,16.1,21.2,9.87e-06,0.993,0.00667,1.78e-10,1.007
+Dy,solution,0.4224,this work: DPA4C-Plus (solution),MD occupancy (300 K),,,,0.0109,0.2481,0.4599,0.2811,2.011
+Dy,solution,0.4224,this work: DPA4-Pro (solution),MD occupancy (300 K),,,,0.0,0.0,0.0,1.0,3.0
+Dy,solution,0.4224,this work: MACE-POLAR-1-M (solution),MD occupancy (300 K),,,,0.0,0.0,0.0,1.0,3.0
+Dy,graphite,0.3594,"Shiery2021 Table 1 (DFT, 298.15 K)",predicted from pKa,9.1,16.1,21.2,1.16e-05,0.994,0.00568,1.29e-10,1.006
+Dy,graphite,0.3594,this work: DPA4C-Plus (graphite),MD occupancy (300 K),,,,0.1254,0.4663,0.3776,0.0307,1.313
+Dy,graphite,0.3594,this work: UMA-s-1.2.1 (graphite),MD occupancy (300 K),,,,0.0,0.0,0.073,0.927,2.927

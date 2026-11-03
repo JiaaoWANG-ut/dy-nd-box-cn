@@ -1,0 +1,17 @@
+metal,source,quantity,value_kJmol,lo,hi,T_K,note
+Nd,"Shiery2021 SI PMF (step 1, r(O-H) 0.99->1.40 A)",dG(end) - dG(start) = deprotonation free energy,47.22,,,298.15,"monotonic (9 points, smallest increment 3.68 kJ/mol): no barrier, so no activation energy is defined; pKa from endpoint 8.27"
+Nd,"Shiery2021 Table 1 (DFT, 298.15 K)","dG1 (acid, step 1)",47.38,,,298.15,Table 1
+Nd,this work: DPA4C-Plus (solution),dG1 acid-equivalent = RT ln10 pKa1_eq,84.6,82.59,87.19,300.0,both states visited with committed dwell >= 1 ps
+Nd,this work: DPA4C-Plus (solution),dG_act Ln-OH loss 1->0 (Ln-OH + H2O -> Ln-OH2 + OH-),6.99,5.11,9.15,300.0,"apparent Eyring barrier, N = 8 events; no paper counterpart"
+Nd,this work: DPA4C-Plus (solution),dG_act OH uptake 0->1,11.1,9.3,13.38,300.0,"apparent Eyring barrier, N = 7 events; no paper counterpart"
+Nd,this work: DPA4C-Plus (graphite),dG1 acid-equivalent = RT ln10 pKa1_eq,78.28,77.88,78.68,300.0,both states visited with committed dwell >= 1 ps
+Nd,this work: DPA4C-Plus (graphite),dG_act Ln-OH loss 1->0 (Ln-OH + H2O -> Ln-OH2 + OH-),10.51,10.24,10.81,300.0,"apparent Eyring barrier, N = 1108 events; no paper counterpart"
+Nd,this work: DPA4C-Plus (graphite),dG_act OH uptake 0->1,7.7,7.36,8.0,300.0,"apparent Eyring barrier, N = 1096 events; no paper counterpart"
+Dy,"Shiery2021 SI PMF (step 1, r(O-H) 0.99->1.40 A)",dG(end) - dG(start) = deprotonation free energy,51.87,,,298.15,"monotonic (9 points, smallest increment 3.10 kJ/mol): no barrier, so no activation energy is defined; pKa from endpoint 9.09"
+Dy,"Shiery2021 Table 1 (DFT, 298.15 K)","dG1 (acid, step 1)",51.94,,,298.15,Table 1
+Dy,this work: DPA4C-Plus (solution),dG1 acid-equivalent = RT ln10 pKa1_eq,73.17,70.99,74.66,300.0,one state only visited transiently (committed dwell < 1 ps); low confidence
+Dy,this work: DPA4C-Plus (solution),dG_act Ln-OH loss 1->0 (Ln-OH + H2O -> Ln-OH2 + OH-),13.33,9.05,inf,300.0,"apparent Eyring barrier, N = 1 events; no paper counterpart"
+Dy,this work: DPA4C-Plus (solution),dG_act OH uptake 0->1,3.54,-0.75,12.7,300.0,"apparent Eyring barrier, N = 1 events; no paper counterpart"
+Dy,this work: DPA4C-Plus (graphite),dG1 acid-equivalent = RT ln10 pKa1_eq,77.31,76.79,77.77,300.0,both states visited with committed dwell >= 1 ps
+Dy,this work: DPA4C-Plus (graphite),dG_act Ln-OH loss 1->0 (Ln-OH + H2O -> Ln-OH2 + OH-),12.23,11.95,12.53,300.0,"apparent Eyring barrier, N = 506 events; no paper counterpart"
+Dy,this work: DPA4C-Plus (graphite),dG_act OH uptake 0->1,8.67,8.2,9.1,300.0,"apparent Eyring barrier, N = 479 events; no paper counterpart"

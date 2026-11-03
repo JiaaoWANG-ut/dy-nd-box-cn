@@ -1,0 +1,13 @@
+{
+  "article": "Shiery, R. C.; Cooper, K. A.; Cantu, D. C. Computational Prediction of All Lanthanide Aqua Ion Acidity Constants. Inorg. Chem. 2021, 60 (14), 10257-10266. DOI 10.1021/acs.inorgchem.1c00662",
+  "article_url": "https://pubs.acs.org/doi/10.1021/acs.inorgchem.1c00662",
+  "si_url": "https://ndownloader.figshare.com/files/28696985",
+  "dissertation_url": "https://scholarwolf.unr.edu/bitstreams/ae32a3d1-8c2e-40ab-a18f-9499bf7f21e1/download",
+  "table_sources": {
+    "Table 1/2": "transcribed from the dissertation Chapter 5 Tables 5-1/5-2 (reproduce the article tables); verified by recomputing the Table 1 MADs (lit_table2_mad_check.csv)",
+    "Table S1/S2": "SI p. S2 and S9",
+    "structures": "SI pp. S10-S39 (pypdf text layer)",
+    "PMF": "SI Figures S1-S15, marker centres read from the PDF vector paths; axes 0.95-1.45 A and 0-60 kJ/mol"
+  },
+  "conversion": "dG = RT ln(10) pKa with RT ln(10) = 5.7080 kJ/mol at 298.15 K"
+}
