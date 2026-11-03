@@ -4,10 +4,13 @@
 Reads the CSV/JSON/SVG outputs of analyze.py, kinetics.py, literature.py and
 compare.py (nothing is recomputed) and writes
 
-  index.html               Chinese report; every table/figure links its raw data
-  dy_nd_box_cn_data.zip    all outputs + scripts + index.html.  kinetics_cache/
+  index.html               English report (landing page); every table/figure links its raw data
+  index_zh.html            the same report in Chinese (same numbers, same links)
+  dy_nd_box_cn_data.zip    all outputs + scripts + both pages.  kinetics_cache/
                            (regenerable, 380 MB) and the publisher's SI PDF
                            (literature.py downloads it again) are not bundled.
+
+Page text is written as T(zh, en); each page is rendered with LANG set to its language.
 
 Run:  python build_page.py
 """
@@ -29,7 +32,8 @@ from types import SimpleNamespace
 from urllib.parse import unquote
 
 HERE = Path(__file__).resolve().parent
-OUT_HTML = HERE / "index.html"
+PAGES = {"en": HERE / "index.html", "zh": HERE / "index_zh.html"}
+README = {"en": "README.md", "zh": "README_zh.md"}
 OUT_ZIP = HERE / "dy_nd_box_cn_data.zip"
 ZIP_ROOT = "dy_nd_box_cn"
 SKIP_DIR_NAMES = {"kinetics_cache", "__pycache__"}
@@ -41,24 +45,62 @@ SI_URL = "https://ndownloader.figshare.com/files/28696985"
 THESIS_URL = "https://scholarwolf.unr.edu/bitstreams/ae32a3d1-8c2e-40ab-a18f-9499bf7f21e1/download"
 EXTERNAL_URLS = {ARTICLE_URL, SI_URL, THESIS_URL}
 
+LANG = "en"
+
+
+def set_lang(lang: str) -> None:
+    global LANG
+    LANG = lang
+
+
+def T(zh, en):
+    """Text for the page being rendered."""
+    return en if LANG == "en" else zh
+
+
+class Localized:
+    """Read-only mapping that answers from the zh or the en table, according to LANG."""
+
+    def __init__(self, zh: dict, en: dict):
+        if zh.keys() != en.keys():
+            raise ValueError(f"zh/en keys differ: {sorted(zh.keys() ^ en.keys())}")
+        self.zh, self.en = zh, en
+
+    def __getitem__(self, key):
+        return T(self.zh, self.en)[key]
+
+    def __contains__(self, key) -> bool:
+        return key in self.zh
+
+    def get(self, key, default=None):
+        return T(self.zh, self.en).get(key, default)
+
+
 MINUS = "\u2212"
 METALS = ("Dy", "Nd")
 MODEL_ORDER = ("DPA4C-Plus", "DPA4-Pro", "MACE-POLAR-1-M", "uma-s-1.2.1")
 MODEL_LABEL = {"DPA4C-Plus": "DPA4C-Plus", "DPA4-Pro": "DPA4-Pro",
                "MACE-POLAR-1-M": "MACE-POLAR-1-M", "uma-s-1.2.1": "UMA-s-1.2.1"}
-SYSTEM_LABEL = {"graphite": "石墨表面", "solution": "溶液", "cluster": "DFT 团簇（M06 + CPCM）"}
+SYSTEM_LABEL = Localized({"graphite": "石墨表面", "solution": "溶液", "cluster": "DFT 团簇（M06 + CPCM）"},
+                         {"graphite": "Graphite", "solution": "Solution", "cluster": "DFT cluster (M06 + CPCM)"})
 SERIES = (("graphite", "DPA4C-Plus"), ("graphite", "uma-s-1.2.1"),
           ("solution", "DPA4C-Plus"), ("solution", "DPA4-Pro"),
           ("solution", "MACE-POLAR-1-M"), ("solution", "uma-s-1.2.1"))
 GRAPHITE_STARTS = ("3near", "2near1far", "1near2far", "3far")
 SCENARIOS = ("primary", "W0.2", "W1.0", "W2.0", "rc2.90", "rc3.30", "start1", "start50", "start90")
-SCENARIO_LABEL = {
+SCENARIO_LABEL = Localized({
     "primary": "主分析：W = 0.5 ps，r<sub>c</sub> = 密度极小，t ≥ 10 ps",
     "W0.2": "过滤窗口 W = 0.2 ps", "W1.0": "过滤窗口 W = 1.0 ps", "W2.0": "过滤窗口 W = 2.0 ps",
     "rc2.90": "固定 r<sub>c</sub> = 2.90 Å", "rc3.30": "固定 r<sub>c</sub> = 3.30 Å",
     "start1": "分析起点 t ≥ 1 ps", "start50": "分析起点 t ≥ 50 ps", "start90": "分析起点 t ≥ 90 ps",
-}
+}, {
+    "primary": "Primary: W = 0.5 ps, r<sub>c</sub> = density minimum, t ≥ 10 ps",
+    "W0.2": "Filter window W = 0.2 ps", "W1.0": "Filter window W = 1.0 ps", "W2.0": "Filter window W = 2.0 ps",
+    "rc2.90": "Fixed r<sub>c</sub> = 2.90 Å", "rc3.30": "Fixed r<sub>c</sub> = 3.30 Å",
+    "start1": "Analysis from t ≥ 1 ps", "start50": "Analysis from t ≥ 50 ps", "start90": "Analysis from t ≥ 90 ps",
+})
 DIRECTIONS = (("association", "正向"), ("dissociation", "逆向"))
+DIRECTIONS_EN = (("association", "forward"), ("dissociation", "reverse"))
 
 esc = html.escape
 
@@ -152,12 +194,13 @@ def pill(text: str, kind: str = "") -> str:
     return f'<span class="pill {kind}">{text}</span>' if kind else f'<span class="pill">{text}</span>'
 
 
-QUALITY_ZH = {"good": "好", "fair": "尚可", "poor": "差", "none": "无"}
+QUALITY_LABEL = Localized({"good": "好", "fair": "尚可", "poor": "差", "none": "无"},
+                          {"good": "good", "fair": "fair", "poor": "poor", "none": "none"})
 
 
 def quality_pill(quality: str) -> str:
     kind = {"good": "ok", "fair": "warn", "poor": "bad"}.get(quality, "")
-    return pill(QUALITY_ZH.get(quality or "none", esc(quality)), kind)
+    return pill(QUALITY_LABEL.get(quality or "none", esc(quality)), kind)
 
 
 def size_label(nbytes: int) -> str:
@@ -187,15 +230,16 @@ def dl(rel: str, text: str | None = None) -> str:
             f'<span class="size">{size_label(path.stat().st_size)}</span>')
 
 
-def data_line(*rels: str, label: str = "原始数据") -> str:
-    return f'<p class="files">{label}：' + " · ".join(dl(r) for r in rels) + "</p>"
+def data_line(*rels: str, label: str | None = None) -> str:
+    label = label or T("原始数据", "Raw data")
+    return f'<p class="files">{label}' + T("：", ": ") + " · ".join(dl(r) for r in rels) + "</p>"
 
 
 def figure(rel: str, caption: str, data: tuple[str, ...] = ()) -> str:
     _register(rel)
-    links = [f'<a href="{esc(rel)}" target="_blank" rel="noopener">新窗口打开</a>', dl(rel, "下载 SVG")]
+    links = [T(f'<a href="{esc(rel)}" target="_blank" rel="noopener">新窗口打开</a>', f'<a href="{esc(rel)}" target="_blank" rel="noopener">Open in new tab</a>'), dl(rel, T("下载 SVG", "Download SVG"))]
     if data:
-        links.append("作图数据：" + " · ".join(dl(r) for r in data))
+        links.append(T("作图数据：", "Plot data: ") + " · ".join(dl(r) for r in data))
     return (f'<figure class="fig"><a href="{esc(rel)}" target="_blank" rel="noopener">'
             f'<img src="{esc(rel)}" alt="{esc(plain(caption))}" loading="lazy"></a>'
             f'<figcaption>{caption}<div class="files">{" · ".join(links)}</div></figcaption></figure>')
@@ -323,6 +367,9 @@ CSS = """
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.58 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 header{background:linear-gradient(120deg,#132b49,#244b78);color:#fff;padding:30px max(24px,calc((100vw - 1200px)/2));}
 .head{max-width:1200px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.13em;opacity:.78}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.lang{display:flex;gap:6px}.lang a{color:#fff;text-decoration:none;font-size:13px;padding:3px 11px;border:1px solid #ffffff77;border-radius:99px}
+.lang a[aria-current]{background:#fff;color:#183558;border-color:#fff;font-weight:650}
 h1{font-size:clamp(24px,3.6vw,34px);line-height:1.25;margin:13px 0 8px}header p{max-width:900px;margin:0;color:#e3edf8}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-block;background:#fff;color:#183558;padding:9px 15px;border-radius:9px;font-weight:650;text-decoration:none}
 .btn.ghost{background:transparent;color:#fff;border:1px solid #ffffff88}
@@ -348,26 +395,45 @@ details{margin:12px 0}details>summary{cursor:pointer;font-weight:650;color:var(-
 ul.tight li{margin:4px 0}pre{background:#0f1f33;color:#e3edf8;padding:12px 14px;border-radius:10px;overflow:auto;font-size:13px}
 .foot{color:var(--muted);font-size:13px;padding:10px 4px 30px}.muted{color:var(--muted)}code{background:#f0f3f8;padding:1px 5px;border-radius:4px}
 @media(max-width:760px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.card{padding:15px}header{padding:22px 18px}}
-@media print{body{background:#fff}.card,.metric{box-shadow:none;break-inside:avoid}header{background:#fff;color:var(--ink);padding:10px}header p{color:var(--muted)}.btns{display:none}main{margin-top:8px}details{display:block}}
+@media print{body{background:#fff}.card,.metric{box-shadow:none;break-inside:avoid}header{background:#fff;color:var(--ink);padding:10px}header p{color:var(--muted)}.btns{display:none}.lang{display:none}main{margin-top:8px}details{display:block}}
 """
 
 TOC = (("summary", "1 结论摘要"), ("methods", "2 方法"), ("cn", "3 配位数"), ("kinetics", "4 三步表观活化能"),
        ("occupancy", "5 占据数与 pKa 等效"), ("paper", "6 与 Shiery 2021 对比"), ("limits", "7 局限性"),
        ("downloads", "8 数据下载"), ("sources", "9 来源与复现"))
+TOC_EN = (("summary", "1 Summary"), ("methods", "2 Methods"), ("cn", "3 Coordination numbers"),
+          ("kinetics", "4 Three-step apparent activation energies"), ("occupancy", "5 Occupancy and pKa equivalents"),
+          ("paper", "6 Comparison with Shiery 2021"), ("limits", "7 Limitations"), ("downloads", "8 Data downloads"),
+          ("sources", "9 Sources and reproduction"))
+LANG_NAMES = (("en", "en", "English"), ("zh", "zh-CN", "\u4e2d\u6587"))
+
+
+def lang_switch() -> str:
+    links = []
+    for lang, code, name in LANG_NAMES:
+        current = ' aria-current="page"' if lang == LANG else ""
+        links.append(f'<a href="{PAGES[lang].name}" hreflang="{code}" lang="{code}"{current}>{name}</a>')
+    return '<nav class="lang" aria-label="Language">' + "".join(links) + "</nav>"
 
 
 def page_header(zip_label: str) -> str:
-    _register("README.md")
-    return f"""<header><div class="head">
-<div class="eyebrow">Dy / Nd · Ln(OH)<sub>3</sub> + H<sub>2</sub>O · 3D 周期 box (PBC) · 机器学习势函数</div>
+    readme = README[LANG]
+    _register(readme)
+    return T(f"""<header><div class="head">
+<div class="topline"><div class="eyebrow">Dy / Nd · Ln(OH)<sub>3</sub> + H<sub>2</sub>O · 3D 周期 box (PBC) · 机器学习势函数</div>{lang_switch()}</div>
 <h1>Dy、Nd 水解：配位数、三步表观活化能，以及与 Shiery 2021 (Inorg. Chem. 60, 10257) 的对比</h1>
 <p>石墨表面与溶液两种体系（都只用 box PBC 轨迹），比较 DPA4C-Plus、DPA4-Pro、MACE-POLAR-1-M、UMA-s-1.2.1 四个势函数。每张表和图下面都有对应原始数据 (CSV/SVG/JSON) 的下载链接，也可以一次下载全部。</p>
-<div class="btns"><a class="btn" href="{OUT_ZIP.name}" download>⬇ 下载全部数据与脚本 (zip, {zip_label})</a><a class="btn ghost" href="#downloads">逐个文件下载</a><a class="btn ghost" href="README.md" target="_blank" rel="noopener">README</a></div>
-</div></header>"""
+<div class="btns"><a class="btn" href="{OUT_ZIP.name}" download>⬇ 下载全部数据与脚本 (zip, {zip_label})</a><a class="btn ghost" href="#downloads">逐个文件下载</a><a class="btn ghost" href="{readme}" target="_blank" rel="noopener">README</a></div>
+</div></header>""", f"""<header><div class="head">
+<div class="topline"><div class="eyebrow">Dy / Nd · Ln(OH)<sub>3</sub> + H<sub>2</sub>O · 3D periodic box (PBC) · machine-learning potentials</div>{lang_switch()}</div>
+<h1>Dy and Nd hydrolysis: coordination numbers, three-step apparent activation energies, and comparison with Shiery 2021 (Inorg. Chem. 60, 10257)</h1>
+<p>Two systems, a graphite surface and bulk solution (box PBC trajectories only), compared across four potentials: DPA4C-Plus, DPA4-Pro, MACE-POLAR-1-M and UMA-s-1.2.1. Every table and figure has download links to its raw data (CSV/SVG/JSON) directly below it, and everything can also be downloaded at once.</p>
+<div class="btns"><a class="btn" href="{OUT_ZIP.name}" download>⬇ Download all data and scripts (zip, {zip_label})</a><a class="btn ghost" href="#downloads">Download individual files</a><a class="btn ghost" href="{readme}" target="_blank" rel="noopener">README</a></div>
+</div></header>""")
 
 
 def toc() -> str:
-    return '<nav class="toc">' + "".join(f'<a href="#{a}">{t}</a>' for a, t in TOC) + "</nav>"
+    return '<nav class="toc">' + "".join(f'<a href="#{a}">{t}</a>' for a, t in T(TOC, TOC_EN)) + "</nav>"
 
 
 def metrics(d) -> str:
@@ -386,16 +452,16 @@ def metrics(d) -> str:
     t1 = {m: first(d.t1, Ln=m) for m in METALS}
     pmf = {m: first(d.pmf, metal=m, source=lambda s: s.startswith("Shiery2021 SI PMF")) for m in METALS}
     cards = [
-        (f"{n_tot} 条轨迹", f"石墨 {n_gra} + 溶液 {n_tot - n_gra}；坍塌筛查排除 {status['excluded']} 条、截断 {status['truncated']} 条"),
-        (f"Dy {fmt(gd['REE_O_total_mean'])} · Nd {fmt(gn['REE_O_total_mean'])}", "石墨 DPA4C-Plus：CN(REE–O 总)，300 K"),
-        (f"Dy {rng(sol_tot['Dy'])} · Nd {rng(sol_tot['Nd'])}", "溶液 4 个势函数的 CN(REE–O 总) 范围，300 K"),
-        (f"{rng(oree_dpa)} | {rng(oree_oth)}", "OH 中心 O–REE（壳层截断）：DPA4C-Plus | 其它势函数"),
-        (f"Dy {rng(dg['Dy'], 1)} · Nd {rng(dg['Nd'], 1)}", "石墨 DPA4C-Plus 三步表观 ΔG<sup>‡</sup> (kJ/mol, 300 K, 6 个方向)"),
-        (f"{rng(ea, 1)}", "溶液 Arrhenius 表观 E<sub>a</sub> 范围 (kJ/mol；拟合质量“好/尚可”)"),
+        (T(f"{n_tot} 条轨迹", f"{n_tot} trajectories"), T(f"石墨 {n_gra} + 溶液 {n_tot - n_gra}；坍塌筛查排除 {status['excluded']} 条、截断 {status['truncated']} 条", f"Graphite {n_gra} + solution {n_tot - n_gra}; collapse screening excluded {status['excluded']} and truncated {status['truncated']}")),
+        (f"Dy {fmt(gd['REE_O_total_mean'])} · Nd {fmt(gn['REE_O_total_mean'])}", T("石墨 DPA4C-Plus：CN(REE–O 总)，300 K", "Graphite DPA4C-Plus: CN(REE–O total), 300 K")),
+        (f"Dy {rng(sol_tot['Dy'])} · Nd {rng(sol_tot['Nd'])}", T("溶液 4 个势函数的 CN(REE–O 总) 范围，300 K", "Solution: range of CN(REE–O total) over the 4 potentials, 300 K")),
+        (f"{rng(oree_dpa)} | {rng(oree_oth)}", T("OH 中心 O–REE（壳层截断）：DPA4C-Plus | 其它势函数", "OH-centred O–REE (shell cutoff): DPA4C-Plus | other potentials")),
+        (f"Dy {rng(dg['Dy'], 1)} · Nd {rng(dg['Nd'], 1)}", T("石墨 DPA4C-Plus 三步表观 ΔG<sup>‡</sup> (kJ/mol, 300 K, 6 个方向)", "Graphite DPA4C-Plus three-step apparent ΔG<sup>‡</sup> (kJ/mol, 300 K, 3 steps × 2 directions)")),
+        (f"{rng(ea, 1)}", T("溶液 Arrhenius 表观 E<sub>a</sub> 范围 (kJ/mol；拟合质量“好/尚可”)", "Solution: range of Arrhenius apparent E<sub>a</sub> (kJ/mol; fit quality “good/fair”)")),
         (f"Nd {fmt(pka1['Nd']['pKa'], 1)} vs {fmt(t1['Nd']['pKa1_calc'], 1)} · Dy {fmt(pka1['Dy']['pKa'], 1)} vs {fmt(t1['Dy']['pKa1_calc'], 1)}",
-         "pKa<sub>1</sub>：石墨 DPA4C-Plus (MD 等效) vs 论文 Table 1"),
+         T("pKa<sub>1</sub>：石墨 DPA4C-Plus (MD 等效) vs 论文 Table 1", "pKa<sub>1</sub>: graphite DPA4C-Plus (MD equivalent) vs paper Table 1")),
         (f"Nd {fmt(pmf['Nd']['value_kJmol'], 1)} · Dy {fmt(pmf['Dy']['value_kJmol'], 1)}",
-         "论文第一步 PMF 终点 (kJ/mol)：单调、无能垒 → 论文没有可比的活化能"),
+         T("论文第一步 PMF 终点 (kJ/mol)：单调、无能垒 → 论文没有可比的活化能", "Paper first-step PMF end point (kJ/mol): monotonic, no barrier → no comparable activation energy in the paper")),
     ]
     return '<section class="metrics">' + "".join(
         f'<div class="metric"><b>{v}</b><span>{t}</span></div>' for v, t in cards) + "</section>"
@@ -403,12 +469,17 @@ def metrics(d) -> str:
 
 def notice(d) -> str:
     c1 = d.kmeta["c_single_M"]
-    return f"""<div class="notice"><strong>阅读前请注意</strong><ul>
+    return T(f"""<div class="notice"><strong>阅读前请注意</strong><ul>
 <li>速率与 ΔG<sup>‡</sup> 是 committed-transition 的<b>表观</b>值，依赖过滤窗口 W 和截断 r<sub>c</sub>（见 4.4 敏感性）；三步之间的相对顺序稳定，绝对值会移动几个 kJ/mol。</li>
 <li>pKa“等效值”假设 pK<sub>w</sub> = {fmt(d.kmeta['pKw'], 0)}，并把 box 中的 OH<sup>−</sup> 当理想溶液（单分子浓度 c<sub>1</sub> = {fmt(c1['solution'], 3)} M 溶液 / {fmt(c1['graphite'], 3)} M 石墨）；实际是高浓度、有离子对，不是无限稀释。</li>
 <li>溶液每个温度只有 1 条 150 ps 轨迹；石墨 DPA4C-Plus 在 ~90 ps 前仍有起始构型记忆；UMA 大量轨迹坍塌（截断/排除），剩余轨迹中 OH 几乎不离开 Ln（非遍历）。</li>
 <li>论文的 pKa<sub>1</sub> 来自约束 AIMD（显式水）的 PMF 终点，pKa<sub>2</sub>、pKa<sub>3</sub> 来自团簇 + 隐式溶剂（M06/CPCM）相对第 1 步的自由能差，都是 298 K 热力学量，<b>没有</b>给出能垒/活化能；与论文能比较的是 ΔG、pKa、结构，而不是 E<sub>a</sub>。</li>
-</ul></div>"""
+</ul></div>""", f"""<div class="notice"><strong>Please read first</strong><ul>
+<li>Rates and ΔG<sup>‡</sup> are <b>apparent</b> committed-transition values and depend on the filter window W and the cutoff r<sub>c</sub> (see the sensitivity analysis in 4.4); the relative order of the three steps is stable, while absolute values shift by a few kJ/mol.</li>
+<li>The pKa “equivalents” assume pK<sub>w</sub> = {fmt(d.kmeta['pKw'], 0)} and treat the OH<sup>−</sup> in the box as an ideal solution (single-molecule concentration c<sub>1</sub> = {fmt(c1['solution'], 3)} M solution / {fmt(c1['graphite'], 3)} M graphite); in reality the concentration is high and ion pairs form, far from infinite dilution.</li>
+<li>Solution has only one 150 ps trajectory per temperature; graphite DPA4C-Plus still remembers its starting configuration before ~90 ps; many UMA trajectories collapse (truncated/excluded), and in the remaining ones OH almost never leaves Ln (non-ergodic).</li>
+<li>The paper's pKa<sub>1</sub> is the PMF end point of constrained AIMD (explicit water), and its pKa<sub>2</sub> and pKa<sub>3</sub> are free-energy differences relative to step 1 from clusters + implicit solvent (M06/CPCM). All are 298 K thermodynamic quantities, and the paper gives <b>no</b> barriers/activation energies: what can be compared with the paper is ΔG, pKa and structure, not E<sub>a</sub>.</li>
+</ul></div>""")
 
 
 def sec_summary(d) -> str:
@@ -452,32 +523,49 @@ def sec_summary(d) -> str:
     agree = Counter(r["agrees_within_0.05"] for r in d.madchk)
     paper = {m: "/".join(fmt(t1[m][f"pKa{k}_calc"], 1) for k in (1, 2, 3)) for m in METALS}
     items = [
-        f"""<b>(a) REE–O 配位（300 K，box PBC）：</b>DPA4C-Plus 在石墨上 Dy/Nd 的 REE–O(总) = {fmt(gd['REE_O_total_mean'])}/{fmt(gn['REE_O_total_mean'])}
+        T(f"""<b>(a) REE–O 配位（300 K，box PBC）：</b>DPA4C-Plus 在石墨上 Dy/Nd 的 REE–O(总) = {fmt(gd['REE_O_total_mean'])}/{fmt(gn['REE_O_total_mean'])}
 （水 {fmt(gd['REE_O_water_mean'])}/{fmt(gn['REE_O_water_mean'])}，OH {fmt(gd['REE_O_hydroxide_mean'])}/{fmt(gn['REE_O_hydroxide_mean'])}）；
 在溶液中 Dy = {fmt(sd['REE_O_total_mean'])}（水 {fmt(sd['REE_O_water_mean'])}，OH {fmt(sd['REE_O_hydroxide_mean'])}），Nd = {fmt(sn['REE_O_total_mean'])}（水 {fmt(sn['REE_O_water_mean'])}，OH {fmt(sn['REE_O_hydroxide_mean'])}）。
 DPA4-Pro、MACE-POLAR-1-M、UMA 在溶液中 REE–O(OH) = {rng([r['REE_O_hydroxide_mean'] for r in oth_sol])}，即 3 个 OH 始终全部配位，水相应减少，总 CN 更低
-（Dy {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Dy'])}，Nd {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Nd'])}；UMA 石墨 Dy/Nd = {fmt(ud['REE_O_total_mean'])}/{fmt(un['REE_O_total_mean'])}）。截断取总 REE–O g(r) 第一极小（{rng(rc_ree)} Å）。""",
-        f"""<b>(b) OH 中心配位：</b>O–X(总) g(r) 的第一个极小（{rng([c['OH_X_first_min_A'] for c in cuts])} Å）在 O–REE 峰（{rng([c['OH_REE_peak_A'] for c in cuts])} Å）之前，
+（Dy {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Dy'])}，Nd {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Nd'])}；UMA 石墨 Dy/Nd = {fmt(ud['REE_O_total_mean'])}/{fmt(un['REE_O_total_mean'])}）。截断取总 REE–O g(r) 第一极小（{rng(rc_ree)} Å）。""", f"""<b>(a) REE–O coordination (300 K, box PBC):</b> with DPA4C-Plus on graphite, Dy/Nd REE–O(total) = {fmt(gd['REE_O_total_mean'])}/{fmt(gn['REE_O_total_mean'])}
+(water {fmt(gd['REE_O_water_mean'])}/{fmt(gn['REE_O_water_mean'])}, OH {fmt(gd['REE_O_hydroxide_mean'])}/{fmt(gn['REE_O_hydroxide_mean'])});
+in solution Dy = {fmt(sd['REE_O_total_mean'])} (water {fmt(sd['REE_O_water_mean'])}, OH {fmt(sd['REE_O_hydroxide_mean'])}) and Nd = {fmt(sn['REE_O_total_mean'])} (water {fmt(sn['REE_O_water_mean'])}, OH {fmt(sn['REE_O_hydroxide_mean'])}).
+With DPA4-Pro, MACE-POLAR-1-M and UMA in solution, REE–O(OH) = {rng([r['REE_O_hydroxide_mean'] for r in oth_sol])}, i.e. all 3 OH stay coordinated, with correspondingly less water and a lower total CN
+(Dy {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Dy'])}, Nd {rng([r['REE_O_total_mean'] for r in oth_sol if r['metal'] == 'Nd'])}; UMA graphite Dy/Nd = {fmt(ud['REE_O_total_mean'])}/{fmt(un['REE_O_total_mean'])}). The cutoff is the first minimum of the total REE–O g(r) ({rng(rc_ree)} Å)."""),
+        T(f"""<b>(b) OH 中心配位：</b>O–X(总) g(r) 的第一个极小（{rng([c['OH_X_first_min_A'] for c in cuts])} Å）在 O–REE 峰（{rng([c['OH_REE_peak_A'] for c in cuts])} Å）之前，
 所以“严格第一极小”下 O–REE 恒为 0，只数到氢键给体 H（DPA4C-Plus 在 1.23–1.25 Å 还有一个共享质子峰）。因此同时给出“含 REE 的壳层”截断（O–REE 峰之后的极小，{rng([c['OH_X_shell_min_A'] for c in cuts])} Å）：
 DPA4-Pro、MACE、UMA 的 O–X(总) = {shell(ox_oth, 'OH_Xtotal_shell_mean')}，即 O–REE {shell(ox_oth, 'OH_REE_shell_mean')} + O–H(水) {shell(ox_oth, 'OH_Hwater_shell_mean')}（≈ 1 个 REE + 2 个多水 H）；
 DPA4C-Plus 的 O–X(总) = {shell(ox_dpa, 'OH_Xtotal_shell_mean')} 相近，但组成不同：O–REE 只有 {shell(ox_dpa, 'OH_REE_shell_mean')}（OH 多数不在 REE 上），O–H(水) 更多（{shell(ox_dpa, 'OH_Hwater_shell_mean')}）。
-DPA4C-Plus Nd 石墨的壳层极小几乎不存在（峰→谷降幅 {nd_drop:.1f}%），DPA4C-Plus Nd 溶液的壳层峰其实是 O···O(水)（O–X = {fmt(odd['OH_Xtotal_shell_mean'])}，其中 O–REE {fmt(odd['OH_REE_shell_mean'])}，含 ≈ {fmt(odd_rest, 1)} 个水 O）——这两项只作诊断。""",
-        f"""<b>三步表观活化能（Eyring，300 K）：</b>统计最好的是石墨 DPA4C-Plus（每个方向 {min(n_ev)}–{max(n_ev)} 个 committed 事件）。
+DPA4C-Plus Nd 石墨的壳层极小几乎不存在（峰→谷降幅 {nd_drop:.1f}%），DPA4C-Plus Nd 溶液的壳层峰其实是 O···O(水)（O–X = {fmt(odd['OH_Xtotal_shell_mean'])}，其中 O–REE {fmt(odd['OH_REE_shell_mean'])}，含 ≈ {fmt(odd_rest, 1)} 个水 O）——这两项只作诊断。""", f"""<b>(b) OH-centred coordination:</b> the first minimum of the O–X(total) g(r) ({rng([c['OH_X_first_min_A'] for c in cuts])} Å) lies before the O–REE peak ({rng([c['OH_REE_peak_A'] for c in cuts])} Å),
+so with the “strict first minimum” O–REE is always 0 and only hydrogen-bond donor H are counted (DPA4C-Plus also has a shared-proton peak at 1.23–1.25 Å). We therefore also report a “shell including the REE” cutoff (the minimum after the O–REE peak, {rng([c['OH_X_shell_min_A'] for c in cuts])} Å):
+for DPA4-Pro, MACE and UMA, O–X(total) = {shell(ox_oth, 'OH_Xtotal_shell_mean')}, i.e. O–REE {shell(ox_oth, 'OH_REE_shell_mean')} + O–H(water) {shell(ox_oth, 'OH_Hwater_shell_mean')} (≈ 1 REE + just over 2 water H);
+for DPA4C-Plus, O–X(total) = {shell(ox_dpa, 'OH_Xtotal_shell_mean')} is similar but the composition differs: O–REE is only {shell(ox_dpa, 'OH_REE_shell_mean')} (most OH are not on the REE) and O–H(water) is larger ({shell(ox_dpa, 'OH_Hwater_shell_mean')}).
+For DPA4C-Plus Nd on graphite the shell minimum barely exists (peak-to-valley drop {nd_drop:.1f}%), and for DPA4C-Plus Nd in solution the shell peak is actually O···O(water) (O–X = {fmt(odd['OH_Xtotal_shell_mean'])}, of which O–REE {fmt(odd['OH_REE_shell_mean'])}, including ≈ {fmt(odd_rest, 1)} water O); these two entries are diagnostic only."""),
+        T(f"""<b>三步表观活化能（Eyring，300 K）：</b>统计最好的是石墨 DPA4C-Plus（每个方向 {min(n_ev)}–{max(n_ev)} 个 committed 事件）。
 水解正向（Ln 得 OH<sup>−</sup>，(k−1)→k）第 1/2/3 步：Dy {'/'.join(fmt(x, 1) for x in fwd['Dy'])}，Nd {'/'.join(fmt(x, 1) for x in fwd['Nd'])} kJ/mol；
 逆向（Ln 失 OH<sup>−</sup>，k→(k−1)）：Dy {'/'.join(fmt(x, 1) for x in rev['Dy'])}，Nd {'/'.join(fmt(x, 1) for x in rev['Nd'])} kJ/mol。
-第 1 步正向最快、逆向最慢，第 3 步相反；Nd 比 Dy 低 {rng(diff, 1)} kJ/mol。≥ {math.floor(min(ptl) * 100)}% 的事件是质子转移型（OH 的 O 留在 Ln 上，只交换 H）。""",
-        f"""<b>温度依赖（溶液，300–500 K）：</b>只有 DPA4C-Plus（和 MACE Nd 第 3 步）事件足够做 Arrhenius；拟合质量为“好/尚可”的表观 E<sub>a</sub> = {rng([r['Ea_kJmol'] for r in ea_rows], 1)} kJ/mol，95% CI 宽。
+第 1 步正向最快、逆向最慢，第 3 步相反；Nd 比 Dy 低 {rng(diff, 1)} kJ/mol。≥ {math.floor(min(ptl) * 100)}% 的事件是质子转移型（OH 的 O 留在 Ln 上，只交换 H）。""", f"""<b>Three-step apparent activation energies (Eyring, 300 K):</b> graphite DPA4C-Plus has the best statistics ({min(n_ev)}–{max(n_ev)} committed events per direction).
+Forward hydrolysis (Ln gains OH<sup>−</sup>, (k−1)→k), steps 1/2/3: Dy {'/'.join(fmt(x, 1) for x in fwd['Dy'])}, Nd {'/'.join(fmt(x, 1) for x in fwd['Nd'])} kJ/mol;
+reverse (Ln loses OH<sup>−</sup>, k→(k−1)): Dy {'/'.join(fmt(x, 1) for x in rev['Dy'])}, Nd {'/'.join(fmt(x, 1) for x in rev['Nd'])} kJ/mol.
+Step 1 is the fastest forward and the slowest in reverse; step 3 is the opposite. Nd is {rng(diff, 1)} kJ/mol lower than Dy. ≥ {math.floor(min(ptl) * 100)}% of the events are proton-transfer-like (the OH oxygen stays on Ln and only an H is exchanged)."""),
+        T(f"""<b>温度依赖（溶液，300–500 K）：</b>只有 DPA4C-Plus（和 MACE Nd 第 3 步）事件足够做 Arrhenius；拟合质量为“好/尚可”的表观 E<sub>a</sub> = {rng([r['Ea_kJmol'] for r in ea_rows], 1)} kJ/mol，95% CI 宽。
 失 OH 方向出现负 E<sub>a</sub>（如 Nd 2→1：{fmt(nd21['Ea_kJmol'])} {ci(nd21['Ea_CI95_lo'], nd21['Ea_CI95_hi'])}），与 van 't Hoff ΔH°<sub>d</sub> &lt; 0（Nd 第 1 步 {fmt(vh1['dH0_dissociation_kJmol'])} kJ/mol）一致：升温使 OH 更稳定地留在 Ln 上。
-这些是复合的表观速率常数，不是单一基元步骤的能垒；DPA4-Pro、MACE、UMA 在溶液中 OH 几乎从不离开 Ln，只能给 ΔG<sup>‡</sup> 下限。""",
-        f"""<b>与 Shiery 2021 对比：</b>论文只有热力学（pKa、ΔG，298 K）。SI 第一步水解 PMF 单调上升（终点 Nd {fmt(pmf['Nd']['value_kJmol'], 1)}、Dy {fmt(pmf['Dy']['value_kJmol'], 1)} kJ/mol ≈ Table 1 ΔG<sub>1</sub> {fmt(t1['Nd']['dG1_kJmol_298K'], 1)}/{fmt(t1['Dy']['dG1_kJmol_298K'], 1)}），没有能垒，因此活化能无法与论文直接比较。
+这些是复合的表观速率常数，不是单一基元步骤的能垒；DPA4-Pro、MACE、UMA 在溶液中 OH 几乎从不离开 Ln，只能给 ΔG<sup>‡</sup> 下限。""", f"""<b>Temperature dependence (solution, 300–500 K):</b> only DPA4C-Plus (plus MACE Nd step 3) has enough events for Arrhenius fits; the apparent E<sub>a</sub> with fit quality “good/fair” = {rng([r['Ea_kJmol'] for r in ea_rows], 1)} kJ/mol, with wide 95% CIs.
+Negative E<sub>a</sub> appears in the OH-loss direction (e.g. Nd 2→1: {fmt(nd21['Ea_kJmol'])} {ci(nd21['Ea_CI95_lo'], nd21['Ea_CI95_hi'])}), consistent with a van 't Hoff ΔH°<sub>d</sub> &lt; 0 (Nd step 1: {fmt(vh1['dH0_dissociation_kJmol'])} kJ/mol): heating makes OH more likely to stay on Ln.
+These are composite apparent rate constants, not barriers of single elementary steps; with DPA4-Pro, MACE and UMA, OH almost never leaves Ln in solution, so they only give lower bounds on ΔG<sup>‡</sup>."""),
+        T(f"""<b>与 Shiery 2021 对比：</b>论文只有热力学（pKa、ΔG，298 K）。SI 第一步水解 PMF 单调上升（终点 Nd {fmt(pmf['Nd']['value_kJmol'], 1)}、Dy {fmt(pmf['Dy']['value_kJmol'], 1)} kJ/mol ≈ Table 1 ΔG<sub>1</sub> {fmt(t1['Nd']['dG1_kJmol_298K'], 1)}/{fmt(t1['Dy']['dG1_kJmol_298K'], 1)}），没有能垒，因此活化能无法与论文直接比较。
 DPA4C-Plus 的 pKa 等效值（pK<sub>w</sub> = 14）三步都落在 {rng([r['pKa'] for r in md_dpa], 1)}，三步几乎没有逐级分离（论文 Nd {paper['Nd']}，Dy {paper['Dy']}）：
 pKa<sub>1</sub> 比论文高（ΔΔG<sub>1</sub> = {rng(ddg1, 1)} kJ/mol），pKa<sub>3</sub> 比论文低（ΔΔG<sub>3</sub> = {rng(ddg3, 1)} kJ/mol；其它势函数第 3 步 {rng(ddg3_oth, 1)} kJ/mol）。
-其它势函数在溶液中 OH 基本不离开 Ln，第 1、2 步多为“无法确定”或只有界限。""",
-        f"""<b>Table 2 的读法：</b>Nd 的 Kragten 1984（ref 99）8.1/16.2/24.3 = 8.1 × n，看起来是累积常数 −log*β<sub>n</sub>；第 2、3 步的实验中位数在数值上也更像累积值。
-论文 MAD 是把它们当逐步 pKa 计算的（我们用 Table 2 重算 MAD：{agree['yes']}/{agree['yes'] + agree['NO']} 与 Table 1 一致，另有 {agree['']} 项无实验值）。第 6 节同时给出两种读法。""",
+其它势函数在溶液中 OH 基本不离开 Ln，第 1、2 步多为“无法确定”或只有界限。""", f"""<b>Comparison with Shiery 2021:</b> the paper has thermodynamics only (pKa, ΔG, 298 K). The SI first-hydrolysis PMF rises monotonically (end point Nd {fmt(pmf['Nd']['value_kJmol'], 1)}, Dy {fmt(pmf['Dy']['value_kJmol'], 1)} kJ/mol ≈ Table 1 ΔG<sub>1</sub> {fmt(t1['Nd']['dG1_kJmol_298K'], 1)}/{fmt(t1['Dy']['dG1_kJmol_298K'], 1)}) with no barrier, so activation energies cannot be compared with the paper directly.
+The DPA4C-Plus pKa equivalents (pK<sub>w</sub> = 14) of all three steps fall within {rng([r['pKa'] for r in md_dpa], 1)}, with almost no stepwise separation (paper: Nd {paper['Nd']}, Dy {paper['Dy']}):
+pKa<sub>1</sub> is higher than in the paper (ΔΔG<sub>1</sub> = {rng(ddg1, 1)} kJ/mol) and pKa<sub>3</sub> is lower (ΔΔG<sub>3</sub> = {rng(ddg3, 1)} kJ/mol; other potentials, step 3: {rng(ddg3_oth, 1)} kJ/mol).
+With the other potentials OH hardly ever leaves Ln in solution, so steps 1 and 2 are mostly “undetermined” or bounds only."""),
+        T(f"""<b>Table 2 的读法：</b>Nd 的 Kragten 1984（ref 99）8.1/16.2/24.3 = 8.1 × n，看起来是累积常数 −log*β<sub>n</sub>；第 2、3 步的实验中位数在数值上也更像累积值。
+论文 MAD 是把它们当逐步 pKa 计算的（我们用 Table 2 重算 MAD：{agree['yes']}/{agree['yes'] + agree['NO']} 与 Table 1 一致，另有 {agree['']} 项无实验值）。第 6 节同时给出两种读法。""", f"""<b>How to read Table 2:</b> for Nd, Kragten 1984 (ref 99) lists 8.1/16.2/24.3 = 8.1 × n, which looks like cumulative constants −log*β<sub>n</sub>; the experimental medians for steps 2 and 3 are also numerically closer to cumulative values.
+The paper's MAD treats them as stepwise pKa (recomputing the MAD from Table 2, {agree['yes']}/{agree['yes'] + agree['NO']} agree with Table 1, and {agree['']} entries have no experimental value). Section 6 gives both readings."""),
     ]
     body = '<ul class="tight">' + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
-    return card("summary", "1 结论摘要", "所有数字都直接从下面各节的 CSV 读出", body)
+    return card("summary", T("1 结论摘要", "1 Summary"), T("所有数字都直接从下面各节的 CSV 读出", "Every number is read directly from the CSV files of the sections below"), body)
 
 
 # ------------------------------------------------------------------ 2 methods
@@ -515,23 +603,23 @@ def sec_methods(d) -> str:
         st = Counter(x["status"] for x in g)
         temps = sorted({inum(x["T_K"]) for x in g})
         starts = sorted({x["variant"] for x in g})
-        layout = (f"{len(starts)} 种起始 × {len(g) // max(len(starts), 1)}" if system == "graphite"
-                  else "每个 T 1 条")
+        layout = (T(f"{len(starts)} 种起始 × {len(g) // max(len(starts), 1)}", f"{len(starts)} starts × {len(g) // max(len(starts), 1)}") if system == "graphite"
+                  else T("每个 T 1 条", "1 per T"))
         usable = [x["usable_end_ps"] for x in g if x["status"] != "excluded"]
         rows.append({"cells": lead_cells(system, model, metal) + [
             str(len(g)), "/".join(map(str, temps)), layout, str(st["ok"]), str(st["truncated"]), str(st["excluded"]),
             fmt(median(usable), 0) if usable else "—"],
             "cls": "weak" if st["excluded"] == len(g) else ""})
-    systems = table(["体系", "势函数", "金属", "轨迹", "T (K)", "布局", "正常", "截断", "排除", "可用时长中位数 (ps)"],
+    systems = table([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal"), T("轨迹", "Traj."), "T (K)", T("布局", "Layout"), T("正常", "OK"), T("截断", "Truncated"), T("排除", "Excluded"), T("可用时长中位数 (ps)", "Median usable length (ps)")],
                     rows, num_cols=(3, 6, 7, 8, 9))
     n_used = sum(1 for r in d.screen if r["status"] != "excluded")
     g_other = max(num(r["REE_O_other_mean"]) for r in d.cn if r["variant"] != "box_pbc")
     s_other = max(abs(num(r["REE_Ototal_mean"]) - num(r["REE_Ow_mean"]) - num(r["REE_OOH_mean"]))
                   for r in d.sol_all if r["collapsed"] == "0")
     sol_trunc = [s for s in d.sol_all if s["collapsed"] != "0" and (sc := sol_screen(d, s)) and sc["status"] == "truncated"]
-    trunc_txt = "；".join(f"{MODEL_LABEL[s['model']]} {s['metal']} {s['T_K']} K 只有动力学结果（用前 {fmt(sol_screen(d, s)['usable_end_ps'], 0)} ps）"
+    trunc_txt = T("；", "; ").join(T(f"{MODEL_LABEL[s['model']]} {s['metal']} {s['T_K']} K 只有动力学结果（用前 {fmt(sol_screen(d, s)['usable_end_ps'], 0)} ps）", f"{MODEL_LABEL[s['model']]} {s['metal']} {s['T_K']} K has kinetics results only (from the first {fmt(sol_screen(d, s)['usable_end_ps'], 0)} ps)")
                           for s in sol_trunc)
-    body = f"""
+    body = T(f"""
 <h3>2.1 体系与轨迹</h3>
 <p>所有轨迹都是三维周期 box（PBC），每条 150 ps：Ln(OH)<sub>3</sub> + 水，石墨体系另含一层石墨。石墨只有 DPA4C-Plus 和 UMA 的轨迹，300 K，4 种 OH 起始构型（3near / 2near1far / 1near2far / 3far，指 3 个 OH 相对石墨的远近）× 50 条；
 溶液四个势函数各 1 条 / 温度（300–500 K）。共 {len(d.screen)} 条，坍塌筛查后可用 {n_used} 条。</p>
@@ -556,8 +644,33 @@ def sec_methods(d) -> str:
 <h3>2.4 坍塌筛查</h3>
 <p>部分 UMA 轨迹会坍塌（势能骤降、H/O 被吸到 Ln 上）。判据：(i) 势能：每 50 个采样点（1 ps）的块平均比前 5 块最低值低 25 eV（石墨）/ 15 eV（溶液），在 −10 eV 处细化起点；(ii) 几何：Ln–O &lt; 1.85 Å 或 Ln–H &lt; 1.90 Å 连续 10 个采样点。
 轨迹截到坍塌前 1 ps；剩余 ≥ 20 ps 记为“截断”并继续使用，否则“排除”。共排除 {Counter(r['status'] for r in d.screen)['excluded']} 条（UMA Dy 溶液 5 条全部排除）。石墨 CN/g(r) 和全部动力学都只用可用时间段；溶液 CN/g(r) 取自 <code>md/dense-gr-cn</code>，它对坍塌的轨迹不给 CN{('，所以 ' + trunc_txt) if trunc_txt else ''}。</p>
-"""
-    return card("methods", "2 方法", "CN/g(r)：analyze.py · 动力学：kinetics.py · 文献：literature.py · 对比：compare.py", body)
+""", f"""
+<h3>2.1 Systems and trajectories</h3>
+<p>All trajectories are three-dimensional periodic boxes (PBC), 150 ps each: Ln(OH)<sub>3</sub> + water, plus a graphite layer in the graphite system. Graphite trajectories exist only for DPA4C-Plus and UMA, at 300 K, with 4 OH starting configurations (3near / 2near1far / 1near2far / 3far, i.e. how close the 3 OH are to the graphite) × 50 trajectories;
+in solution each of the four potentials has 1 trajectory per temperature (300–500 K). {len(d.screen)} trajectories in total, {n_used} of them usable after collapse screening.</p>
+{systems}
+{data_line("collapse_screen.csv")}
+<h3>2.2 Coordination-number definitions (tasks a, b)</h3>
+<ul class="tight">
+<li><b>O species:</b> every H is assigned to its nearest O by minimum-image distance; an O with 2 H = water, 1 H = OH<sup>−</sup>, 0 or ≥ 3 = other (O<sup>2−</sup>/H<sub>3</sub>O<sup>+</sup>). The assignment is redone in every frame, so OH and water swap identities after a proton transfer. REE–O(other): {'0' if g_other == 0 else fmt(g_other)} in the graphite system; in solution (non-collapsed trajectories) |REE–O(total) − water − OH| ≤ {fmt(s_other, 3)}, which is negligible, so REE–O(total) ≈ water + OH.</li>
+<li><b>(a) REE-centred:</b> cutoff r<sub>c</sub> = the minimum after the first peak of the total REE–O g(r) (g(r) grid 0.02 Å, 5-point smoothing). REE–O(water), REE–O(OH) and REE–O(total) are all counted directly with this single r<sub>c</sub>.</li>
+<li><b>(b) OH-centred:</b> centres = the O of every OH in each frame; X = all atoms except the central O itself and its own H (REE, water O/H, O/H of the other OH, and C in the graphite system). Reported: O–REE, O–H(water) and O–X(total).</li>
+<li><b>Sampling and errors:</b> graphite uses one frame per 1 ps from t ≥ 10 ps, with the between-trajectory standard error (weighted by frame count); solution uses the per-frame counts of <code>md/dense-gr-cn</code> (t ≥ 10 ps, every 2 fs, {inum(sol300(d, 'DPA4C-Plus', 'Nd')['n_frames']):,} frames), with 5-block standard errors.</li>
+</ul>
+<h3>2.3 What to do when the OH solvation shell is unclear</h3>
+<p>The O–X(total) g(r) of OH<sup>−</sup> is made of several overlapping peaks: water H donating hydrogen bonds to the OH (1.6–1.8 Å; DPA4C-Plus also has a shared proton at 1.23–1.25 Å), the REE (2.2–2.3 Å) and water O (2.4–2.7 Å). The “first minimum of the total g(r)” is therefore not unique. Our approach:</p>
+<ol class="tight">
+<li><b>Strict cutoff</b> (the requested definition): the first minimum after the first real peak of O–X(total) (g &gt; 0.5 followed by a drop of ≥ 10%). It always lies before the O–REE peak, so only hydrogen-bonded H are counted and O–REE ≈ 0.</li>
+<li><b>Shell cutoff</b>: starting from the O–REE g(r) peak (the maximum within 1.9–2.8 Å), take the next minimum of O–X(total), so that the REE is included.</li>
+<li><b>Clarity:</b> a peak-to-valley drop 1 − g<sub>min</sub>/g<sub>peak</sub> ≥ 10% counts as “clear”; otherwise the result is diagnostic only.</li>
+<li><b>Remainder check:</b> inside the shell, X − REE − H(water) should be ≈ 0; if it is clearly &gt; 0, the shell cutoff has already taken in water O.</li>
+<li><b>Reciprocal reference:</b> REE–O(OH)/3 does not depend on any OH-centred cutoff (it uses the REE–O r<sub>c</sub>) and can be compared with the shell O–REE.</li>
+</ol>
+<h3>2.4 Collapse screening</h3>
+<p>Some UMA trajectories collapse (the potential energy plunges and H/O are pulled onto Ln). Criteria: (i) energy: the block average over every 50 samples (1 ps) falls 25 eV (graphite) / 15 eV (solution) below the minimum of the preceding 5 blocks, with the onset refined at −10 eV; (ii) geometry: Ln–O &lt; 1.85 Å or Ln–H &lt; 1.90 Å for 10 consecutive samples.
+Trajectories are cut 1 ps before the collapse; if ≥ 20 ps remain they are marked “truncated” and kept, otherwise “excluded”. {Counter(r['status'] for r in d.screen)['excluded']} trajectories were excluded in total (all 5 UMA Dy solution trajectories). Graphite CN/g(r) and all kinetics use only the usable time span; solution CN/g(r) come from <code>md/dense-gr-cn</code>, which gives no CN for collapsed trajectories{('; hence ' + trunc_txt) if trunc_txt else ''}.</p>
+""")
+    return card("methods", T("2 方法", "2 Methods"), T("CN/g(r)：analyze.py · 动力学：kinetics.py · 文献：literature.py · 对比：compare.py", "CN/g(r): analyze.py · kinetics: kinetics.py · literature: literature.py · comparison: compare.py"), body)
 
 
 # ------------------------------------------------------------------ 3 CN
@@ -565,25 +678,25 @@ def sample_label(d, system: str, model: str, metal: str, row: dict) -> str:
     if system == "graphite":
         extra = []
         if inum(row["n_truncated"]):
-            extra.append(f"截断 {inum(row['n_truncated'])}")
+            extra.append(T(f"截断 {inum(row['n_truncated'])}", f"truncated {inum(row['n_truncated'])}"))
         if inum(row["n_excluded"]):
-            extra.append(f"排除 {inum(row['n_excluded'])}")
-        tail = f"（{'，'.join(extra)}）" if extra else ""
-        return f"{inum(row['n_replicas'])} 条{tail}<small>{inum(row['n_samples']):,} 帧 × 1 ps</small>"
+            extra.append(T(f"排除 {inum(row['n_excluded'])}", f"excluded {inum(row['n_excluded'])}"))
+        tail = T(f"（{'，'.join(extra)}）", f" ({', '.join(extra)})") if extra else ""
+        return T(f"{inum(row['n_replicas'])} 条{tail}<small>{inum(row['n_samples']):,} 帧 × 1 ps</small>", f"{inum(row['n_replicas'])} traj.{tail}<small>{inum(row['n_samples']):,} frames × 1 ps</small>")
     s = sol300(d, model, metal)
-    return f"1 条<small>{inum(s['n_frames']):,} 帧 × 2 fs</small>"
+    return T(f"1 条<small>{inum(s['n_frames']):,} 帧 × 2 fs</small>", f"1 traj.<small>{inum(s['n_frames']):,} frames × 2 fs</small>")
 
 
 def collapsed_cells(n_cols: int) -> tuple[str, str]:
-    return ("轨迹坍塌（5/5 条被排除），无可用数据", f'colspan="{n_cols}" class="weak"')
+    return (T("轨迹坍塌（5/5 条被排除），无可用数据", "Trajectories collapsed (5/5 excluded); no usable data"), f'colspan="{n_cols}" class="weak"')
 
 
 def shell_flags(c: dict) -> list[str]:
     flags = []
     if c["OH_X_shell_min_clear"] != "True":
-        flags.append(f"壳层极小不清晰（降幅 {fmt(num(c['OH_X_shell_drop_fraction']) * 100, 1)}%）")
+        flags.append(T(f"壳层极小不清晰（降幅 {fmt(num(c['OH_X_shell_drop_fraction']) * 100, 1)}%）", f"Shell minimum unclear (drop {fmt(num(c['OH_X_shell_drop_fraction']) * 100, 1)}%)"))
     if abs(num(c["OH_X_shell_peak_A"]) - num(c["OH_REE_peak_A"])) > 0.05:
-        flags.append(f"壳层峰 {fmt(c['OH_X_shell_peak_A'])} Å ≠ O–REE 峰 {fmt(c['OH_REE_peak_A'])} Å（是 O···O 水峰；O–REE 峰高仅 g = {fmt(c['OH_REE_peak_g'], 1)}）")
+        flags.append(T(f"壳层峰 {fmt(c['OH_X_shell_peak_A'])} Å ≠ O–REE 峰 {fmt(c['OH_REE_peak_A'])} Å（是 O···O 水峰；O–REE 峰高仅 g = {fmt(c['OH_REE_peak_g'], 1)}）", f"Shell peak {fmt(c['OH_X_shell_peak_A'])} Å ≠ O–REE peak {fmt(c['OH_REE_peak_A'])} Å (it is the O···O water peak; the O–REE peak is only g = {fmt(c['OH_REE_peak_g'], 1)})"))
     return flags
 
 
@@ -600,13 +713,13 @@ def sec_cn(d) -> str:
                               pm(r["REE_O_hydroxide_mean"], r["REE_O_hydroxide_sem"]),
                               "<b>" + pm(r["REE_O_total_mean"], r["REE_O_total_sem"]) + "</b>",
                               sample_label(d, system, model, metal, r)])
-    tab_a = table(["体系", "势函数", "金属", "r<sub>c</sub> (Å)", "REE–O (水)", "REE–O (OH)", "REE–O (总)", "样本"],
+    tab_a = table([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal"), "r<sub>c</sub> (Å)", T("REE–O (水)", "REE–O (water)"), "REE–O (OH)", T("REE–O (总)", "REE–O (total)"), T("样本", "Samples")],
                   rows_a, num_cols=(3, 4, 5, 6))
 
     # (b) OH-centred: cutoffs and clarity
     def drop(c, key):
         ok = c[f"OH_X_{key}_min_clear"] == "True"
-        return f"{fmt(num(c[f'OH_X_{key}_drop_fraction']) * 100, 1)}% " + (pill("清晰", "ok") if ok else pill("不清晰", "bad"))
+        return f"{fmt(num(c[f'OH_X_{key}_drop_fraction']) * 100, 1)}% " + (pill(T("清晰", "clear"), "ok") if ok else pill(T("不清晰", "unclear"), "bad"))
 
     rows_c, cuts = [], []
     for system, model, metal in series_rows():
@@ -621,12 +734,12 @@ def sec_cn(d) -> str:
             fmt(c["OH_X_first_peak_A"]), fmt(c["OH_X_first_min_A"]), (drop(c, "first"), 'class="num"'),
             f"{fmt(c['OH_REE_peak_A'])}<small>g = {fmt(c['OH_REE_peak_g'], 0)}</small>",
             fmt(c["OH_X_shell_peak_A"]), fmt(c["OH_X_shell_min_A"]), (drop(c, "shell"), 'class="num"'),
-            "；".join(flags) + " ‡" if flags else pill("两种截断都可用", "ok")], "cls": "hl" if flags else ""})
-    head_c = thead2(["体系", "势函数", "金属"],
-                    [("严格：O–X(总) 第一极小", ["峰 (Å)", "极小 (Å)", "降幅"]),
-                     ("O–REE g(r)", ["峰 (Å)"]),
-                     ("壳层：O–REE 峰之后的 O–X 极小", ["峰 (Å)", "极小 (Å)", "降幅"]),
-                     ("判定", [""])])
+            T("；", "; ").join(flags) + " ‡" if flags else pill(T("两种截断都可用", "both cutoffs usable"), "ok")], "cls": "hl" if flags else ""})
+    head_c = thead2([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal")],
+                    [(T("严格：O–X(总) 第一极小", "Strict: first minimum of O–X(total)"), [T("峰 (Å)", "Peak (Å)"), T("极小 (Å)", "Minimum (Å)"), T("降幅", "Drop")]),
+                     ("O–REE g(r)", [T("峰 (Å)", "Peak (Å)")]),
+                     (T("壳层：O–REE 峰之后的 O–X 极小", "Shell: O–X minimum after the O–REE peak"), [T("峰 (Å)", "Peak (Å)"), T("极小 (Å)", "Minimum (Å)"), T("降幅", "Drop")]),
+                     (T("判定", "Verdict"), [""])])
     tab_c = table([], rows_c, num_cols=(3, 4, 6, 7), thead=head_c)
 
     # (b) OH-centred: counts
@@ -656,21 +769,27 @@ def sec_cn(d) -> str:
                                ("OH_Hw_shell_mean", "OH_Hwater_shell_from_gr"), ("OH_Xtotal_shell_mean", "OH_Xtotal_shell_from_gr")):
             if finite(s[direct]) and finite(s[via_gr]):
                 gr_diff.append(abs(num(s[direct]) - num(s[via_gr])))
-    head_b = thead2(["体系", "势函数", "金属"],
-                    [("严格截断（第一极小）", ["r<sub>c</sub> (Å)", "O–REE", "O–H(水)", "O–X(总)"]),
-                     ("壳层截断（含 REE）", ["r<sub>c</sub> (Å)", "O–REE", "O–H(水)", "O–X(总)", "余量 X−REE−H<sub>w</sub>"]),
-                     ("对称参考", ["REE–O(OH)/3"])])
+    head_b = thead2([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal")],
+                    [(T("严格截断（第一极小）", "Strict cutoff (first minimum)"), ["r<sub>c</sub> (Å)", "O–REE", T("O–H(水)", "O–H(water)"), T("O–X(总)", "O–X(total)")]),
+                     (T("壳层截断（含 REE）", "Shell cutoff (includes the REE)"), ["r<sub>c</sub> (Å)", "O–REE", T("O–H(水)", "O–H(water)"), T("O–X(总)", "O–X(total)"), T("余量 X−REE−H<sub>w</sub>", "Remainder X−REE−H<sub>w</sub>")]),
+                     (T("对称参考", "Reciprocal reference"), ["REE–O(OH)/3"])])
     tab_b = table([], rows_b, num_cols=tuple(range(3, 13)), thead=head_b)
     odd = cn_get(d, "DPA4C-Plus", "Nd", "box_pbc")
     dpa_first_peak = [c["OH_X_first_peak_A"] for c in cuts if c["model"] == "DPA4C-Plus"]
-    notes = f"""<ul class="tight muted">
+    notes = T(f"""<ul class="tight muted">
 <li>严格第一极小（{rng([c['OH_X_first_min_A'] for c in cuts])} Å）都在 O–REE 峰（{rng([c['OH_REE_peak_A'] for c in cuts])} Å）之前，所以严格截断下 O–REE ≤ {fmt(max(oree_first), 3)}：OH 的“第一层”只有给它氢键的水 H（DPA4C-Plus 的第一峰在 {rng(dpa_first_peak)} Å，是共享质子）。</li>
 <li>壳层截断把 REE 包进来：DPA4-Pro / MACE / UMA 的 O–REE ≈ 1（每个 OH 都在 Ln 上），DPA4C-Plus 只有 {rng([r['OH_REE_shell_mean'] for r in d.cn if r['model'] == 'DPA4C-Plus' and r['variant'] in ('ALL', 'box_pbc')])}（OH 大部分时间不在 Ln 上）。
 壳层截断略小于 REE–O 的 r<sub>c</sub>，所以 O–REE(壳层) ≤ REE–O(OH)/3，差值就是落在两者之间的 OH。</li>
 <li>† 溶液严格截断下的 O–REE、O–H(水) 由 g(r) 积分得到（无误差棒）；其余溶液数值是直接计数（5 段 block SEM），直接计数与 g(r) 积分最多相差 {fmt(max(gr_diff), 3)}。</li>
 <li>‡ 标黄的两行只作诊断：DPA4C-Plus Nd 石墨的壳层极小几乎不存在；DPA4C-Plus Nd 溶液的“壳层”其实到了 O···O(水) 峰之后，余量 ≈ {fmt(num(odd['OH_Xtotal_shell_mean']) - num(odd['OH_REE_shell_mean']) - num(odd['OH_Hwater_shell_mean']))} 个水 O。对这两行建议用 O–REE(壳层) 与 REE–O(OH)/3 来描述 OH 是否在 Ln 上，不用 O–X(总)。</li>
-</ul>"""
-    body = f"""
+</ul>""", f"""<ul class="tight muted">
+<li>The strict first minima ({rng([c['OH_X_first_min_A'] for c in cuts])} Å) all lie before the O–REE peak ({rng([c['OH_REE_peak_A'] for c in cuts])} Å), so with the strict cutoff O–REE ≤ {fmt(max(oree_first), 3)}: the “first shell” of OH contains only the water H that hydrogen-bond to it (the DPA4C-Plus first peak at {rng(dpa_first_peak)} Å is a shared proton).</li>
+<li>The shell cutoff takes in the REE: for DPA4-Pro / MACE / UMA O–REE ≈ 1 (every OH sits on Ln), for DPA4C-Plus only {rng([r['OH_REE_shell_mean'] for r in d.cn if r['model'] == 'DPA4C-Plus' and r['variant'] in ('ALL', 'box_pbc')])} (most of the time OH is not on Ln).
+The shell cutoff is slightly smaller than the REE–O r<sub>c</sub>, so O–REE(shell) ≤ REE–O(OH)/3; the difference is the OH lying between the two cutoffs.</li>
+<li>† In solution, O–REE and O–H(water) with the strict cutoff come from integrating g(r) (no error bars); the other solution values are direct counts (5-block SEM), and direct counts and g(r) integrals differ by at most {fmt(max(gr_diff), 3)}.</li>
+<li>‡ The two highlighted rows are diagnostic only: for DPA4C-Plus Nd on graphite the shell minimum barely exists; for DPA4C-Plus Nd in solution the “shell” extends past the O···O(water) peak, with a remainder of ≈ {fmt(num(odd['OH_Xtotal_shell_mean']) - num(odd['OH_REE_shell_mean']) - num(odd['OH_Hwater_shell_mean']))} water O. For these two rows, use O–REE(shell) and REE–O(OH)/3 rather than O–X(total) to describe whether OH is on Ln.</li>
+</ul>""")
+    body = T(f"""
 <h3>3.1 (a) REE 中心：REE–O(水)、REE–O(OH)、REE–O(总)，300 K</h3>
 {tab_a}
 {data_line("cn_summary_300K.csv", "graphite_cn_summary_box_pbc.csv", "graphite_cn_by_replica_box_pbc.csv", "solution_cn_box_pbc.csv")}
@@ -693,8 +812,31 @@ def sec_cn(d) -> str:
 {figure("solution_CN_box_pbc_300K.svg", "溶液：各配位数汇总", ("solution_cn_box_pbc.csv",))}
 </div>
 <p class="files">石墨累积 g(r) 直方图（可重新归一化）：{dl("graphite_rdf_accumulated.npz")} · {dl("graphite_rdf_accumulated.json")}</p>
-"""
-    return card("cn", "3 配位数（box PBC，300 K）", "任务 (a) REE 中心与 (b) OH 中心；石墨 = 全部起始构型合并 (ALL)，溶液 = 300 K 轨迹", body)
+""", f"""
+<h3>3.1 (a) REE-centred: REE–O(water), REE–O(OH), REE–O(total), 300 K</h3>
+{tab_a}
+{data_line("cn_summary_300K.csv", "graphite_cn_summary_box_pbc.csv", "graphite_cn_by_replica_box_pbc.csv", "solution_cn_box_pbc.csv")}
+<h3>3.2 (b) OH-centred: cutoff positions and clarity</h3>
+{tab_c}
+{data_line("graphite_cutoffs_box_pbc.csv", "solution_cutoffs_box_pbc_300K.csv")}
+<h3>3.3 (b) OH-centred: O–REE, O–H(water), O–X(total), 300 K</h3>
+{tab_b}
+{notes}
+{data_line("cn_summary_300K.csv", "solution_cn_box_pbc.csv")}
+{details("Graphite: CN for each of the 4 starting configurations", graphite_start_table(d))}
+{details("Solution: CN at every temperature, 300–500 K", solution_all_t_table(d))}
+<h3>3.4 Figures</h3>
+<div class="grid2">
+{figure("graphite_REE_O_total_box_pbc_300K.svg", "Graphite: REE–O g(r) (water / OH / total) and r<sub>c</sub>", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_REE_O_total_box_pbc_300K.svg", "Solution: REE–O g(r) (water / OH / total) and r<sub>c</sub>", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_OH_X_total_box_pbc_300K.svg", "Graphite: OH-centred O–X(total), O–REE and O–H(water) g(r) with both cutoffs", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_OH_X_total_box_pbc_300K.svg", "Solution: OH-centred O–X(total), O–REE and O–H(water) g(r) with both cutoffs", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_CN_box_pbc_300K.svg", "Graphite: summary of all coordination numbers", ("graphite_cn_summary_box_pbc.csv",))}
+{figure("solution_CN_box_pbc_300K.svg", "Solution: summary of all coordination numbers", ("solution_cn_box_pbc.csv",))}
+</div>
+<p class="files">Graphite accumulated g(r) histograms (can be renormalized): {dl("graphite_rdf_accumulated.npz")} · {dl("graphite_rdf_accumulated.json")}</p>
+""")
+    return card("cn", T("3 配位数（box PBC，300 K）", "3 Coordination numbers (box PBC, 300 K)"), T("任务 (a) REE 中心与 (b) OH 中心；石墨 = 全部起始构型合并 (ALL)，溶液 = 300 K 轨迹", "Task (a) REE-centred and (b) OH-centred; graphite = all starting configurations combined (ALL), solution = 300 K trajectories"), body)
 
 
 def graphite_start_table(d) -> str:
@@ -705,7 +847,7 @@ def graphite_start_table(d) -> str:
                 r = cn_get(d, model, metal, variant)
                 if r is None:
                     continue
-                rows.append({"cells": [MODEL_LABEL[model], metal_html(metal), "全部合并" if variant == "ALL" else variant,
+                rows.append({"cells": [MODEL_LABEL[model], metal_html(metal), T("全部合并", "All combined") if variant == "ALL" else variant,
                                        sample_label(d, "graphite", model, metal, r),
                                        pm(r["REE_O_water_mean"], r["REE_O_water_sem"]),
                                        pm(r["REE_O_hydroxide_mean"], r["REE_O_hydroxide_sem"]),
@@ -714,10 +856,10 @@ def graphite_start_table(d) -> str:
                                        pm(r["OH_Hwater_shell_mean"], r["OH_Hwater_shell_sem"]),
                                        pm(r["OH_Xtotal_shell_mean"], r["OH_Xtotal_shell_sem"])],
                              "cls": "paper" if variant == "ALL" else ""})
-    return table(["势函数", "金属", "起始构型", "样本", "REE–O(水)", "REE–O(OH)", "REE–O(总)",
-                  "O–REE 壳层", "O–H(水) 壳层", "O–X 壳层"], rows, num_cols=tuple(range(4, 10)), cls="compact") + \
+    return table([T("势函数", "Potential"), T("金属", "Metal"), T("起始构型", "Starting configuration"), T("样本", "Samples"), T("REE–O(水)", "REE–O(water)"), "REE–O(OH)", T("REE–O(总)", "REE–O(total)"),
+                  T("O–REE 壳层", "O–REE shell"), T("O–H(水) 壳层", "O–H(water) shell"), T("O–X 壳层", "O–X shell")], rows, num_cols=tuple(range(4, 10)), cls="compact") + \
         data_line("cn_summary_300K.csv", "graphite_cn_by_replica_box_pbc.csv") + \
-        '<p class="muted">截断用全部合并 (ALL) 的 g(r) 确定，各起始构型共用。</p>'
+        T('<p class="muted">截断用全部合并 (ALL) 的 g(r) 确定，各起始构型共用。</p>', '<p class="muted">Cutoffs are determined from the all-combined (ALL) g(r) and shared by every starting configuration.</p>')
 
 
 def solution_all_t_table(d) -> str:
@@ -728,8 +870,8 @@ def solution_all_t_table(d) -> str:
                 lead = [MODEL_LABEL[model], metal_html(metal), s["T_K"]]
                 if s["collapsed"] != "0":
                     sc = sol_screen(d, s)
-                    msg = (f"{fmt(sc['usable_end_ps'], 0)} ps 后坍塌：无 CN（动力学只用前 {fmt(sc['usable_end_ps'], 0)} ps）"
-                           if sc and sc["status"] == "truncated" else "坍塌（排除）")
+                    msg = (T(f"{fmt(sc['usable_end_ps'], 0)} ps 后坍塌：无 CN（动力学只用前 {fmt(sc['usable_end_ps'], 0)} ps）", f"Collapses after {fmt(sc['usable_end_ps'], 0)} ps: no CN (kinetics uses only the first {fmt(sc['usable_end_ps'], 0)} ps)")
+                           if sc and sc["status"] == "truncated" else T("坍塌（排除）", "Collapsed (excluded)"))
                     rows.append({"cells": lead + [(msg, 'colspan="9" class="weak"')], "cls": "weak"})
                     continue
                 rows.append(lead + [
@@ -738,10 +880,10 @@ def solution_all_t_table(d) -> str:
                     pm(s["REE_Ototal_mean"], s["REE_Ototal_sem"]), pm(s["OH_Xtotal_mean"], s["OH_Xtotal_sem"]),
                     pm(s["OH_REE_shell_mean"], s["OH_REE_shell_sem"]), pm(s["OH_Hw_shell_mean"], s["OH_Hw_shell_sem"]),
                     pm(s["OH_Xtotal_shell_mean"], s["OH_Xtotal_shell_sem"]), fmt(s["n_OH_mean"])])
-    return table(["势函数", "金属", "T (K)", "r<sub>c</sub>: REE–O / 严格 / 壳层 (Å)", "REE–O(水)", "REE–O(OH)", "REE–O(总)",
-                  "O–X 严格", "O–REE 壳层", "O–H(水) 壳层", "O–X 壳层", "n<sub>OH</sub>"],
+    return table([T("势函数", "Potential"), T("金属", "Metal"), "T (K)", T("r<sub>c</sub>: REE–O / 严格 / 壳层 (Å)", "r<sub>c</sub>: REE–O / strict / shell (Å)"), T("REE–O(水)", "REE–O(water)"), "REE–O(OH)", T("REE–O(总)", "REE–O(total)"),
+                  T("O–X 严格", "O–X strict"), T("O–REE 壳层", "O–REE shell"), T("O–H(水) 壳层", "O–H(water) shell"), T("O–X 壳层", "O–X shell"), "n<sub>OH</sub>"],
                  rows, num_cols=tuple(range(3, 12)), cls="compact") + data_line("solution_cn_box_pbc.csv") + \
-        '<p class="muted">每个温度单独确定截断；UMA-s-1.2.1 Dy 溶液所有温度都坍塌。</p>'
+        T('<p class="muted">每个温度单独确定截断；UMA-s-1.2.1 Dy 溶液所有温度都坍塌。</p>', '<p class="muted">Cutoffs are determined separately at each temperature; UMA-s-1.2.1 Dy in solution collapses at every temperature.</p>')
 
 
 # ------------------------------------------------------------------ 4 kinetics
@@ -753,9 +895,9 @@ def transition(step: str, direction: str) -> str:
 def dg_cell(n, dwell, dg, lo, hi, bound, compact: bool = False) -> tuple[str, str]:
     n, dwell = inum(n), num(dwell)
     if not dwell > 0:
-        return ("—<small>起始态未出现</small>" if not compact else "—", 'class="num weak"')
+        return (T("—<small>起始态未出现</small>", "—<small>origin state never visited</small>") if not compact else "—", 'class="num weak"')
     if n == 0:
-        tail = f"<small>N = 0，T<sub>origin</sub> = {fmt(dwell, 0)} ps</small>" if not compact else ""
+        tail = T(f"<small>N = 0，T<sub>origin</sub> = {fmt(dwell, 0)} ps</small>", f"<small>N = 0, T<sub>origin</sub> = {fmt(dwell, 0)} ps</small>") if not compact else ""
         return (f"&gt; {fmt(bound, 1)}{tail}", 'class="num weak"')
     tail = f"<small>{ci(lo, hi, 1)} · N = {n}</small>" if not compact else f"<small>N = {n}</small>"
     return (f"<b>{fmt(dg)}</b>{tail}", 'class="num weak"' if n < 5 else 'class="num"')
@@ -773,22 +915,24 @@ def rate_cell(r: dict | None, compact: bool = False) -> tuple[str, str]:
                    r["dG_act_lower_bound_if_no_events"], compact)
 
 
-STEP_GROUPS = [(f"第 {k} 步", [f"正向 {k - 1}→{k}", f"逆向 {k}→{k - 1}"]) for k in (1, 2, 3)]
+def step_groups() -> list:
+    return [(T(f"第 {k} 步", f"Step {k}"), [T(f"正向 {k - 1}→{k}", f"forward {k - 1}→{k}"),
+                                            T(f"逆向 {k}→{k - 1}", f"reverse {k}→{k - 1}")]) for k in (1, 2, 3)]
 
 
 def sec_kinetics(d) -> str:
-    mapping = table(["论文第 k 步", "论文：酸解离（298 K；第 1 步约束 AIMD，第 2、3 步 DFT 团簇 + CPCM）", "MD 正向：Ln 得 OH<sup>−</sup>", "MD 逆向：Ln 失 OH<sup>−</sup>"], [
-        ["1", "Ln<sup>3+</sup> + H<sub>2</sub>O → LnOH<sup>2+</sup> + H<sup>+</sup>", "n：0 → 1", "n：1 → 0"],
-        ["2", "LnOH<sup>2+</sup> + H<sub>2</sub>O → Ln(OH)<sub>2</sub><sup>+</sup> + H<sup>+</sup>", "n：1 → 2", "n：2 → 1"],
-        ["3", "Ln(OH)<sub>2</sub><sup>+</sup> + H<sub>2</sub>O → Ln(OH)<sub>3</sub> + H<sup>+</sup>", "n：2 → 3", "n：3 → 2"]])
+    mapping = table([T("论文第 k 步", "Paper step k"), T("论文：酸解离（298 K；第 1 步约束 AIMD，第 2、3 步 DFT 团簇 + CPCM）", "Paper: acid dissociation (298 K; step 1 constrained AIMD, steps 2 and 3 DFT cluster + CPCM)"), T("MD 正向：Ln 得 OH<sup>−</sup>", "MD forward: Ln gains OH<sup>−</sup>"), T("MD 逆向：Ln 失 OH<sup>−</sup>", "MD reverse: Ln loses OH<sup>−</sup>")], [
+        ["1", "Ln<sup>3+</sup> + H<sub>2</sub>O → LnOH<sup>2+</sup> + H<sup>+</sup>", T("n：0 → 1", "n: 0 → 1"), T("n：1 → 0", "n: 1 → 0")],
+        ["2", "LnOH<sup>2+</sup> + H<sub>2</sub>O → Ln(OH)<sub>2</sub><sup>+</sup> + H<sup>+</sup>", T("n：1 → 2", "n: 1 → 2"), T("n：2 → 1", "n: 2 → 1")],
+        ["3", "Ln(OH)<sub>2</sub><sup>+</sup> + H<sub>2</sub>O → Ln(OH)<sub>3</sub> + H<sup>+</sup>", T("n：2 → 3", "n: 2 → 3"), T("n：3 → 2", "n: 3 → 2")]])
     kcut_rows = [lead_cells(r["system"], r["model"], r["metal"]) + [r["n_trajectories"], fmt(r["rc_A"]), fmt(r["first_peak_A"]),
                                                                     fmt(r["second_shell_peak_A"])] for r in d.kcut]
-    kcut = table(["体系", "势函数", "金属", "轨迹", "r<sub>c</sub> (Å)", "Ln–O(OH) 第一峰 (Å)", "第二层峰 (Å)"], kcut_rows,
+    kcut = table([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal"), T("轨迹", "Traj."), "r<sub>c</sub> (Å)", T("Ln–O(OH) 第一峰 (Å)", "Ln–O(OH) first peak (Å)"), T("第二层峰 (Å)", "Second-shell peak (Å)")], kcut_rows,
                  num_cols=(3, 4, 5, 6), cls="compact")
     gact = where(d.act, system="graphite", model="DPA4C-Plus")
     ptl = [num(r["frac_proton_transfer_like"]) for r in gact if finite(r["frac_proton_transfer_like"])]
     meta = d.kmeta
-    method = f"""
+    method = T(f"""
 <div class="grid2"><div class="mini"><h4>状态与事件</h4><ul class="tight">
 <li>n(t) = Ln 周围 r<sub>c</sub> 内 OH<sup>−</sup> 的 O 的个数（OH = 恰有 1 个最近 H 的 O），上限 3，每 20 fs 一帧。</li>
 <li>r<sub>c</sub> = Ln–O(OH) 径向密度第一峰之后的极小（{rng([r['rc_A'] for r in d.kcut])} Å，见下表）。</li>
@@ -803,7 +947,22 @@ def sec_kinetics(d) -> str:
 <li>N = 0 时给下限：用泊松上限速率 3.689/T<sub>origin</sub> 代入 Eyring。</li>
 <li>Arrhenius 按 N 加权拟合。拟合质量：好 = ≥ 4 个 T、≥ 20 个事件且每个 T ≥ 3 个；尚可 = ≥ 3 个 T 且 ≥ 8 个事件；其余为差；有事件的 T 少于 2 个为“无”。</li></ul>
 </div></div>
-{details("动力学截断 r<sub>c</sub>（Ln–O(OH) 密度极小）", kcut + data_line("kinetics/kinetics_cutoffs.csv", "kinetics/kinetics_oh_density.csv"))}"""
+{details("动力学截断 r<sub>c</sub>（Ln–O(OH) 密度极小）", kcut + data_line("kinetics/kinetics_cutoffs.csv", "kinetics/kinetics_oh_density.csv"))}""", f"""
+<div class="grid2"><div class="mini"><h4>States and events</h4><ul class="tight">
+<li>n(t) = number of OH<sup>−</sup> oxygens within r<sub>c</sub> of Ln (OH = an O with exactly 1 nearest H), capped at 3, one frame every 20 fs.</li>
+<li>r<sub>c</sub> = the minimum after the first peak of the Ln–O(OH) radial density ({rng([r['rc_A'] for r in d.kcut])} Å, see the table below).</li>
+<li>Committed transitions: a centred mode filter of width W = 0.5 ps, after which segments shorter than W/2 are absorbed; this removes back-and-forth jumps caused by O–H vibration.</li>
+<li>Rates are counted from t ≥ 10 ps, occupancies from t ≥ {fmt(meta['thermo_start_ps']['solution'], 0)} ps (solution) / {fmt(meta['thermo_start_ps']['graphite'], 0)} ps (graphite).</li>
+<li>In graphite DPA4C-Plus, {math.floor(min(ptl) * 100)}–{math.ceil(max(ptl) * 100)}% of the events are “proton-transfer-like”: the O stays on Ln and only an H is exchanged (Ln–OH<sub>2</sub> + OH<sup>−</sup> ⇌ Ln–OH + H<sub>2</sub>O). This is exactly the acid-dissociation step of the paper, except that the proton acceptor is OH<sup>−</sup> rather than water.</li>
+</ul></div><div class="mini"><h4>Rates and apparent barriers</h4>
+<div class="formula">k = N / T<sub>origin</sub></div>
+<div class="formula">ΔG<sup>‡</sup> = RT ln(k<sub>B</sub>T / hk)</div>
+<div class="formula">ln k = ln A − E<sub>a</sub>/RT; ln(k/T) = ln(k<sub>B</sub>/h) + ΔS<sup>‡</sup>/R − ΔH<sup>‡</sup>/RT</div>
+<ul class="tight"><li>N = number of transitions, T<sub>origin</sub> = total dwell time in the origin state. 95% CI = envelope of a bootstrap ({meta['n_bootstrap']} resamples; graphite resampled by trajectory, solution, with only 1 trajectory per T, resampled in {fmt(meta['block_ps'], 0)} ps blocks) and the Garwood Poisson interval. When N is very small the CI can extend to ΔG<sup>‡</sup> &lt; 0 or ∞ (resamples with 0 events); such values only indicate an order of magnitude.</li>
+<li>For N = 0 a lower bound is given by inserting the Poisson upper-limit rate 3.689/T<sub>origin</sub> into Eyring.</li>
+<li>Arrhenius fits are weighted by N. Fit quality: good = ≥ 4 T, ≥ 20 events and ≥ 3 at every T; fair = ≥ 3 T and ≥ 8 events; otherwise poor; “none” if fewer than 2 T have events.</li></ul>
+</div></div>
+{details("Kinetics cutoff r<sub>c</sub> (Ln–O(OH) density minimum)", kcut + data_line("kinetics/kinetics_cutoffs.csv", "kinetics/kinetics_oh_density.csv"))}""")
 
     # 4.2 dG table
     rows = []
@@ -820,25 +979,25 @@ def sec_kinetics(d) -> str:
                     cells.append(dg_cell(r["N_events_300K"], r["dwell_origin_state_ps"], r["dG_act_300K_kJmol"],
                                          r["dG_act_CI95_lo"], r["dG_act_CI95_hi"], r["dG_act_lower_bound_kJmol"]))
             rows.append({"cells": lead + cells, "cls": "hl" if (system, model) == ("graphite", "DPA4C-Plus") else ""})
-        paper = [(f"ΔG<sub>{k}</sub> = {fmt(act_get(d, 'graphite', 'DPA4C-Plus', metal, k, 'association')['paper_dG_acid_step_kJmol_298K'])}"
-                  "<small>热力学（酸解离），无能垒</small>", 'colspan="2" class="num"') for k in (1, 2, 3)]
-        rows.append({"cells": [metal_html(metal), ("Shiery 2021 Table 1（298 K）", 'colspan="2"')] + paper, "cls": "paper"})
-    dg_tab = table([], rows, thead=thead2(["金属", "体系", "势函数"], STEP_GROUPS))
+        paper = [(T(f"ΔG<sub>{k}</sub> = {fmt(act_get(d, 'graphite', 'DPA4C-Plus', metal, k, 'association')['paper_dG_acid_step_kJmol_298K'])}"
+                  "<small>热力学（酸解离），无能垒</small>", f"ΔG<sub>{k}</sub> = {fmt(act_get(d, 'graphite', 'DPA4C-Plus', metal, k, 'association')['paper_dG_acid_step_kJmol_298K'])}<small>thermodynamic (acid dissociation), no barrier</small>"), 'colspan="2" class="num"') for k in (1, 2, 3)]
+        rows.append({"cells": [metal_html(metal), (T("Shiery 2021 Table 1（298 K）", "Shiery 2021 Table 1 (298 K)"), 'colspan="2"')] + paper, "cls": "paper"})
+    dg_tab = table([], rows, thead=thead2([T("金属", "Metal"), T("体系", "System"), T("势函数", "Potential")], step_groups()))
 
     # 4.3 Arrhenius
     arr_rows = []
     for r in d.arr:
         if r["scenario"] != "primary" or r["quality"] == "none":
             continue
-        arr_rows.append([MODEL_LABEL[r["model"]], metal_html(r["metal"]), f"第 {r['hydrolysis_step']} 步",
-                         ("正向 " if r["direction"] == "association" else "逆向 ") + transition(r["hydrolysis_step"], r["direction"]),
+        arr_rows.append([MODEL_LABEL[r["model"]], metal_html(r["metal"]), T(f"第 {r['hydrolysis_step']} 步", f"Step {r['hydrolysis_step']}"),
+                         (T("正向 ", "forward ") if r["direction"] == "association" else T("逆向 ", "reverse ")) + transition(r["hydrolysis_step"], r["direction"]),
                          r["T_used"].replace(";", "/"), r["N_per_T"].replace(";", "/"), quality_pill(r["quality"]),
                          f"<b>{fmt(r['Ea_kJmol'])}</b><small>{ci(r['Ea_CI95_lo'], r['Ea_CI95_hi'])}</small>",
                          f"{fmt(r['dH_act_kJmol'])}<small>{ci(r['dH_act_CI95_lo'], r['dH_act_CI95_hi'])}</small>",
                          f"{fmt(r['dS_act_JmolK'], 1)}<small>{ci(r['dS_act_CI95_lo'], r['dS_act_CI95_hi'], 1)}</small>",
                          fmt(r["dG_act_300K_from_fit_kJmol"])])
-    arr_tab = table(["势函数", "金属", "步", "方向", "T (K)", "每个 T 的 N", "质量", "E<sub>a</sub> (kJ/mol)",
-                     "ΔH<sup>‡</sup> (kJ/mol)", "ΔS<sup>‡</sup> (J/mol/K)", "ΔG<sup>‡</sup>(300 K, 拟合)"],
+    arr_tab = table([T("势函数", "Potential"), T("金属", "Metal"), T("步", "Step"), T("方向", "Direction"), "T (K)", T("每个 T 的 N", "N per T"), T("质量", "Fit quality"), "E<sub>a</sub> (kJ/mol)",
+                     "ΔH<sup>‡</sup> (kJ/mol)", "ΔS<sup>‡</sup> (J/mol/K)", T("ΔG<sup>‡</sup>(300 K, 拟合)", "ΔG<sup>‡</sup>(300 K, fit)")],
                     arr_rows, num_cols=(7, 8, 9, 10))
     n_none = sum(1 for r in d.arr if r["scenario"] == "primary" and r["quality"] == "none")
 
@@ -861,11 +1020,11 @@ def sec_kinetics(d) -> str:
             n_same += same
             cells = [rate_cell(idx.get((sc, "graphite", "DPA4C-Plus", metal, "ALL", 300, str(k), dr)), compact=True)
                      for k in (1, 2, 3) for dr, _ in DIRECTIONS]
-            srows.append({"cells": [SCENARIO_LABEL[sc]] + cells + [pill("一致", "ok") if same else pill("改变", "bad")],
+            srows.append({"cells": [SCENARIO_LABEL[sc]] + cells + [pill(T("一致", "consistent"), "ok") if same else pill(T("改变", "changed"), "bad")],
                           "cls": "hl" if sc == "primary" else ""})
         robust[metal] = n_same
-        sens_html.append(f"<h4>{metal_html(metal)} · 石墨 DPA4C-Plus</h4>" +
-                         table([], srows, cls="compact", thead=thead2(["分析设定"], STEP_GROUPS + [("三步顺序", ["vs 主分析"])])))
+        sens_html.append(T(f"<h4>{metal_html(metal)} · 石墨 DPA4C-Plus</h4>", f"<h4>{metal_html(metal)} · graphite DPA4C-Plus</h4>") +
+                         table([], srows, cls="compact", thead=thead2([T("分析设定", "Analysis setting")], step_groups() + [(T("三步顺序", "Three-step order"), [T("vs 主分析", "vs primary")])])))
     shifts = []
     for metal in METALS:
         for k in (1, 2, 3):
@@ -886,24 +1045,24 @@ def sec_kinetics(d) -> str:
             if r is None or r["quality"] == "none":
                 cells.append(("—", 'class="num weak"'))
             else:
-                cells.append((f"{fmt(r['Ea_kJmol'], 1)}<small>{QUALITY_ZH.get(r['quality'], esc(r['quality']))}</small>",
+                cells.append((f"{fmt(r['Ea_kJmol'], 1)}<small>{QUALITY_LABEL.get(r['quality'], esc(r['quality']))}</small>",
                               'class="num"' if r["quality"] in ("good", "fair") else 'class="num weak"'))
-        ea_rows.append([MODEL_LABEL[model], metal_html(metal), ("正向 " if dr == "association" else "逆向 ") + transition(k, dr)] + cells)
-    short = {"primary": "主分析", "W0.2": "W = 0.2 ps", "W1.0": "W = 1.0 ps", "W2.0": "W = 2.0 ps",
+        ea_rows.append([MODEL_LABEL[model], metal_html(metal), (T("正向 ", "forward ") if dr == "association" else T("逆向 ", "reverse ")) + transition(k, dr)] + cells)
+    short = {"primary": T("主分析", "Primary"), "W0.2": "W = 0.2 ps", "W1.0": "W = 1.0 ps", "W2.0": "W = 2.0 ps",
              "rc2.90": "r<sub>c</sub> = 2.90 Å", "rc3.30": "r<sub>c</sub> = 3.30 Å",
              "start1": "t ≥ 1 ps", "start50": "t ≥ 50 ps", "start90": "t ≥ 90 ps"}
-    ea_tab = table(["势函数", "金属", "过程"] + [short[sc] for sc in SCENARIOS], ea_rows, cls="compact")
+    ea_tab = table([T("势函数", "Potential"), T("金属", "Metal"), T("过程", "Transition")] + [short[sc] for sc in SCENARIOS], ea_rows, cls="compact")
     temps = (300, 350, 400, 450, 500)
     pt_rows = []
     for metal in METALS:
         for k in (1, 2, 3):
-            for dr, label in DIRECTIONS:
+            for dr, label in T(DIRECTIONS, DIRECTIONS_EN):
                 pt_rows.append([metal_html(metal), f"{label} {transition(str(k), dr)}"] +
                                [rate_cell(idx.get(("primary", "solution", "DPA4C-Plus", metal, "box_pbc", t, str(k), dr)), compact=True)
                                 for t in temps])
-    pt_tab = table(["金属", "过程"] + [f"{t} K" for t in temps], pt_rows, cls="compact")
+    pt_tab = table([T("金属", "Metal"), T("过程", "Transition")] + [f"{t} K" for t in temps], pt_rows, cls="compact")
 
-    body = f"""
+    body = T(f"""
 <h3>4.1 步骤对应与方法</h3>
 {mapping}
 {method}
@@ -929,8 +1088,34 @@ def sec_kinetics(d) -> str:
 {figure("kinetics/fig_kinetics_traces.svg", "n(t) 示例：原始（灰）与 committed（彩色）", ("kinetics/kinetics_traces_example.csv",))}
 {figure("kinetics/fig_kinetics_OH_density_cutoff.svg", "Ln–O(OH) 径向密度与动力学截断 r<sub>c</sub>", ("kinetics/kinetics_oh_density.csv", "kinetics/kinetics_cutoffs.csv"))}
 </div>
-"""
-    return card("kinetics", "4 三步表观活化能", "committed-transition 速率 → Eyring ΔG<sup>‡</sup>（300 K）与 Arrhenius E<sub>a</sub>（溶液 300–500 K）", body)
+""", f"""
+<h3>4.1 Step mapping and method</h3>
+{mapping}
+{method}
+<h3>4.2 Three-step apparent ΔG<sup>‡</sup> at 300 K (kJ/mol)</h3>
+<p class="muted">Bold = point estimate, small text = 95% CI and number of events N; grey = N &lt; 5 or lower bound only; “&gt; x” = no events, lower bound only. The highlighted rows (graphite DPA4C-Plus) have the best statistics. The paper rows are thermodynamic ΔG (acid-dissociation free energies), not barriers, and are shown only to compare magnitudes.</p>
+{dg_tab}
+{data_line("comparison/compare_activation.csv", "kinetics/kinetics_rates.csv", "kinetics/kinetics_events_by_traj.csv")}
+<h3>4.3 Apparent activation energies E<sub>a</sub> (solution 300–500 K, Arrhenius)</h3>
+<p class="muted">Only the {len(arr_rows)} fits whose quality is not “none” are listed; another {n_none} have too few events (mostly DPA4-Pro / MACE / UMA, where OH hardly ever leaves Ln). Graphite was simulated at 300 K only, so it has no E<sub>a</sub>. A negative E<sub>a</sub> means the process slows down on heating, showing that these are composite apparent rate constants (including OH<sup>−</sup> diffusion, hydrogen-bond network rearrangement, etc.), not single elementary steps.</p>
+{arr_tab}
+{data_line("kinetics/kinetics_arrhenius.csv", "kinetics/kinetics_rates.csv")}
+<h3>4.4 Sensitivity: graphite DPA4C-Plus ΔG<sup>‡</sup> under 9 analysis settings</h3>
+<p class="muted">The relative order of the three steps (forward 1 &lt; 2 &lt; 3, reverse 1 &gt; 2 &gt; 3) matches the primary analysis in {robust['Dy']}/{len(SCENARIOS)} settings for Dy and {robust['Nd']}/{len(SCENARIOS)} for Nd; individual ΔG<sup>‡</sup> values move by {fmt(min(shifts), 1)}–{fmt(max(shifts), 1)} kJ/mol across settings (the smaller W, the more fast back-and-forth events are counted and the lower ΔG<sup>‡</sup>).</p>
+{''.join(sens_html)}
+{data_line("kinetics/kinetics_rates.csv")}
+{details("Solution: E<sub>a</sub> vs analysis setting (kJ/mol; small text = fit quality)", ea_tab + data_line("kinetics/kinetics_arrhenius.csv"))}
+{details("Solution DPA4C-Plus: ΔG<sup>‡</sup> at each temperature (primary analysis, kJ/mol)", pt_tab + data_line("kinetics/kinetics_rates.csv"))}
+<h3>4.5 Figures</h3>
+{figure("kinetics/fig_kinetics_dGact_300K.svg", "Three-step apparent ΔG<sup>‡</sup> at 300 K: all potentials, both systems", ("comparison/compare_activation.csv", "kinetics/kinetics_rates.csv"))}
+{figure("kinetics/fig_kinetics_arrhenius_DPA4C_solution.svg", "DPA4C-Plus solution: ln k vs 1/T (Arrhenius)", ("kinetics/kinetics_rates.csv", "kinetics/kinetics_arrhenius.csv"))}
+{figure("kinetics/fig_kinetics_sensitivity.svg", "Sensitivity of ΔG<sup>‡</sup> to the filter window, r<sub>c</sub> and analysis start", ("kinetics/kinetics_rates.csv",))}
+<div class="grid2">
+{figure("kinetics/fig_kinetics_traces.svg", "Example n(t): raw (grey) and committed (colour)", ("kinetics/kinetics_traces_example.csv",))}
+{figure("kinetics/fig_kinetics_OH_density_cutoff.svg", "Ln–O(OH) radial density and the kinetics cutoff r<sub>c</sub>", ("kinetics/kinetics_oh_density.csv", "kinetics/kinetics_cutoffs.csv"))}
+</div>
+""")
+    return card("kinetics", T("4 三步表观活化能", "4 Three-step apparent activation energies"), T("committed-transition 速率 → Eyring ΔG<sup>‡</sup>（300 K）与 Arrhenius E<sub>a</sub>（溶液 300–500 K）", "Committed-transition rates → Eyring ΔG<sup>‡</sup> (300 K) and Arrhenius E<sub>a</sub> (solution 300–500 K)"), body)
 
 
 # ------------------------------------------------------------------ 5 occupancy
@@ -949,20 +1134,20 @@ def sec_occupancy(d) -> str:
             continue
         cells = [f"{fmt_p(r[f'P{n}'])}<small>[{fmt_p(r[f'P{n}_CI95_lo'])}, {fmt_p(r[f'P{n}_CI95_hi'])}]</small>" for n in range(4)]
         rows.append(lead + [r["n_trajectories"]] + cells + [fmt(r["mean_n_OH_bound"])])
-    occ_tab = table(["体系", "势函数", "金属", "轨迹", "P<sub>0</sub>", "P<sub>1</sub>", "P<sub>2</sub>", "P<sub>3</sub>", "⟨n⟩"],
+    occ_tab = table([T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal"), T("轨迹", "Traj."), "P<sub>0</sub>", "P<sub>1</sub>", "P<sub>2</sub>", "P<sub>3</sub>", "⟨n⟩"],
                     rows, num_cols=(3, 4, 5, 6, 7, 8))
     c1 = d.kmeta["c_single_M"]
     vrows = []
     for r in d.vth:
         if inum(r["n_T"]) < 2:
             continue
-        vrows.append([MODEL_LABEL[r["model"]], metal_html(r["metal"]), f"第 {r['hydrolysis_step']} 步（{r['step']}）",
+        vrows.append([MODEL_LABEL[r["model"]], metal_html(r["metal"]), T(f"第 {r['hydrolysis_step']} 步（{r['step']}）", f"Step {r['hydrolysis_step']} ({r['step']})"),
                       r["T_used"].replace(";", "/"),
                       f"{fmt(r['dH0_dissociation_kJmol'])}<small>{ci(r['dH0_CI95_lo'], r['dH0_CI95_hi'])}</small>",
                       f"{fmt(r['dS0_dissociation_JmolK'], 1)}<small>{ci(r['dS0_CI95_lo'], r['dS0_CI95_hi'], 1)}</small>",
                       fmt(r["dG0_dissociation_300K_fit_kJmol"])])
-    vh_tab = table(["势函数", "金属", "步（失 OH 方向）", "T (K)", "ΔH°<sub>d</sub> (kJ/mol)", "ΔS°<sub>d</sub> (J/mol/K)",
-                    "ΔG°<sub>d</sub>(300 K, 拟合)"], vrows, num_cols=(4, 5, 6))
+    vh_tab = table([T("势函数", "Potential"), T("金属", "Metal"), T("步（失 OH 方向）", "Step (OH-loss direction)"), "T (K)", "ΔH°<sub>d</sub> (kJ/mol)", "ΔS°<sub>d</sub> (J/mol/K)",
+                    T("ΔG°<sub>d</sub>(300 K, 拟合)", "ΔG°<sub>d</sub>(300 K, fit)")], vrows, num_cols=(4, 5, 6))
     th = {(r["scenario"], r["system"], r["model"], r["metal"], r["hydrolysis_step"]): r for r in d.thermo
           if r["variant"] in ("ALL", "box_pbc") and inum(r["T_K"]) == 300}
 
@@ -971,9 +1156,9 @@ def sec_occupancy(d) -> str:
             return "—"
         p = num(r["pKa_equivalent"])
         if math.isfinite(p):
-            return fmt(p) + (" " + pill("瞬态", "warn") if r["both_states_committed"] != "True" else "")
+            return fmt(p) + (" " + pill(T("瞬态", "transient"), "warn") if r["both_states_committed"] != "True" else "")
         missing = [str(n) for n, key in ((int(k) - 1, "P_n_minus_1"), (int(k), "P_n")) if not num(r[key]) > 0]
-        return f"n = {'、'.join(missing)} 未出现"
+        return T(f"n = {'、'.join(missing)} 未出现", f"n = {', '.join(missing)} not observed")
 
     srows = []
     for system in ("graphite", "solution"):
@@ -981,17 +1166,17 @@ def sec_occupancy(d) -> str:
             for k in ("1", "2", "3"):
                 a, b = th.get(("primary", system, "DPA4C-Plus", metal, k)), th.get(("start90", system, "DPA4C-Plus", metal, k))
                 pa, pb = num(a["pKa_equivalent"]) if a else math.nan, num(b["pKa_equivalent"]) if b else math.nan
-                srows.append([SYSTEM_LABEL[system], metal_html(metal), f"第 {k} 步", s90_cell(a, k), s90_cell(b, k),
+                srows.append([SYSTEM_LABEL[system], metal_html(metal), T(f"第 {k} 步", f"Step {k}"), s90_cell(a, k), s90_cell(b, k),
                               fmt(pb - pa, 2, sign=True) if math.isfinite(pa) and math.isfinite(pb) else "—"])
-    s90 = table(["体系", "金属", "步", "pKa 等效（t ≥ 10/50 ps）", "pKa 等效（t ≥ 90 ps）", "差"], srows, num_cols=(3, 4, 5), cls="compact")
+    s90 = table([T("体系", "System"), T("金属", "Metal"), T("步", "Step"), T("pKa 等效（t ≥ 10/50 ps）", "pKa equivalent (t ≥ 10/50 ps)"), T("pKa 等效（t ≥ 90 ps）", "pKa equivalent (t ≥ 90 ps)"), T("差", "Difference")], srows, num_cols=(3, 4, 5), cls="compact")
     o90 = occ_get(d, "start90", "solution", "DPA4C-Plus", "Nd", "box_pbc", 300)
     seen = [str(n) for n in range(4) if o90 and num(o90[f"P{n}"]) > 0]
-    s90_note = f"（例如溶液 Nd 在 t ≥ 90 ps 只出现 n = {'、'.join(seen)}）" if o90 and len(seen) < 4 else ""
+    s90_note = T(f"（例如溶液 Nd 在 t ≥ 90 ps 只出现 n = {'、'.join(seen)}）", f" (e.g. solution Nd only visits n = {', '.join(seen)} at t ≥ 90 ps)") if o90 and len(seen) < 4 else ""
     vsig = sorted((r for r in d.vth if inum(r["n_T"]) >= 2
                    and (num(r["dH0_CI95_hi"]) < 0 or num(r["dH0_CI95_lo"]) > 0)),
                   key=lambda r: (r["model"], METALS.index(r["metal"]), r["hydrolysis_step"]))
-    vsig_txt = "、".join(f"{MODEL_LABEL[r['model']]} {r['metal']} 第 {r['hydrolysis_step']} 步" for r in vsig) or "无"
-    body = f"""
+    vsig_txt = T("、", ", ").join(T(f"{MODEL_LABEL[r['model']]} {r['metal']} 第 {r['hydrolysis_step']} 步", f"{MODEL_LABEL[r['model']]} {r['metal']} step {r['hydrolysis_step']}") for r in vsig) or T("无", "none")
+    body = T(f"""
 <p>把 box 里 3 个 OH<sup>−</sup> 在 Ln 上的占据数分布 P<sub>n</sub> 当作平衡分布，就能得到每一步的“pKa 等效值”，用来和论文的 pKa 对比（第 6 节）。</p>
 <h3>5.1 300 K 占据数 P<sub>n</sub>（n = Ln 上的 OH 数）</h3>
 {occ_tab}
@@ -1010,8 +1195,27 @@ def sec_occupancy(d) -> str:
 {s90}
 <p class="muted">石墨 4 种起始构型的 P<sub>n</sub> 到 ~90 ps 才基本一致，所以用 t ≥ 90 ps 重算一遍。“瞬态”= 其中一个状态的 committed 停留 &lt; 1 ps，数值只有量级意义；“n = … 未出现”= 该设定下这个状态从未出现，这一步的 pKa 无法确定{s90_note}。</p>
 {figure("kinetics/fig_kinetics_occupancy.svg", "占据数 P<sub>n</sub>：各势函数、各起始构型、随时间", ("kinetics/kinetics_occupancy.csv", "kinetics/kinetics_occupancy_vs_time.csv"))}
-"""
-    return card("occupancy", "5 占据数与 pKa 等效值", "平衡占据数 → K<sub>d</sub> → pKa（pK<sub>w</sub> = 14）", body)
+""", f"""
+<p>Treating the occupancy distribution P<sub>n</sub> of the 3 OH<sup>−</sup> on Ln in the box as an equilibrium distribution gives a “pKa equivalent” for every step, which is compared with the paper's pKa (section 6).</p>
+<h3>5.1 Occupancy P<sub>n</sub> at 300 K (n = number of OH on Ln)</h3>
+{occ_tab}
+{data_line("kinetics/kinetics_occupancy.csv", "kinetics/kinetics_occupancy_vs_time.csv")}
+<h3>5.2 From occupancy to pKa</h3>
+<div class="formula">Ln(OH)<sub>n</sub> ⇌ Ln(OH)<sub>n−1</sub> + OH<sup>−</sup>: K<sub>d</sub> = (P<sub>n−1</sub>/P<sub>n</sub>) · (4 − n) · c<sub>1</sub></div>
+<div class="formula">pKa<sub>n</sub>(equiv.) = pK<sub>w</sub> + log<sub>10</sub> K<sub>d</sub> = 14 + log<sub>10</sub> K<sub>d</sub>; ΔG<sub>acid</sub> = RT ln10 · pKa (300 K: {fmt(8.314462618e-3 * 300 * math.log(10), 3)} kJ/mol per pKa unit)</div>
+<p class="muted">c<sub>1</sub> = concentration of one molecule in the box (solution {fmt(c1['solution'], 4)} M, graphite {fmt(c1['graphite'], 4)} M); (4 − n) = number of free OH<sup>−</sup> when Ln carries n−1 OH.
+If the committed dwells in both states are ≥ 1 ps, the value is given directly (bold); if both states occur but one of them has committed dwells &lt; 1 ps, it is marked “transient” (order of magnitude only); if only one state occurs, a bound is given (assuming the unseen state is not more populated than the seen one, i.e. the pKa at P<sub>n−1</sub> = P<sub>n</sub>); if neither occurs, it is “undetermined”.</p>
+{data_line("kinetics/kinetics_thermo.csv", "comparison/compare_pKa_stepwise.csv")}
+<h3>5.3 van 't Hoff: ΔH° and ΔS° in the OH-loss direction (solution, ≥ 2 temperatures)</h3>
+{vh_tab}
+<p class="muted">ΔH°<sub>d</sub> &lt; 0 means that heating makes OH more likely to stay on Ln (consistent with the negative OH-loss E<sub>a</sub> in 4.3). All CIs are wide; the only entries whose 95% CI excludes 0 are {vsig_txt}.</p>
+{data_line("kinetics/kinetics_vanthoff.csv")}
+<h3>5.4 Starting-configuration memory: results from t ≥ 90 ps only (DPA4C-Plus)</h3>
+{s90}
+<p class="muted">The P<sub>n</sub> of the 4 graphite starting configurations only roughly agree after ~90 ps, so everything is recomputed with t ≥ 90 ps. “transient” = one of the states has committed dwells &lt; 1 ps, so the value only indicates an order of magnitude; “n = … not observed” = that state never occurs under this setting, so the pKa of this step cannot be determined{s90_note}.</p>
+{figure("kinetics/fig_kinetics_occupancy.svg", "Occupancy P<sub>n</sub>: by potential, by starting configuration and over time", ("kinetics/kinetics_occupancy.csv", "kinetics/kinetics_occupancy_vs_time.csv"))}
+""")
+    return card("occupancy", T("5 占据数与 pKa 等效值", "5 Occupancy and pKa equivalents"), T("平衡占据数 → K<sub>d</sub> → pKa（pK<sub>w</sub> = 14）", "Equilibrium occupancy → K<sub>d</sub> → pKa (pK<sub>w</sub> = 14)"), body)
 
 
 # ------------------------------------------------------------------ 6 paper comparison
@@ -1031,11 +1235,29 @@ NOTE_ZH = (
      "其中一个状态 committed 停留 &lt; 1 ps（瞬态），可信度低"),
     (r"apparent Eyring barrier, N = (\d+) events; no paper counterpart", r"表观 Eyring 能垒，N = \1；论文无对应量"),
 )
+NOTE_EN = (
+    (r"median of (\d+) Table 2 step-(\d) entries, read as cumulative", r"median of the \1 Table 2 step-\2 entries, read as cumulative"),
+    (r"8\.1/16\.2/24\.3 = 8\.1 x n, i\.e\. cumulative constants", "8.1/16.2/24.3 = 8.1 × n, i.e. cumulative constants"),
+    (r"sum of stepwise pKa1\.\.pKa_n", "sum of the stepwise pKa<sub>1</sub> … pKa<sub>n</sub>"),
+    (r"sum of stepwise pKa_eq \(measured\); CI combined in quadrature \(approximate\)",
+     "sum of the stepwise pKa equivalents; CI combined in quadrature (approximate)"),
+    (r"sum of stepwise pKa_eq \(transient\); CI combined in quadrature \(approximate\)",
+     "sum of the stepwise pKa equivalents (including transient values); CI combined in quadrature (approximate)"),
+    (r"monotonic \((\d+) points, smallest increment ([\d.]+) kJ/mol\): no barrier, so no activation energy is defined; "
+     r"pKa from endpoint ([\d.]+)", r"monotonic rise (\1 points, smallest increment \2 kJ/mol): no barrier, so no activation "
+                                    r"energy can be defined; pKa = \3 from the endpoint"),
+    (r"Table 1", "Table 1"),
+    (r"both states visited with committed dwell >= 1 ps", "both states visited with committed dwells ≥ 1 ps"),
+    (r"one state only visited transiently \(committed dwell < 1 ps\); low confidence",
+     "one state visited only transiently (committed dwell &lt; 1 ps); low confidence"),
+    (r"apparent Eyring barrier, N = (\d+) events; no paper counterpart", r"apparent Eyring barrier, N = \1 events; no counterpart in the paper"),
+)
+assert [p for p, _ in NOTE_ZH] == [p for p, _ in NOTE_EN]
 UNTRANSLATED: set[str] = set()
 
 
-def note_zh(note: str) -> str:
-    for pat, rep in NOTE_ZH:
+def note_html(note: str) -> str:
+    for pat, rep in T(NOTE_ZH, NOTE_EN):
         if re.fullmatch(pat, note):
             return re.sub(pat, rep, note)
     UNTRANSLATED.add(note)
@@ -1050,39 +1272,39 @@ def temp_label(value) -> str:
 def src_label(source: str, system: str = "", model: str = "") -> str:
     s = source
     if s.startswith("Shiery2021 Table 1"):
-        return "Shiery 2021 Table 1（DFT）" + ("，逐步求和" if "summed" in s else "")
+        return T("Shiery 2021 Table 1（DFT）", "Shiery 2021 Table 1 (DFT)") + (T("，逐步求和", ", summed stepwise") if "summed" in s else "")
     if s.startswith("Shiery2021 Table 2"):
-        return "Shiery 2021 Table 2 实验（中位数）"
+        return T("Shiery 2021 Table 2 实验（中位数）", "Shiery 2021 Table 2 experiment (median)")
     if s.startswith("Shiery2021 SI PMF"):
-        return "Shiery 2021 SI 第一步 PMF"
+        return T("Shiery 2021 SI 第一步 PMF", "Shiery 2021 SI first-step PMF")
     if s.startswith("Shiery2021 SI"):
-        return "Shiery 2021 SI 优化团簇"
+        return T("Shiery 2021 SI 优化团簇", "Shiery 2021 SI optimized clusters")
     if s.startswith("Table 2 ref 99") or s.startswith("Kragten 1984 (Table 2"):
-        return "Kragten 1984（Table 2 ref 99），按原值"
+        return T("Kragten 1984（Table 2 ref 99），按原值", "Kragten 1984 (Table 2 ref 99), as listed")
     if s.startswith("Kragten 1984 read as cumulative"):
-        return "Kragten 1984，按累积常数读（逐步 8.1/8.1/8.1）"
+        return T("Kragten 1984，按累积常数读（逐步 8.1/8.1/8.1）", "Kragten 1984, read as cumulative constants (stepwise 8.1/8.1/8.1)")
     if s.startswith("this work"):
         m = re.match(r"this work: (.+?) \((\w+)\)", s)
         if m:
             mdl = m.group(1)
             sysname = SYSTEM_LABEL.get(m.group(2), m.group(2))
-            return f"本工作：{sysname} {MODEL_LABEL.get(mdl, mdl)}"
+            return T(f"本工作：{sysname} {MODEL_LABEL.get(mdl, mdl)}", f"This work: {sysname} {MODEL_LABEL.get(mdl, mdl)}")
         if system:
-            return f"本工作：{SYSTEM_LABEL.get(system, system)} {MODEL_LABEL.get(model, model)}"
-        return "本工作 (MD)"
+            return T(f"本工作：{SYSTEM_LABEL.get(system, system)} {MODEL_LABEL.get(model, model)}", f"This work: {SYSTEM_LABEL.get(system, system)} {MODEL_LABEL.get(model, model)}")
+        return T("本工作 (MD)", "This work (MD)")
     return esc(s)
 
 
 def pka_cell(r: dict | None) -> str:
     if r is None:
-        return '<span class="muted">无数据</span>'
+        return T('<span class="muted">无数据</span>', '<span class="muted">no data</span>')
     st = r["status"]
     if st == "undetermined":
-        return pill("无法确定", "bad")
+        return pill(T("无法确定", "undetermined"), "bad")
     if st in ("upper_bound", "lower_bound"):
-        return f"{'≤' if st == 'upper_bound' else '≥'} {fmt(r['pKa_bound'])} {pill('界限', 'warn')}"
+        return T(f"{'≤' if st == 'upper_bound' else '≥'} {fmt(r['pKa_bound'])} {pill('界限', 'warn')}", f"{'≤' if st == 'upper_bound' else '≥'} {fmt(r['pKa_bound'])} {pill('bound', 'warn')}")
     small = f"<small>{ci(r['pKa_CI95_lo'], r['pKa_CI95_hi'])}</small>" if finite(r["pKa_CI95_lo"]) else ""
-    return f"<b>{fmt(r['pKa'])}</b>{' ' + pill('瞬态', 'warn') if st == 'transient' else ''}{small}"
+    return T(f"<b>{fmt(r['pKa'])}</b>{' ' + pill('瞬态', 'warn') if st == 'transient' else ''}{small}", f"<b>{fmt(r['pKa'])}</b>{' ' + pill('transient', 'warn') if st == 'transient' else ''}{small}")
 
 
 def ddg_cell(r: dict | None) -> str:
@@ -1107,8 +1329,8 @@ def sec_paper_a(d) -> str:
                           fmt(r["dG1_kJmol_298K"]), fmt(r["dG2_kJmol_298K"]), fmt(r["dG3_kJmol_298K"])],
                 "cls": "hl" if r["Ln"] in METALS else ""} for r in d.t1]
     t1_tab = table([], t1_rows, num_cols=tuple(range(1, 11)), cls="compact",
-                   thead=thead2(["Ln", "水合 CN"], [("pKa<sub>1</sub>", ["计算", "MAD"]), ("pKa<sub>2</sub>", ["计算", "MAD"]),
-                                                    ("pKa<sub>3</sub>", ["计算", "MAD"]), ("ΔG (kJ/mol, 298 K)", ["第 1 步", "第 2 步", "第 3 步"])]))
+                   thead=thead2(["Ln", T("水合 CN", "Aqua CN")], [("pKa<sub>1</sub>", [T("计算", "Calc."), "MAD"]), ("pKa<sub>2</sub>", [T("计算", "Calc."), "MAD"]),
+                                                    ("pKa<sub>3</sub>", [T("计算", "Calc."), "MAD"]), ("ΔG (kJ/mol, 298 K)", [T("第 1 步", "Step 1"), T("第 2 步", "Step 2"), T("第 3 步", "Step 3")])]))
 
     # 6.2 stepwise pivot
     piv = []
@@ -1117,18 +1339,18 @@ def sec_paper_a(d) -> str:
         for kind, system, model in [("calc", "", ""), ("experiment", "", "")] + [("md", s, m) for s, m in SERIES]:
             recs = [stepw_get(d, metal, k, kind, system, model) for k in ("1", "2", "3")]
             if kind == "calc":
-                label = "Shiery 2021 Table 1（DFT，298 K）"
+                label = T("Shiery 2021 Table 1（DFT，298 K）", "Shiery 2021 Table 1 (DFT, 298 K)")
             elif kind == "experiment":
-                label = "Table 2 实验（中位数 [最小, 最大]）"
+                label = T("Table 2 实验（中位数 [最小, 最大]）", "Table 2 experiment (median [min, max])")
             else:
-                label = f"本工作：{SYSTEM_LABEL[system]} {MODEL_LABEL[model]}"
+                label = T(f"本工作：{SYSTEM_LABEL[system]} {MODEL_LABEL[model]}", f"This work: {SYSTEM_LABEL[system]} {MODEL_LABEL[model]}")
             if kind == "md" and all(r is None for r in recs):
                 rows.append({"cells": [label, collapsed_cells(9)], "cls": "weak"})
                 continue
             cells = []
             for r in recs:
                 if r is None:
-                    cells += [('<span class="muted">无实验值</span>', 'class="num"'), "—", "—"]
+                    cells += [(T('<span class="muted">无实验值</span>', '<span class="muted">no experimental value</span>'), 'class="num"'), "—", "—"]
                     continue
                 dg = fmt(r["dG_acid_kJmol"], 1) if finite(r["dG_acid_kJmol"]) else "—"
                 cells += [(pka_cell(r), 'class="num"'), dg, ddg_cell(r)]
@@ -1136,27 +1358,27 @@ def sec_paper_a(d) -> str:
                          "cls": "paper" if kind != "md" else ("hl" if model == "DPA4C-Plus" else "")})
         piv.append(f"<h4>{metal_html(metal)}</h4>" + table(
             [], rows, num_cols=(2, 3, 5, 6, 8, 9), cls="compact",
-            thead=thead2(["来源"], [(f"第 {k} 步", ["pKa", "ΔG<sub>acid</sub>", "ΔΔG vs DFT"]) for k in (1, 2, 3)])))
+            thead=thead2([T("来源", "Source")], [(T(f"第 {k} 步", f"Step {k}"), ["pKa", "ΔG<sub>acid</sub>", "ΔΔG vs DFT"]) for k in (1, 2, 3)])))
     mad_rows = []
     for metal in METALS:
         for kind, system, model in [("calc", "", "")] + [("md", s, m) for s, m in SERIES]:
             recs = [stepw_get(d, metal, k, kind, system, model) for k in ("1", "2", "3")]
             if not any(r and finite(r["MAD_vs_table2_as_listed"]) for r in recs):
                 continue
-            label = "Shiery 2021 Table 1（DFT）" if kind == "calc" else f"本工作：{SYSTEM_LABEL[system]} {MODEL_LABEL[model]}"
+            label = T("Shiery 2021 Table 1（DFT）", "Shiery 2021 Table 1 (DFT)") if kind == "calc" else T(f"本工作：{SYSTEM_LABEL[system]} {MODEL_LABEL[model]}", f"This work: {SYSTEM_LABEL[system]} {MODEL_LABEL[model]}")
             cells = []
             for r in recs:
                 st = r["status"] if r else ""
                 mad = fmt(r["MAD_vs_table2_as_listed"], 2) if r else "—"
                 if st == "transient" and mad != "—":
-                    mad += " " + pill("瞬态", "warn")
+                    mad += " " + pill(T("瞬态", "transient"), "warn")
                 dmed = "—"
                 if r and finite(r["dpKa_vs_exp_median"]):
                     dmed = ("≤ " if st == "upper_bound" else "") + fmt(r["dpKa_vs_exp_median"], 2, sign=True)
                 cells += [mad, dmed]
             mad_rows.append({"cells": [metal_html(metal), label] + cells, "cls": "paper" if kind == "calc" else ""})
     mad_tab = table([], mad_rows, num_cols=tuple(range(2, 8)), cls="compact",
-                    thead=thead2(["金属", "来源"], [(f"第 {k} 步", ["MAD", "Δ 中位数"]) for k in (1, 2, 3)]))
+                    thead=thead2([T("金属", "Metal"), T("来源", "Source")], [(T(f"第 {k} 步", f"Step {k}"), ["MAD", T("Δ 中位数", "Δ median")]) for k in (1, 2, 3)]))
     md_dpa = [r for r in d.stepw if r["model"] == "DPA4C-Plus" and r["status"] in ("measured", "transient")]
     spread = {m: max(num(r["pKa"]) for r in md_dpa if r["metal"] == m) - min(num(r["pKa"]) for r in md_dpa if r["metal"] == m)
               for m in METALS}
@@ -1166,22 +1388,22 @@ def sec_paper_a(d) -> str:
     def t2_row(r):
         cit = r["citation"]
         calc = r["source"] == "this_work_calc"
-        short = "Shiery 2021 自己的计算值（= Table 1）" if calc else (cit if len(cit) <= 70 else cit[:68] + "…")
+        short = T("Shiery 2021 自己的计算值（= Table 1）", "Shiery 2021 own calculated value (= Table 1)") if calc else (cit if len(cit) <= 70 else cit[:68] + "…")
         return {"cells": [r["Ln"], r["step"], f"{fmt(r['pKa'], 2)}" + (f"<small>± {fmt(r['pKa_error'], 1)}</small>" if finite(r["pKa_error"]) else ""),
-                          "论文计算" if calc else "实验", r["ref_number"] or "—", f'<span title="{esc(cit)}">{esc(short)}</span>',
+                          T("论文计算", "Paper calc.") if calc else T("实验", "Experiment"), r["ref_number"] or "—", f'<span title="{esc(cit)}">{esc(short)}</span>',
                           fmt(r["dG_kJmol_298K"])], "cls": "paper" if calc else ""}
 
-    t2_head = ["Ln", "步", "pKa", "类型", "文献号", "引文", "ΔG (kJ/mol)"]
+    t2_head = ["Ln", T("步", "Step"), "pKa", T("类型", "Type"), T("文献号", "Ref. no."), T("引文", "Citation"), "ΔG (kJ/mol)"]
     t2_sel = table(t2_head, [t2_row(r) for r in d.t2 if r["Ln"] in METALS], num_cols=(1, 2, 4, 6), cls="compact")
     t2_all = table(t2_head, [t2_row(r) for r in d.t2], num_cols=(1, 2, 4, 6), cls="compact")
     agree = Counter(r["agrees_within_0.05"] for r in d.madchk)
     bad = [r for r in d.madchk if r["agrees_within_0.05"] == "NO"]
-    bad_txt = "；".join(f"{r['Ln']} 第 {r['step']} 步：重算 {fmt(r['MAD_recomputed'], 3)} vs Table 1 {fmt(r['MAD_table1'], 2)}" for r in bad)
+    bad_txt = T("；", "; ").join(T(f"{r['Ln']} 第 {r['step']} 步：重算 {fmt(r['MAD_recomputed'], 3)} vs Table 1 {fmt(r['MAD_table1'], 2)}", f"{r['Ln']} step {r['step']}: recomputed {fmt(r['MAD_recomputed'], 3)} vs Table 1 {fmt(r['MAD_table1'], 2)}") for r in bad)
     chk_rows = [{"cells": [r["Ln"], r["step"], fmt(r["pKa_calc"], 1), r["n_exp"], fmt(r["exp_mean"]), fmt(r["exp_median"]),
                            fmt(r["exp_min"]), fmt(r["exp_max"]), fmt(r["MAD_recomputed"], 3), fmt(r["MAD_table1"], 2),
-                           {"yes": pill("一致", "ok"), "NO": pill("不一致", "bad")}.get(r["agrees_within_0.05"], pill("无实验值"))],
+                           {"yes": pill(T("一致", "consistent"), "ok"), "NO": pill(T("不一致", "inconsistent"), "bad")}.get(r["agrees_within_0.05"], pill(T("无实验值", "no experimental value")))],
                  "cls": "hl" if r["agrees_within_0.05"] == "NO" else ""} for r in d.madchk]
-    chk_tab = table(["Ln", "步", "pKa 计算", "实验个数", "均值", "中位数", "最小", "最大", "MAD 重算", "MAD Table 1", "一致？"],
+    chk_tab = table(["Ln", T("步", "Step"), T("pKa 计算", "pKa calc."), T("实验个数", "N exp."), T("均值", "Mean"), T("中位数", "Median"), T("最小", "Min"), T("最大", "Max"), T("MAD 重算", "MAD recomputed"), "MAD Table 1", T("一致？", "Agrees?")],
                     chk_rows, num_cols=tuple(range(1, 10)), cls="compact")
 
     # 6.4 cumulative
@@ -1189,9 +1411,9 @@ def sec_paper_a(d) -> str:
     for r in d.cum:
         cum_rows.append({"cells": [metal_html(r["metal"]), r["n_OH"], src_label(r["source"]),
                                    f"<b>{fmt(r['value'])}</b>" + (f"<small>{ci(r['lo'], r['hi'])}</small>" if finite(r["lo"]) else ""),
-                                   fmt(r["diff_vs_calc_cumulative"], 2, sign=True), f'<span class="muted">{note_zh(r["note"])}</span>'],
+                                   fmt(r["diff_vs_calc_cumulative"], 2, sign=True), f'<span class="muted">{note_html(r["note"])}</span>'],
                          "cls": "paper" if r["source"].startswith(("Shiery", "Table 2", "Kragten")) else ""})
-    cum_tab = table(["金属", "n", "来源", "−log *β<sub>n</sub>", "与 DFT 累积值之差", "说明"], cum_rows, num_cols=(1, 3, 4), cls="compact")
+    cum_tab = table([T("金属", "Metal"), "n", T("来源", "Source"), "−log *β<sub>n</sub>", T("与 DFT 累积值之差", "Difference from DFT cumulative"), T("说明", "Note")], cum_rows, num_cols=(1, 3, 4), cls="compact")
     kr = [r for r in d.t2 if r["Ln"] == "Nd" and r["ref_number"] == "99"]
     kr_txt = "/".join(fmt(r["pKa"], 1) for r in sorted(kr, key=lambda x: x["step"]))
     exp_cum = {(r["metal"], r["n_OH"]): num(r["value"]) for r in d.cum if r["source"].startswith("Shiery2021 Table 2")}
@@ -1201,7 +1423,7 @@ def sec_paper_a(d) -> str:
     md_minus_exp = {grp: [num(r["value"]) - exp_cum[(r["metal"], r["n_OH"])] for r in md_cum if (r["n_OH"] == "1") == (grp == 1)]
                     for grp in (1, 2)}
 
-    body = f"""
+    body = T(f"""
 <p>文献：Shiery, Cooper, Cantu, <i>Inorg. Chem.</i> 2021, 60, 10257（<a href="{ARTICLE_URL}" target="_blank" rel="noopener">文章</a> · <a href="{SI_URL}" target="_blank" rel="noopener">SI</a>）。
 论文方法（据作者学位论文第 5 章）：pKa<sub>1</sub> 用约束 AIMD（Bluemoon，CP2K/PBE，64 个显式水）在 9 个固定 r(O–H) 上各跑 15 ps，积分约束力得到 PMF，取 PMF 终点；pKa<sub>2</sub>、pKa<sub>3</sub> 用 M06 团簇（第一层水和 OH 显式）+ CPCM 隐式溶剂计算三步反应自由能，再以 pKa<sub>1</sub> 为基准取相对值；La–Sm 按 9 配位、Eu–Lu 按 8 配位。所有值都对应 298.15 K，ΔG = RT ln10 · pKa = 5.708 kJ/mol × pKa。
 <b>论文没有给出任何能垒或活化能</b>：第一步的 PMF 单调上升（6.7 节），第 2、3 步只有反应自由能。所以下面对比的是热力学量（pKa、ΔG）和结构，我们的活化能只能和自己的热力学比较。</p>
@@ -1229,7 +1451,35 @@ def sec_paper_a(d) -> str:
 {cum_tab}
 {data_line("comparison/compare_pKa_cumulative.csv")}
 {figure("comparison/fig_compare_pKa_cumulative.svg", "累积 −log *β<sub>n</sub>：论文 DFT（求和）、Table 2 实验、本工作 MD", ("comparison/compare_pKa_cumulative.csv",))}
-"""
+""", f"""
+<p>Reference: Shiery, Cooper, Cantu, <i>Inorg. Chem.</i> 2021, 60, 10257 (<a href="{ARTICLE_URL}" target="_blank" rel="noopener">article</a> · <a href="{SI_URL}" target="_blank" rel="noopener">SI</a>).
+Methods of the paper (from chapter 5 of the first author's PhD dissertation): pKa<sub>1</sub> comes from constrained AIMD (Bluemoon, CP2K/PBE, 64 explicit waters) run for 15 ps at each of 9 fixed r(O–H) values; integrating the constraint force gives the PMF, and its end point is used. pKa<sub>2</sub> and pKa<sub>3</sub> come from the reaction free energies of the three steps computed for M06 clusters (first-shell water and OH explicit) + CPCM implicit solvent, taken relative to pKa<sub>1</sub>; La–Sm are treated as 9-coordinate and Eu–Lu as 8-coordinate. All values refer to 298.15 K, with ΔG = RT ln10 · pKa = 5.708 kJ/mol × pKa.
+<b>The paper gives no barriers or activation energies at all</b>: the first-step PMF rises monotonically (section 6.7), and steps 2 and 3 only have reaction free energies. What is compared below is therefore thermodynamics (pKa, ΔG) and structure; our activation energies can only be compared with our own thermodynamics.</p>
+<h3>6.1 Table 1 of the paper (all 15 Ln)</h3>
+{t1_tab}
+{data_line("literature/lit_table1_calc_pKa.csv")}
+<h3>6.2 Stepwise pKa and ΔG, and the difference from the paper, ΔΔG</h3>
+<p class="muted">The MD pKa values are the equivalents of section 5 (300 K); ΔG<sub>acid</sub> = RT ln10 · pKa (300 K for MD, 298.15 K for the paper); ΔΔG = 5.708 × (pKa − pKa<sub>DFT</sub>) kJ/mol. “≤” marks a bound (the other state never occurs); yellow = DPA4C-Plus. The brackets in the experiment rows are the minimum and maximum of all experimental values for that step in Table 2.</p>
+{''.join(piv)}
+<p>The three DPA4C-Plus pKa equivalents differ by only {fmt(spread['Dy'], 1)} (Dy) and {fmt(spread['Nd'], 1)} (Nd) units, whereas in the paper step 1 and step 3 differ by {fmt(paper_spread['Dy'], 1)} (Dy) and {fmt(paper_spread['Nd'], 1)} (Nd): in MD step 1 is clearly harder than in the paper (ΔΔG<sub>1</sub> &gt; 0) and step 3 clearly easier (ΔΔG<sub>3</sub> &lt; 0).</p>
+<h4>MAD against the Table 2 experimental values (reading steps 2 and 3 as stepwise constants, as the paper does)</h4>
+{mad_tab}
+<p class="muted">MAD = mean of |pKa − each experimental value|; Δ median = pKa − experimental median. “≤” = MD gives only an upper bound (the other state never occurs); then only an upper bound on Δ median is given and no MAD is computed.</p>
+{data_line("comparison/compare_pKa_stepwise.csv")}
+{figure("comparison/fig_compare_pKa_stepwise.svg", "Stepwise pKa: paper DFT, Table 2 experiment and the MD equivalents of this work", ("comparison/compare_pKa_stepwise.csv",))}
+<h3>6.3 Table 2 of the paper (compilation of experimental values) and MAD check</h3>
+<p>Recomputing the Table 1 MAD from Table 2: {agree['yes']}/{agree['yes'] + agree['NO']} entries agree (±0.05) and {agree['']} have no experimental value; disagreements: {bad_txt or 'none'}. The transcribed Tables 1 and 2 are therefore reliable. The table below lists all Nd and Dy entries (blue background = the paper's own calculated values).</p>
+{t2_sel}
+{details(f"Table 2 for all 15 Ln ({len(d.t2)} entries)", t2_all)}
+{details("MAD check table (all Ln)", chk_tab + data_line("literature/lit_table2_mad_check.csv"))}
+{data_line("literature/lit_table2_pKa_all.csv", "literature/lit_references.csv", "literature/lit_table2_mad_check.csv")}
+<h3>6.4 Reading as cumulative constants</h3>
+<p>For Nd, Kragten 1984 (ref 99) appears in Table 2 with the three steps {kr_txt} = 8.1 × n, the signature of cumulative constants −log *β<sub>n</sub> (Ln<sup>3+</sup> + n H<sub>2</sub>O ⇌ Ln(OH)<sub>n</sub> + n H<sup>+</sup>);
+the other experimental values for steps 2 and 3 are also numerically closer to cumulative values. Read as cumulative constants, the paper's DFT cumulative values (summed stepwise) for n ≥ 2 exceed the experimental medians by {rng(dft_minus_exp, 1)}; the DPA4C-Plus MD cumulative values (sums of the stepwise equivalents) exceed experiment by {rng(md_minus_exp[2], 1)} for n ≥ 2 and by {rng(md_minus_exp[1], 1)} for n = 1.</p>
+{cum_tab}
+{data_line("comparison/compare_pKa_cumulative.csv")}
+{figure("comparison/fig_compare_pKa_cumulative.svg", "Cumulative −log *β<sub>n</sub>: paper DFT (summed), Table 2 experiment, MD of this work", ("comparison/compare_pKa_cumulative.csv",))}
+""")
     return body
 
 
@@ -1249,11 +1499,11 @@ def sec_paper_b(d) -> str:
     for r in d.boxocc:
         md = r["kind"].startswith("MD")
         box_rows.append({"cells": [metal_html(r["metal"]), SYSTEM_LABEL[r["system"]], src_label(r["source"]),
-                                   "MD 占据数（300 K）" if md else "由 pKa 预测",
+                                   T("MD 占据数（300 K）", "MD occupancy (300 K)") if md else T("由 pKa 预测", "Predicted from pKa"),
                                    fmt(r["pKa1"], 1), fmt(r["pKa2"], 1), fmt(r["pKa3"], 1)]
                                   + [fmt_p(r[f"P{n}"]) for n in range(4)] + [f"<b>{fmt(r['mean_n_OH'])}</b>"],
                          "cls": "" if md else "paper"})
-    box_tab = table(["金属", "体系", "来源", "类型", "pKa<sub>1</sub>", "pKa<sub>2</sub>", "pKa<sub>3</sub>",
+    box_tab = table([T("金属", "Metal"), T("体系", "System"), T("来源", "Source"), T("类型", "Type"), "pKa<sub>1</sub>", "pKa<sub>2</sub>", "pKa<sub>3</sub>",
                      "P<sub>0</sub>", "P<sub>1</sub>", "P<sub>2</sub>", "P<sub>3</sub>", "⟨n⟩"], box_rows,
                     num_cols=tuple(range(4, 12)), cls="compact")
 
@@ -1261,8 +1511,8 @@ def sec_paper_b(d) -> str:
         r = first(d.boxocc, metal=metal, system=system, source=lambda s: s.startswith(prefix))
         return fmt(r["mean_n_OH"]) if r else "—"
 
-    pred = "；".join(f"{m} {mean_n(m, 'solution', 'Shiery2021 Table 1')}（溶液）/ {mean_n(m, 'graphite', 'Shiery2021 Table 1')}（石墨）" for m in METALS)
-    mdn = "；".join(f"{m} {mean_n(m, 'solution', 'this work: DPA4C-Plus')} / {mean_n(m, 'graphite', 'this work: DPA4C-Plus')}" for m in METALS)
+    pred = T("；", "; ").join(T(f"{m} {mean_n(m, 'solution', 'Shiery2021 Table 1')}（溶液）/ {mean_n(m, 'graphite', 'Shiery2021 Table 1')}（石墨）", f"{m} {mean_n(m, 'solution', 'Shiery2021 Table 1')} (solution) / {mean_n(m, 'graphite', 'Shiery2021 Table 1')} (graphite)") for m in METALS)
+    mdn = T("；", "; ").join(f"{m} {mean_n(m, 'solution', 'this work: DPA4C-Plus')} / {mean_n(m, 'graphite', 'this work: DPA4C-Plus')}" for m in METALS)
     others = [num(r["mean_n_OH"]) for r in d.boxocc if r["kind"].startswith("MD") and "DPA4C-Plus" not in r["source"]]
 
     # 6.6 structure
@@ -1296,20 +1546,23 @@ def sec_paper_b(d) -> str:
                     d_rw.append(num(r["Ln_O_water_mean_A"]) - num(si["Ln_O_water_mean_A"]))
                     if finite(r["Ln_O_OH_mean_A"]):
                         d_ro.append(num(r["Ln_O_OH_mean_A"]) - num(si["Ln_O_OH_mean_A"]))
-    s_head = ["金属", "n<sub>OH</sub>", "结构 / 来源", "占比", "CN(水)", "CN(OH)", "CN(总)", "⟨Ln–O(水)⟩ (Å)", "⟨Ln–O(OH)⟩ (Å)", "⟨Ln–O⟩ (Å)"]
+    s_head = [T("金属", "Metal"), "n<sub>OH</sub>", T("结构 / 来源", "Structure / source"), T("占比", "Fraction"), T("CN(水)", "CN(water)"), "CN(OH)", T("CN(总)", "CN(total)"), T("⟨Ln–O(水)⟩ (Å)", "⟨Ln–O(water)⟩ (Å)"), "⟨Ln–O(OH)⟩ (Å)", "⟨Ln–O⟩ (Å)"]
     s_tab = table(s_head, main_rows, num_cols=tuple(range(3, 10)), cls="compact")
     md_struct = [r for r in d.struct if r["system"] != "cluster"]
     other_big = sorted((r for r in md_struct if num(r["CN_other"]) >= 0.005), key=lambda r: -num(r["CN_other"]))
     other_small = [num(r["CN_other"]) for r in md_struct if 0 < num(r["CN_other"]) < 0.005]
-    other_txt = "、".join(f"{MODEL_LABEL[r['model']]} {r['metal']} {SYSTEM_LABEL[r['system']]} {r['T_K']} K n = {r['n_OH']}"
-                          f"（{inum(r['frames']):,} 帧，{fmt(r['CN_other'])}）" for r in other_big) or "无"
+    other_txt = T("、", ", ").join(T(f"{MODEL_LABEL[r['model']]} {r['metal']} {SYSTEM_LABEL[r['system']]} {r['T_K']} K n = {r['n_OH']}"
+                          f"（{inum(r['frames']):,} 帧，{fmt(r['CN_other'])}）", f"{MODEL_LABEL[r['model']]} {r['metal']} {SYSTEM_LABEL[r['system']].lower()} {r['T_K']} K n = {r['n_OH']} ({inum(r['frames']):,} frames, {fmt(r['CN_other'])})") for r in other_big) or T("无", "none")
     if other_small:
-        other_txt += f"；其余 ≤ {fmt(max(other_small), 3)}"
+        other_txt += T(f"；其余 ≤ {fmt(max(other_small), 3)}", f"; all others ≤ {fmt(max(other_small), 3)}")
     shell_gap = max(num(r["CN_total"]) - num(r["CN_water"]) - num(r["CN_OH"]) - num(r["CN_other"]) for r in md_struct)
-    s_note = (f'<p class="muted">MD 行：t ≥ 10 ps 的帧按当时 Ln 上的 OH 数 n 分组，n 用第 4 节动力学的 r<sub>c</sub>(OH) 计数，CN(OH) = n；'
+    s_note = (T(f'<p class="muted">MD 行：t ≥ 10 ps 的帧按当时 Ln 上的 OH 数 n 分组，n 用第 4 节动力学的 r<sub>c</sub>(OH) 计数，CN(OH) = n；'
               f'CN(水)、CN(总) 用第 3 节的 REE–O 总截断计数。CN(总) 还包含 CN(其它)（O<sup>2−</sup>/H<sub>3</sub>O<sup>+</sup>；≥ 0.005 的只有 {other_txt}）'
               f'和落在 r<sub>c</sub>(OH) 与总截断之间的 OH（≤ {fmt(shell_gap, 3)}），所以 水 + OH 可能略小于 总。'
-              '占比 = 该 n 状态的帧占比；⟨Ln–O⟩ 后的 ± 是分布标准差，不是标准误。团簇行：CN(总) = 3 Å 内的 O 数。</p>')
+              '占比 = 该 n 状态的帧占比；⟨Ln–O⟩ 后的 ± 是分布标准差，不是标准误。团簇行：CN(总) = 3 Å 内的 O 数。</p>', (f'<p class="muted">MD rows: frames with t ≥ 10 ps are grouped by the number n of OH on Ln at that moment, with n counted using the kinetics r<sub>c</sub>(OH) of section 4, so CN(OH) = n; '
+ f'CN(water) and CN(total) are counted with the total REE–O cutoff of section 3. CN(total) also includes CN(other) (O<sup>2−</sup>/H<sub>3</sub>O<sup>+</sup>; entries ≥ 0.005: {other_txt}) '
+ f'and the OH lying between r<sub>c</sub>(OH) and the total cutoff (≤ {fmt(shell_gap, 3)}), so water + OH can be slightly smaller than total. '
+ 'Fraction = share of the frames in that n state; the ± after ⟨Ln–O⟩ is the standard deviation of the distribution, not a standard error. Cluster rows: CN(total) = number of O within 3 Å.</p>')))
     all_rows = []
     for r in d.struct:
         all_rows.append([src_label(r["source"]) if r["system"] == "cluster" else "MD", SYSTEM_LABEL[r["system"]],
@@ -1317,46 +1570,46 @@ def sec_paper_b(d) -> str:
                          r["n_trajectories"] or "—", f"{inum(r['frames']):,}" if finite(r["frames"]) else "—",
                          fmt(r["fraction"], 3) if finite(r["fraction"]) else "—", fmt(r["CN_water"]), fmt(r["CN_OH"]),
                          fmt(r["CN_other"]), fmt(r["CN_total"]), fmt(r["Ln_O_water_mean_A"], 3), fmt(r["Ln_O_OH_mean_A"], 3)])
-    s_all = table(["来源", "体系", "势函数", "金属", "T (K)", "n<sub>OH</sub>", "轨迹", "帧", "占比", "CN(水)", "CN(OH)", "CN(其它)", "CN(总)",
-                   "⟨Ln–O(水)⟩", "⟨Ln–O(OH)⟩"], all_rows, num_cols=tuple(range(4, 15)), cls="compact")
+    s_all = table([T("来源", "Source"), T("体系", "System"), T("势函数", "Potential"), T("金属", "Metal"), "T (K)", "n<sub>OH</sub>", T("轨迹", "Traj."), T("帧", "Frames"), T("占比", "Fraction"), T("CN(水)", "CN(water)"), "CN(OH)", T("CN(其它)", "CN(other)"), T("CN(总)", "CN(total)"),
+                   T("⟨Ln–O(水)⟩", "⟨Ln–O(water)⟩"), "⟨Ln–O(OH)⟩"], all_rows, num_cols=tuple(range(4, 15)), cls="compact")
     si_rows = [{"cells": [r["Ln"], chem(r["label"]), r["n_atoms"], f"{r['n_oh_label']} / {r['n_oh_geom']}", r["n_water"], r["CN_O_3A"],
                           f"{fmt(r['Ln_O_water_mean'], 3)}<small>{ci(r['Ln_O_water_min'], r['Ln_O_water_max'], 3)}</small>",
                           f"{fmt(r['Ln_O_OH_mean'], 3)}<small>{ci(r['Ln_O_OH_min'], r['Ln_O_OH_max'], 3)}</small>" if finite(r["Ln_O_OH_mean"]) else "—",
                           fmt(r["Ln_O_all_mean"], 3), fmt(r["O_H_covalent_max"], 3)],
                 "cls": "hl" if r["Ln"] in METALS else ""} for r in d.si]
-    si_tab = table(["Ln", "结构", "原子数", "n<sub>OH</sub>（标签 / 几何）", "水", "CN (≤ 3 Å)", "⟨Ln–O(水)⟩ [最小, 最大]", "⟨Ln–O(OH)⟩ [最小, 最大]",
-                    "⟨Ln–O⟩", "最长 O–H"], si_rows, num_cols=tuple(range(2, 10)), cls="compact")
+    si_tab = table(["Ln", T("结构", "Structure"), T("原子数", "Atoms"), T("n<sub>OH</sub>（标签 / 几何）", "n<sub>OH</sub> (label / geometry)"), T("水", "Water"), "CN (≤ 3 Å)", T("⟨Ln–O(水)⟩ [最小, 最大]", "⟨Ln–O(water)⟩ [min, max]"), T("⟨Ln–O(OH)⟩ [最小, 最大]", "⟨Ln–O(OH)⟩ [min, max]"),
+                    "⟨Ln–O⟩", T("最长 O–H", "Longest O–H")], si_rows, num_cols=tuple(range(2, 10)), cls="compact")
     odd_labels = [r["label"] for r in d.si if re.search(r"\(OH\d\)", r["label"])]
     if odd_labels:
-        si_tab += ('<p class="muted">结构名称照抄 SI 原文（' + "、".join(chem(x) for x in odd_labels) +
-                   " 是 SI 中的写法，即 n<sub>OH</sub> = 3）。</p>")
+        si_tab += (T('<p class="muted">结构名称照抄 SI 原文（', '<p class="muted">Structure names are copied verbatim from the SI (') + T("、", ", ").join(chem(x) for x in odd_labels) +
+                   T(" 是 SI 中的写法，即 n<sub>OH</sub> = 3）。</p>", " is the notation used in the SI, i.e. n<sub>OH</sub> = 3).</p>"))
 
     # 6.7 PMF
     def qlabel(q):
         if q.startswith("dG(end)"):
-            return "PMF 终点 − 起点（脱质子自由能）"
+            return T("PMF 终点 − 起点（脱质子自由能）", "PMF end point − start (deprotonation free energy)")
         if q.startswith("dG1 (acid"):
-            return "ΔG<sub>1</sub>（酸解离，第 1 步）"
+            return T("ΔG<sub>1</sub>（酸解离，第 1 步）", "ΔG<sub>1</sub> (acid dissociation, step 1)")
         if q.startswith("dG1 acid-equivalent"):
-            return "ΔG<sub>1</sub> 等效 = RT ln10 · pKa<sub>1</sub>(等效)"
+            return T("ΔG<sub>1</sub> 等效 = RT ln10 · pKa<sub>1</sub>(等效)", "ΔG<sub>1</sub> equivalent = RT ln10 · pKa<sub>1</sub>(equiv.)")
         if q.startswith("dG_act Ln-OH loss"):
-            return "ΔG<sup>‡</sup>：失 OH 1→0（第 1 步逆向）"
+            return T("ΔG<sup>‡</sup>：失 OH 1→0（第 1 步逆向）", "ΔG<sup>‡</sup>: OH loss 1→0 (step 1 reverse)")
         if q.startswith("dG_act OH uptake"):
-            return "ΔG<sup>‡</sup>：得 OH 0→1（第 1 步正向）"
+            return T("ΔG<sup>‡</sup>：得 OH 0→1（第 1 步正向）", "ΔG<sup>‡</sup>: OH uptake 0→1 (step 1 forward)")
         return esc(q)
 
     pmf_rows = [{"cells": [metal_html(r["metal"]), src_label(r["source"]), qlabel(r["quantity"]),
                            f"<b>{fmt(r['value_kJmol'])}</b>" + (f"<small>{ci(r['lo'], r['hi'])}</small>" if finite(r["lo"]) else ""),
-                           temp_label(r["T_K"]), f'<span class="muted">{note_zh(r["note"])}</span>'],
+                           temp_label(r["T_K"]), f'<span class="muted">{note_html(r["note"])}</span>'],
                  "cls": "paper" if r["source"].startswith("Shiery") else ""} for r in d.pmf]
-    pmf_tab = table(["金属", "来源", "量", "kJ/mol", "T (K)", "说明"], pmf_rows, num_cols=(3, 4), cls="compact")
+    pmf_tab = table([T("金属", "Metal"), T("来源", "Source"), T("量", "Quantity"), "kJ/mol", "T (K)", T("说明", "Note")], pmf_rows, num_cols=(3, 4), cls="compact")
     pe_diff = [abs(num(r["pKa_from_PMF_endpoint"]) - num(r["pKa1_table1"])) for r in d.pmf_end]
     act_rows = [(num(r["value_kJmol"]), int(m.group(1)) if (m := re.search(r"N = (\d+)", r["note"])) else 0,
-                 f"{r['metal']} {SYSTEM_LABEL['solution' if '(solution)' in r['source'] else 'graphite']}")
+                 f"{r['metal']} {SYSTEM_LABEL['solution' if '(solution)' in r['source'] else 'graphite'].lower()}")
                 for r in d.pmf if r["quantity"].startswith("dG_act")]
     md_act = [v for v, n, _ in act_rows if n >= 5]
     act_few = sorted((v, n, lab) for v, n, lab in act_rows if n < 5)
-    act_few_txt = ("（不计入事件数 N &lt; 5 的：" + "、".join(f"{lab} {fmt(v, 1)}（N = {n}）" for v, n, lab in act_few) + "）"
+    act_few_txt = (T("（不计入事件数 N &lt; 5 的：", " (excluding those with N &lt; 5 events: ") + T("、", ", ").join(T(f"{lab} {fmt(v, 1)}（N = {n}）", f"{lab} {fmt(v, 1)} (N = {n})") for v, n, lab in act_few) + T("）", ")")
                    if act_few else "")
     paper_dg1 = [num(r["value_kJmol"]) for r in d.pmf if r["quantity"].startswith("dG1 (acid")]
     md_dg1 = [num(r["value_kJmol"]) for r in d.pmf if r["quantity"].startswith("dG1 acid-equivalent")]
@@ -1371,18 +1624,18 @@ def sec_paper_b(d) -> str:
                           f"<b>{fmt(r['dG_last_minus_first'])}</b>", fmt(r["pKa_from_PMF_endpoint"]), fmt(r["pKa1_table1"], 1),
                           fmt(num(r["pKa_from_PMF_endpoint"]) - num(r["pKa1_table1"]), 2, sign=True)],
                 "cls": "hl" if r["Ln"] in METALS else ""} for r in d.pmf_end]
-    pe_tab = table(["Ln", "点数", "r(O–H) 起点 (Å)", "终点 (Å)", "ΔG 起点", "ΔG 终点", "终点 − 起点", "pKa（PMF 终点）", "pKa<sub>1</sub>（Table 1）", "差"],
+    pe_tab = table(["Ln", T("点数", "Points"), T("r(O–H) 起点 (Å)", "r(O–H) start (Å)"), T("终点 (Å)", "End (Å)"), T("ΔG 起点", "ΔG start"), T("ΔG 终点", "ΔG end"), T("终点 − 起点", "End − start"), T("pKa（PMF 终点）", "pKa (PMF end point)"), T("pKa<sub>1</sub>（Table 1）", "pKa<sub>1</sub> (Table 1)"), T("差", "Difference")],
                    pe_rows, num_cols=tuple(range(1, 10)), cls="compact")
 
     # 6.8 S1 / S2
-    s1_tab = table(["Ln", "4f 电子组态", "自旋多重度"],
+    s1_tab = table(["Ln", T("4f 电子组态", "4f configuration"), T("自旋多重度", "Spin multiplicity")],
                    [[r["Ln"], re.sub(r"([spdf])(\d+)", r"\1<sup>\2</sup>", esc(r["electronic_configuration"])), r["multiplicity"]]
                     for r in d.s1], num_cols=(2,), cls="compact")
     s2_tab = table([], [[r["Ln"], fmt(r["pKa2_MAD_manuscript"], 1), fmt(r["pKa2_MAD_ma_def2_TZVPP_opt"], 1),
                          fmt(r["pKa3_MAD_manuscript"], 1), fmt(r["pKa3_MAD_ma_def2_TZVPP_opt"], 1)] for r in d.s2],
                    num_cols=(1, 2, 3, 4), cls="compact",
-                   thead=thead2(["Ln"], [("pKa<sub>2</sub> MAD", ["正文", "ma-def2-TZVPP 优化"]), ("pKa<sub>3</sub> MAD", ["正文", "ma-def2-TZVPP 优化"])]))
-    return f"""
+                   thead=thead2(["Ln"], [("pKa<sub>2</sub> MAD", [T("正文", "Main text"), T("ma-def2-TZVPP 优化", "ma-def2-TZVPP optimized")]), ("pKa<sub>3</sub> MAD", [T("正文", "Main text"), T("ma-def2-TZVPP 优化", "ma-def2-TZVPP optimized")])]))
+    return T(f"""
 <h3>6.5 把论文 pKa 放进我们的 box：预测的占据数 vs MD</h3>
 <p>用论文 pKa 和 5.2 节同一公式（box 内 3 个 OH<sup>−</sup>，c<sub>1</sub> 同 MD）反推平衡占据数。论文 DFT 预测 ⟨n⟩：{pred}；DPA4C-Plus MD（溶液 / 石墨）：{mdn}；其它势函数 ⟨n⟩ = {rng(others)}（OH 基本不离开 Ln）。
 Kragten 两种读法给出完全相反的预测（⟨n⟩ ≈ 1 或 3），说明 Table 2 的读法本身就会决定结论。</p>
@@ -1407,12 +1660,37 @@ Kragten 两种读法给出完全相反的预测（⟨n⟩ ≈ 1 或 3），说�
 <h3>6.8 SI Table S1、S2</h3>
 <div class="grid2"><div>{s1_tab}{data_line("literature/lit_tableS1_multiplicity.csv")}</div>
 <div>{s2_tab}<p class="muted">用 ma-def2-TZVPP 重新优化结构后，pKa<sub>2</sub> 的 MAD 在 {w2}/{n2} 个元素上变大，pKa<sub>3</sub> 在 {w3}/{n3} 个元素上变大，并没有系统性改善。</p>{data_line("literature/lit_tableS2_basis_set_MAD.csv")}</div></div>
-"""
+""", f"""
+<h3>6.5 Putting the paper's pKa into our box: predicted occupancy vs MD</h3>
+<p>The paper's pKa values and the same formula as in section 5.2 (3 OH<sup>−</sup> in the box, same c<sub>1</sub> as MD) give back an equilibrium occupancy. Paper DFT predicts ⟨n⟩: {pred}; DPA4C-Plus MD (solution / graphite): {mdn}; other potentials ⟨n⟩ = {rng(others)} (OH essentially never leaves Ln).
+The two readings of Kragten give opposite predictions (⟨n⟩ ≈ 1 or 3), so how Table 2 is read decides the conclusion by itself.</p>
+{box_tab}
+{data_line("comparison/compare_box_occupancy.csv")}
+{figure("comparison/fig_compare_box_occupancy.svg", "Occupancy in the box: predicted from the paper's pKa vs MD", ("comparison/compare_box_occupancy.csv",))}
+<h3>6.6 Structure: SI optimized clusters vs MD (split by the number n of OH on Ln)</h3>
+<p>The paper's clusters have a fixed CN (Nd 9, Dy 8), whereas in MD the CN is set by the dynamics. DPA4C-Plus (300 K) compared with the clusters: CN(total) differs by {rng(d_cn)}, ⟨Ln–O(water)⟩ by {rng(d_rw, 3)} Å and ⟨Ln–O(OH)⟩ by {rng(d_ro, 3)} Å. Both show Ln–O(water) lengthening and CN(water) decreasing as n increases; the difference is that in MD CN(total) also drops by {rng(cn_drop)} from n = 0 to 3, while the cluster CN(total) is fixed by construction.</p>
+{s_tab}
+{s_note}
+{data_line("comparison/compare_structure_by_nOH.csv", "literature/lit_SI_structures_Nd.xyz", "literature/lit_SI_structures_Dy.xyz")}
+{details("Structure table for all potentials and all temperatures", s_all)}
+{details("Geometry metrics of the 15 Ln × 4 optimized structures in the SI", si_tab + data_line("literature/lit_SI_structures_metrics.csv"))}
+{figure("comparison/fig_compare_structure.svg", "CN and Ln–O distances vs n<sub>OH</sub>: SI clusters vs MD", ("comparison/compare_structure_by_nOH.csv",))}
+<h3>6.7 First-step PMF: the paper has no barrier</h3>
+<p>SI Figures S1–S15 give the PMF of the first hydrolysis along r(O–H) from 0.99 to 1.40 Å: it rises monotonically, with no transition state. Converted to pKa, the PMF end points of the 15 Ln differ from Table 1 pKa<sub>1</sub> by at most {fmt(max(pe_diff), 2)}, i.e. ΔG<sub>1</sub> in Table 1 is the PMF end point.
+The paper therefore contains no quantity that could be compared with our ΔG<sup>‡</sup> / E<sub>a</sub>. The table below puts the paper's first-step thermodynamics next to our thermodynamics and barriers so that magnitudes can be compared: the MD first-step ΔG<sup>‡</sup> is {rng(md_act, 1)} kJ/mol{act_few_txt}, the paper's ΔG<sub>1</sub> is {rng(paper_dg1, 1)} kJ/mol, and the MD ΔG<sub>1</sub> equivalent is {rng(md_dg1, 1)} kJ/mol.</p>
+{pmf_tab}
+{data_line("comparison/compare_PMF_step1.csv")}
+{details("PMF end-point check (all 15 Ln)", pe_tab + data_line("literature/lit_SI_PMF_endpoint_check.csv", "literature/lit_SI_PMF_first_hydrolysis_digitized.csv"))}
+{figure("comparison/fig_compare_PMF_step1.svg", "Step 1: paper PMF (digitized) with the MD ΔG<sup>‡</sup> and ΔG<sub>1</sub> equivalent", ("comparison/compare_PMF_step1.csv", "literature/lit_SI_PMF_first_hydrolysis_digitized.csv"))}
+<h3>6.8 SI Tables S1 and S2</h3>
+<div class="grid2"><div>{s1_tab}{data_line("literature/lit_tableS1_multiplicity.csv")}</div>
+<div>{s2_tab}<p class="muted">After re-optimizing the structures with ma-def2-TZVPP, the pKa<sub>2</sub> MAD gets larger for {w2}/{n2} elements and the pKa<sub>3</sub> MAD for {w3}/{n3} elements: there is no systematic improvement.</p>{data_line("literature/lit_tableS2_basis_set_MAD.csv")}</div></div>
+""")
 
 
 def sec_paper(d) -> str:
-    return card("paper", "6 与 Shiery 2021（Inorg. Chem. 60, 10257）的对比",
-                "论文所有表格（Table 1、2、S1、S2）+ SI 结构与 PMF；逐步 pKa、ΔG、ΔΔG", sec_paper_a(d) + sec_paper_b(d))
+    return card("paper", T("6 与 Shiery 2021（Inorg. Chem. 60, 10257）的对比", "6 Comparison with Shiery 2021 (Inorg. Chem. 60, 10257)"),
+                T("论文所有表格（Table 1、2、S1、S2）+ SI 结构与 PMF；逐步 pKa、ΔG、ΔΔG", "All tables of the paper (Tables 1, 2, S1, S2) + SI structures and PMF; stepwise pKa, ΔG, ΔΔG"), sec_paper_a(d) + sec_paper_b(d))
 
 
 # ------------------------------------------------------------------ 7 limits
@@ -1420,9 +1698,9 @@ def sec_limits(d) -> str:
     idx = rate_index(d)
     sol_n = [inum(r["N_events_300K"]) for r in where(d.act, system="solution", model="DPA4C-Plus")]
     uma = {m: [r for r in d.screen if r["system"] == "graphite" and r["model"] == "uma-s-1.2.1" and r["metal"] == m] for m in METALS}
-    uma_txt = "；".join(
-        f"{m} 排除 {sum(r['status'] == 'excluded' for r in uma[m])}、截断 {sum(r['status'] == 'truncated' for r in uma[m])}，"
-        f"可用时长中位数 {fmt(median([r['usable_end_ps'] for r in uma[m] if r['status'] != 'excluded']), 0)} ps" for m in METALS)
+    uma_txt = T("；", "; ").join(
+        T(f"{m} 排除 {sum(r['status'] == 'excluded' for r in uma[m])}、截断 {sum(r['status'] == 'truncated' for r in uma[m])}，"
+        f"可用时长中位数 {fmt(median([r['usable_end_ps'] for r in uma[m] if r['status'] != 'excluded']), 0)} ps", f"{m} {sum(r['status'] == 'excluded' for r in uma[m])} excluded, {sum(r['status'] == 'truncated' for r in uma[m])} truncated, median usable length {fmt(median([r['usable_end_ps'] for r in uma[m] if r['status'] != 'excluded']), 0)} ps") for m in METALS)
     w02 = num(idx[("W0.2", "graphite", "DPA4C-Plus", "Dy", "ALL", 300, "3", "dissociation")]["dG_act_kJmol"])
     w20 = num(idx[("W2.0", "graphite", "DPA4C-Plus", "Dy", "ALL", 300, "3", "dissociation")]["dG_act_kJmol"])
 
@@ -1434,32 +1712,33 @@ def sec_limits(d) -> str:
 
     n_order = sum(step_order_holds(sc, m) for sc in SCENARIOS for m in METALS)
     n_combo = len(SCENARIOS) * len(METALS)
-    order_txt = (f"三步的相对顺序（正向 1 &lt; 2 &lt; 3，逆向 1 &gt; 2 &gt; 3）在全部 {n_combo} 个“设定 × 金属”组合中都成立（4.4 节），比绝对值可靠。"
+    order_txt = (T(f"三步的相对顺序（正向 1 &lt; 2 &lt; 3，逆向 1 &gt; 2 &gt; 3）在全部 {n_combo} 个“设定 × 金属”组合中都成立（4.4 节），比绝对值可靠。", f"The relative order of the three steps (forward 1 &lt; 2 &lt; 3, reverse 1 &gt; 2 &gt; 3) holds in all {n_combo} “setting × metal” combinations (section 4.4) and is more reliable than the absolute values.")
                  if n_order == n_combo else
-                 f"三步的相对顺序（正向 1 &lt; 2 &lt; 3，逆向 1 &gt; 2 &gt; 3）只在 {n_order}/{n_combo} 个“设定 × 金属”组合中成立（4.4 节）。")
+                 T(f"三步的相对顺序（正向 1 &lt; 2 &lt; 3，逆向 1 &gt; 2 &gt; 3）只在 {n_order}/{n_combo} 个“设定 × 金属”组合中成立（4.4 节）。", f"The relative order of the three steps (forward 1 &lt; 2 &lt; 3, reverse 1 &gt; 2 &gt; 3) holds in only {n_order}/{n_combo} “setting × metal” combinations (section 4.4)."))
     sol_len = max(num(r["t_end_ps"]) for r in d.screen if r["system"] == "solution")
     c1 = d.kmeta["c_single_M"]
     oh_other = [num(r["REE_O_hydroxide_mean"]) for r in d.cn
                 if r["model"] != "DPA4C-Plus" and r["variant"] in ("ALL", "box_pbc") and r["collapsed"] != "1"]
-    unclear = ([f"石墨 {MODEL_LABEL[r['model']]} {r['metal']}" for r in d.gcut if r["OH_X_shell_min_clear"] != "True"]
-               + [f"溶液 {MODEL_LABEL[r['model']]} {r['metal']}" for r in d.scut if r["OH_X_shell_min_clear"] != "True"])
+    unclear = ([T(f"石墨 {MODEL_LABEL[r['model']]} {r['metal']}", f"graphite {MODEL_LABEL[r['model']]} {r['metal']}") for r in d.gcut if r["OH_X_shell_min_clear"] != "True"]
+               + [T(f"溶液 {MODEL_LABEL[r['model']]} {r['metal']}", f"solution {MODEL_LABEL[r['model']]} {r['metal']}") for r in d.scut if r["OH_X_shell_min_clear"] != "True"])
     items = [
-        f"<b>表观量：</b>committed 速率依赖过滤窗口与截断，例如石墨 DPA4C-Plus Dy 3→2 的 ΔG<sup>‡</sup> 在 W = 0.2 / 2.0 ps 时为 {fmt(w02, 1)} / {fmt(w20, 1)} kJ/mol。{order_txt}",
-        f"<b>溶液统计量少：</b>每个温度只有 1 条 {fmt(sol_len, 0)} ps 轨迹，DPA4C-Plus 在 300 K 每个方向只有 {min(sol_n)}–{max(sol_n)} 个事件，E<sub>a</sub> 的 95% CI 很宽（见 4.3 节）。",
-        f"<b>pKa 等效值的假设：</b>pK<sub>w</sub> = 14、理想溶液、标准态换算用 c<sub>1</sub> = 1 个分子 / box = {fmt(c1['solution'], 2)} M（溶液）/ {fmt(c1['graphite'], 2)} M（石墨），游离 OH<sup>−</sup> 浓度 (4 − n)c<sub>1</sub> 达到约 1 M，没有活度与离子对校正；300 K 与 298.15 K 的差别忽略不计。",
-        "<b>起始构型记忆：</b>石墨 DPA4C-Plus 的占据数到 ~90 ps 才收敛（5.4 节）。",
-        f"<b>UMA 坍塌：</b>UMA Dy 溶液全部排除；石墨 UMA {uma_txt}。UMA 的结果只作参考。",
-        f"<b>势函数之间定性不同：</b>DPA4-Pro、MACE、UMA 中 3 个 OH 基本始终在 Ln 上（300 K REE–O(OH) = {rng(oh_other)}），DPA4C-Plus 中 OH 会频繁离开；哪个更接近真实，需要 AIMD 或实验结构来独立验证。",
-        "<b>论文的可比性：</b>论文的 pKa<sub>1</sub> 是小 box（64 个水、每点 15 ps）约束 AIMD 的 PMF 终点，pKa<sub>2</sub>、pKa<sub>3</sub> 是固定配位数（Nd 9、Dy 8）团簇 + CPCM 的相对自由能；只有 298 K 热力学（且第 2、3 步实验值的读法有歧义，6.4 节），没有能垒。我们的 E<sub>a</sub> 无法与论文直接对比，只能和论文的 ΔG 比量级。",
-        (f"<b>OH 溶剂化壳层：</b>{'、'.join(unclear)} 的 O–X(总) 壳层极小不清晰（3.2 节），其壳层 O–X(总) 不宜下结论，建议改看 O–REE(壳层) 与 REE–O(OH)/3。"
-         if unclear else "<b>OH 溶剂化壳层：</b>壳层极小都清晰，但 O–X(总) 依赖截断定义（2.3 节），建议同时看 O–REE(壳层) 与 REE–O(OH)/3。"),
+        T(f"<b>表观量：</b>committed 速率依赖过滤窗口与截断，例如石墨 DPA4C-Plus Dy 3→2 的 ΔG<sup>‡</sup> 在 W = 0.2 / 2.0 ps 时为 {fmt(w02, 1)} / {fmt(w20, 1)} kJ/mol。{order_txt}", f"<b>Apparent quantities:</b> committed rates depend on the filter window and the cutoff; e.g. ΔG<sup>‡</sup> of graphite DPA4C-Plus Dy 3→2 is {fmt(w02, 1)} / {fmt(w20, 1)} kJ/mol at W = 0.2 / 2.0 ps. {order_txt}"),
+        T(f"<b>溶液统计量少：</b>每个温度只有 1 条 {fmt(sol_len, 0)} ps 轨迹，DPA4C-Plus 在 300 K 每个方向只有 {min(sol_n)}–{max(sol_n)} 个事件，E<sub>a</sub> 的 95% CI 很宽（见 4.3 节）。", f"<b>Few statistics in solution:</b> there is only one {fmt(sol_len, 0)} ps trajectory per temperature; DPA4C-Plus at 300 K has only {min(sol_n)}–{max(sol_n)} events per direction, and the 95% CIs of E<sub>a</sub> are wide (see section 4.3)."),
+        T(f"<b>pKa 等效值的假设：</b>pK<sub>w</sub> = 14、理想溶液、标准态换算用 c<sub>1</sub> = 1 个分子 / box = {fmt(c1['solution'], 2)} M（溶液）/ {fmt(c1['graphite'], 2)} M（石墨），游离 OH<sup>−</sup> 浓度 (4 − n)c<sub>1</sub> 达到约 1 M，没有活度与离子对校正；300 K 与 298.15 K 的差别忽略不计。", f"<b>Assumptions behind the pKa equivalents:</b> pK<sub>w</sub> = 14, ideal solution, and a standard-state conversion with c<sub>1</sub> = 1 molecule per box = {fmt(c1['solution'], 2)} M (solution) / {fmt(c1['graphite'], 2)} M (graphite); the free OH<sup>−</sup> concentration (4 − n)c<sub>1</sub> reaches about 1 M, with no activity or ion-pair corrections; the difference between 300 K and 298.15 K is neglected."),
+        T("<b>起始构型记忆：</b>石墨 DPA4C-Plus 的占据数到 ~90 ps 才收敛（5.4 节）。", "<b>Starting-configuration memory:</b> the graphite DPA4C-Plus occupancies converge only after ~90 ps (section 5.4)."),
+        T(f"<b>UMA 坍塌：</b>UMA Dy 溶液全部排除；石墨 UMA {uma_txt}。UMA 的结果只作参考。", f"<b>UMA collapse:</b> all UMA Dy solution trajectories are excluded; graphite UMA: {uma_txt}. UMA results are for reference only."),
+        T(f"<b>势函数之间定性不同：</b>DPA4-Pro、MACE、UMA 中 3 个 OH 基本始终在 Ln 上（300 K REE–O(OH) = {rng(oh_other)}），DPA4C-Plus 中 OH 会频繁离开；哪个更接近真实，需要 AIMD 或实验结构来独立验证。", f"<b>The potentials differ qualitatively:</b> with DPA4-Pro, MACE and UMA the 3 OH stay on Ln almost all the time (300 K REE–O(OH) = {rng(oh_other)}), whereas with DPA4C-Plus OH leaves frequently; which is closer to reality needs independent validation by AIMD or experimental structures."),
+        T("<b>论文的可比性：</b>论文的 pKa<sub>1</sub> 是小 box（64 个水、每点 15 ps）约束 AIMD 的 PMF 终点，pKa<sub>2</sub>、pKa<sub>3</sub> 是固定配位数（Nd 9、Dy 8）团簇 + CPCM 的相对自由能；只有 298 K 热力学（且第 2、3 步实验值的读法有歧义，6.4 节），没有能垒。我们的 E<sub>a</sub> 无法与论文直接对比，只能和论文的 ΔG 比量级。", "<b>Comparability with the paper:</b> the paper's pKa<sub>1</sub> is the PMF end point of constrained AIMD in a small box (64 waters, 15 ps per point), and its pKa<sub>2</sub> and pKa<sub>3</sub> are relative free energies of fixed-CN clusters (Nd 9, Dy 8) + CPCM; the paper has only 298 K thermodynamics (and the reading of the step 2 and 3 experimental values is ambiguous, section 6.4), with no barriers. Our E<sub>a</sub> cannot be compared with the paper directly; only its magnitude can be set against the paper's ΔG."),
+        (T(f"<b>OH 溶剂化壳层：</b>{'、'.join(unclear)} 的 O–X(总) 壳层极小不清晰（3.2 节），其壳层 O–X(总) 不宜下结论，建议改看 O–REE(壳层) 与 REE–O(OH)/3。", f"<b>OH solvation shell:</b> for {', '.join(unclear)} the O–X(total) shell minimum is unclear (section 3.2), so the shell O–X(total) of these entries should not be used for conclusions; use O–REE(shell) and REE–O(OH)/3 instead.")
+         if unclear else T("<b>OH 溶剂化壳层：</b>壳层极小都清晰，但 O–X(总) 依赖截断定义（2.3 节），建议同时看 O–REE(壳层) 与 REE–O(OH)/3。", "<b>OH solvation shell:</b> all shell minima are clear, but O–X(total) depends on the cutoff definition (section 2.3); look at O–REE(shell) and REE–O(OH)/3 as well.")),
     ]
-    return card("limits", "7 局限性", "解读数字前请先看这里", '<ul class="tight">' + "".join(f"<li>{x}</li>" for x in items) + "</ul>")
+    return card("limits", T("7 局限性", "7 Limitations"), T("解读数字前请先看这里", "Read this before interpreting the numbers"), '<ul class="tight">' + "".join(f"<li>{x}</li>" for x in items) + "</ul>")
 
 
 # ------------------------------------------------------------------ 8 downloads
-FILE_INFO = {
-    "README.md": "说明文档：定义、流程与输出文件",
+FILE_INFO_ZH = {
+    "README.md": "说明文档（英文）：定义、流程与输出文件",
+    "README_zh.md": "说明文档（中文）：定义、流程与输出文件",
     "analyze.py": "任务 (a)(b)：g(r)、截断、CN 与 g(r) 图（石墨 + 溶液）",
     "kinetics.py": "轨迹提取、坍塌筛查、committed 跃迁、速率、ΔG‡、Arrhenius、占据数、van 't Hoff",
     "literature.py": "Shiery 2021 表格转录、SI 结构与 PMF 提取（自动下载 SI PDF）",
@@ -1524,23 +1803,94 @@ FILE_INFO = {
     "literature/lit_metadata.json": "转录来源、核对方式与单位换算",
     "literature/source/table2_references.json": "Table 2 引用文献列表（literature.py 的输入，内容同 lit_references.csv）",
 }
+FILE_INFO_EN = {
+    "README.md": "Documentation (English): definitions, workflow and output files",
+    "README_zh.md": "Documentation (Chinese): definitions, workflow and output files",
+    "analyze.py": "Tasks (a)(b): g(r), cutoffs, CN and g(r) figures (graphite + solution)",
+    "kinetics.py": "Trajectory extraction, collapse screening, committed transitions, rates, ΔG‡, Arrhenius, occupancies, van 't Hoff",
+    "literature.py": "Transcription of the Shiery 2021 tables; extraction of SI structures and PMFs (downloads the SI PDF automatically)",
+    "compare.py": "Comparison with Shiery 2021: stepwise/cumulative pKa, occupancies, structures, PMF",
+    "build_page.py": "Generates these web pages and the zip (reads only the outputs of the scripts above)",
+    "cn_summary_300K.csv": "300 K CN summary (tasks a, b): graphite with 4 starting configurations + ALL, solution box_pbc; with cutoffs and standard errors",
+    "graphite_cn_summary_box_pbc.csv": "Graphite CN (potential × metal × starting configuration, 300 K), with cutoffs and two kinds of standard error",
+    "graphite_cn_by_replica_box_pbc.csv": "Graphite CN per trajectory (screening status, usable length, number of samples)",
+    "graphite_cutoffs_box_pbc.csv": "Graphite cutoffs: REE–O minimum; OH-centred strict/shell cutoffs and peak-to-minimum drop",
+    "graphite_gr_box_pbc.csv": "Graphite g(r): REE–O and every OH-centred atom pair (Δr = 0.02 Å)",
+    "graphite_rdf_accumulated.npz": "Accumulated graphite RDF histograms (reused directly by analyze.py --reuse-rdf)",
+    "graphite_rdf_accumulated.json": "Keys and description of the npz above",
+    "solution_cn_box_pbc.csv": "Solution CN: all potentials × 300–500 K (per-frame counts, 5-block standard errors)",
+    "solution_gr_box_pbc_300K.csv": "Solution g(r) at 300 K: REE–O and every OH-centred atom pair",
+    "solution_cutoffs_box_pbc_300K.csv": "Solution cutoffs at 300 K and shell clarity (peak-to-minimum drop)",
+    "collapse_screen.csv": "Collapse screening of every trajectory: onset by energy/geometry, usable length, status",
+    "graphite_REE_O_total_box_pbc_300K.svg": "Figure: graphite REE–O g(r) and cutoffs",
+    "graphite_OH_X_total_box_pbc_300K.svg": "Figure: graphite OH-centred O–X g(r) and cutoffs",
+    "graphite_CN_box_pbc_300K.svg": "Figure: graphite CN",
+    "solution_REE_O_total_box_pbc_300K.svg": "Figure: solution REE–O g(r) and cutoffs",
+    "solution_OH_X_total_box_pbc_300K.svg": "Figure: solution OH-centred O–X g(r) and cutoffs",
+    "solution_CN_box_pbc_300K.svg": "Figure: solution CN",
+    "kinetics/kinetics_rates.csv": "All settings × system × potential × metal × temperature × step × direction: event counts, dwell times, k, ΔG‡ with 95% CI",
+    "kinetics/kinetics_arrhenius.csv": "Arrhenius / Eyring fits: E<sub>a</sub>, ln A, ΔH‡, ΔS‡ (with 95% CI) and fit quality",
+    "kinetics/kinetics_occupancy.csv": "Equilibrium occupancies P<sub>0</sub>–P<sub>3</sub> (95% CI) and ⟨n⟩ (all settings)",
+    "kinetics/kinetics_thermo.csv": "Stepwise ΔG<sub>occ</sub>, ΔG°, pK and pKa equivalents (all settings)",
+    "kinetics/kinetics_vanthoff.csv": "van 't Hoff: ΔH°, ΔS° (OH-loss direction)",
+    "kinetics/kinetics_cutoffs.csv": "Ln–O(OH) cutoff r<sub>c</sub> used for the kinetics (radial density minimum)",
+    "kinetics/kinetics_events_by_traj.csv": "Per trajectory: transition counts N<sub>i→j</sub>, dwell time in each state, raw P<sub>n</sub>, fraction of frames with more than 3 OH / with O<sup>2−</sup> in the shell",
+    "kinetics/kinetics_occupancy_vs_time.csv": "P<sub>n</sub> versus time (10 ps blocks)",
+    "kinetics/kinetics_oh_density.csv": "Ln–O(OH) radial number density (used to set r<sub>c</sub>)",
+    "kinetics/kinetics_traces_example.csv": "Example trajectory n(t): raw and committed values",
+    "kinetics/kinetics_metadata.json": "Analysis settings and constants (pK<sub>w</sub>, c<sub>1</sub>, sampling interval, number of bootstrap resamples, …)",
+    "kinetics/fig_kinetics_dGact_300K.svg": "Figure: three-step ΔG‡ at 300 K",
+    "kinetics/fig_kinetics_arrhenius_DPA4C_solution.svg": "Figure: Arrhenius plot, solution, DPA4C-Plus",
+    "kinetics/fig_kinetics_sensitivity.svg": "Figure: sensitivity to the analysis settings",
+    "kinetics/fig_kinetics_occupancy.svg": "Figure: occupancies P<sub>n</sub>",
+    "kinetics/fig_kinetics_traces.svg": "Figure: example trajectories n(t)",
+    "kinetics/fig_kinetics_OH_density_cutoff.svg": "Figure: Ln–O(OH) radial density and r<sub>c</sub>",
+    "comparison/compare_activation.csv": "Master table of three-step ΔG‡ (300 K) and E<sub>a</sub> (system × potential × metal × direction)",
+    "comparison/compare_pKa_stepwise.csv": "Stepwise pKa, ΔG<sub>acid</sub>, ΔΔG: paper calculations, Table 2 experiments, MD equivalents",
+    "comparison/compare_pKa_cumulative.csv": "Cumulative-constant reading: paper sums, experiment, MD",
+    "comparison/compare_box_occupancy.csv": "Occupancies that the paper's pKa values predict in this box vs MD occupancies",
+    "comparison/compare_structure_by_nOH.csv": "CN and Ln–O distances by n<sub>OH</sub>: SI clusters vs MD",
+    "comparison/compare_PMF_step1.csv": "Step 1: paper PMF endpoint / ΔG<sub>1</sub> vs MD ΔG<sub>1</sub> equivalent and ΔG‡",
+    "comparison/fig_compare_pKa_stepwise.svg": "Figure: stepwise pKa comparison",
+    "comparison/fig_compare_pKa_cumulative.svg": "Figure: cumulative-constant comparison",
+    "comparison/fig_compare_box_occupancy.svg": "Figure: occupancy comparison",
+    "comparison/fig_compare_structure.svg": "Figure: structure comparison",
+    "comparison/fig_compare_PMF_step1.svg": "Figure: step-1 PMF and MD",
+    "literature/lit_table1_calc_pKa.csv": "Paper Table 1: calculated pKa<sub>1–3</sub>, MAD and ΔG (298.15 K) for 15 Ln",
+    "literature/lit_table2_pKa_all.csv": "Paper Table 2: all experimental pKa values with citations",
+    "literature/lit_table2_mad_check.csv": "Table 1 MADs recomputed from Table 2 (transcription check)",
+    "literature/lit_tableS1_multiplicity.csv": "SI Table S1: electron configurations and spin multiplicities",
+    "literature/lit_tableS2_basis_set_MAD.csv": "SI Table S2: MADs for structures optimized with ma-def2-TZVPP",
+    "literature/lit_SI_structures_metrics.csv": "Geometric metrics of the 60 optimized SI structures",
+    "literature/lit_SI_structures_Nd.xyz": "The 4 M06-optimized Nd structures from the SI (n<sub>OH</sub> = 0–3)",
+    "literature/lit_SI_structures_Dy.xyz": "The 4 M06-optimized Dy structures from the SI (n<sub>OH</sub> = 0–3)",
+    "literature/lit_SI_PMF_first_hydrolysis_digitized.csv": "Step-1 PMFs digitized from SI Figures S1–S15 (read from the PDF vector paths)",
+    "literature/lit_SI_PMF_endpoint_check.csv": "pKa converted from the PMF endpoints vs Table 1 pKa<sub>1</sub>",
+    "literature/lit_references.csv": "Table 2 reference numbers and entries",
+    "literature/lit_metadata.json": "Transcription sources, checks and unit conversion",
+    "literature/source/table2_references.json": "Table 2 reference list (input to literature.py; same content as lit_references.csv)",
+}
+FILE_INFO = Localized(FILE_INFO_ZH, FILE_INFO_EN)
 DOWNLOAD_GROUPS = (
-    ("CN 与 g(r)（任务 a、b）", lambda rel: "/" not in rel and not rel.endswith((".py", ".md"))),
-    ("动力学 kinetics/", lambda rel: rel.startswith("kinetics/")),
-    ("与 Shiery 2021 的对比 comparison/", lambda rel: rel.startswith("comparison/")),
-    ("文献转录 literature/", lambda rel: rel.startswith("literature/")),
-    ("脚本与说明", lambda rel: rel.endswith((".py", ".md"))),
+    (("CN 与 g(r)（任务 a、b）", "CN and g(r) (tasks a, b)"),
+     lambda rel: "/" not in rel and not rel.endswith((".py", ".md"))),
+    (("动力学 kinetics/", "Kinetics · kinetics/"), lambda rel: rel.startswith("kinetics/")),
+    (("与 Shiery 2021 的对比 comparison/", "Comparison with Shiery 2021 · comparison/"),
+     lambda rel: rel.startswith("comparison/")),
+    (("文献转录 literature/", "Literature transcription · literature/"), lambda rel: rel.startswith("literature/")),
+    (("脚本与说明", "Scripts and documentation"), lambda rel: rel.endswith((".py", ".md"))),
 )
 
 
 def bundle_files() -> list[str]:
+    pages = {p.name for p in PAGES.values()}
     out = []
     for root, dirs, files in os.walk(HERE):
         dirs[:] = sorted(x for x in dirs if x not in SKIP_DIR_NAMES and not x.startswith("."))
         for name in sorted(files):
             rel = (Path(root) / name).relative_to(HERE).as_posix()
             if (name.startswith(".") or name.endswith((".log", ".tmp")) or name in SKIP_FILES
-                    or rel in SKIP_RELS or rel == OUT_HTML.name):
+                    or rel in SKIP_RELS or rel in pages):
                 continue
             out.append(rel)
     return out
@@ -1555,7 +1905,9 @@ def describe(rel: str) -> str:
     if rel in FILE_INFO:
         return FILE_INFO[rel]
     ext = rel.rsplit(".", 1)[-1].lower()
-    return {"csv": "CSV 数据", "svg": "SVG 图", "json": "JSON 元数据", "py": "Python 脚本"}.get(ext, "文件")
+    kinds = T({"csv": "CSV 数据", "svg": "SVG 图", "json": "JSON 元数据", "py": "Python 脚本"},
+              {"csv": "CSV data", "svg": "SVG figure", "json": "JSON metadata", "py": "Python script"})
+    return kinds.get(ext, T("文件", "File"))
 
 
 def dir_size(path: Path) -> int:
@@ -1564,28 +1916,42 @@ def dir_size(path: Path) -> int:
 
 def cache_size_label() -> str:
     n = dir_size(HERE / "kinetics_cache")
-    return size_label(n) if n else "约 370 MB"
+    return size_label(n) if n else T("约 370 MB", "about 370 MB")
 
 
 def sec_downloads(files: list[str], zip_label: str) -> str:
+    head = T(["文件", "内容"], ["File", "Contents"])
     blocks, used = [], set()
     for title, pred in DOWNLOAD_GROUPS:
         sel = sorted((f for f in files if f not in used and pred(f)), key=file_sort_key)
         used.update(sel)
         if sel:
-            blocks.append(f"<h3>{title}（{len(sel)} 个文件）</h3>"
-                          + table(["文件", "内容"], [[dl(f, f), describe(f)] for f in sel], cls="compact"))
+            blocks.append(f"<h3>{T(*title)}" + T(f"（{len(sel)} 个文件）", f" ({len(sel)} files)") + "</h3>"
+                          + table(head, [[dl(f, f), describe(f)] for f in sel], cls="compact"))
     rest = sorted(f for f in files if f not in used)
     if rest:
-        blocks.append("<h3>其它</h3>" + table(["文件", "内容"], [[dl(f, f), describe(f)] for f in rest], cls="compact"))
+        blocks.append(T("<h3>其它</h3>", "<h3>Other</h3>")
+                      + table(head, [[dl(f, f), describe(f)] for f in rest], cls="compact"))
     total = sum((HERE / f).stat().st_size for f in files)
+    en, zh = (f"<code>{ZIP_ROOT}/{PAGES[lang].name}</code>" for lang in ("en", "zh"))
+    zip_note = T(f"：下面全部 {len(files)} 个文件（未压缩 {size_label(total)}）+ 网页（英文版 {PAGES['en'].name}、中文版 "
+                 f"{PAGES['zh'].name}）；解压后直接用浏览器打开 {zh}（中文）或 {en}（英文）即可离线浏览，所有链接都是相对路径。",
+                 f": all {len(files)} files below ({size_label(total)} uncompressed) + the web pages (English "
+                 f"{PAGES['en'].name}, Chinese {PAGES['zh'].name}); unzip and open {en} (English) or {zh} (Chinese) "
+                 f"in a browser to read everything offline. All links are relative.")
+    not_bundled = T(
+        f"""没有打包：<code>kinetics_cache/</code>（{cache_size_label()}，<code>python kinetics.py extract 8</code> 可从原始轨迹重新生成）；
+出版社的 SI 原文件 <code>literature/source/ic1c00662_si_001.pdf</code>（请从 <a href="{SI_URL}" target="_blank" rel="noopener">figshare</a> 下载，<code>literature.py</code> 也会自动下载）；以及日志和 Python 缓存。""",
+        f"""Not bundled: <code>kinetics_cache/</code> ({cache_size_label()}; <code>python kinetics.py extract 8</code> regenerates it from the raw trajectories);
+the publisher's SI file <code>literature/source/ic1c00662_si_001.pdf</code> (download it from <a href="{SI_URL}" target="_blank" rel="noopener">figshare</a>; <code>literature.py</code> also downloads it automatically); and logs and Python caches.""")
     body = f"""
-<p><a class="dl" href="{OUT_ZIP.name}" download>{OUT_ZIP.name}</a><span class="size">{zip_label}</span>
-：下面全部 {len(files)} 个文件（未压缩 {size_label(total)}）+ 本网页；解压后直接用浏览器打开 <code>{ZIP_ROOT}/index.html</code> 即可离线浏览，所有链接都是相对路径。</p>
+<p><a class="dl" href="{OUT_ZIP.name}" download>{OUT_ZIP.name}</a><span class="size">{zip_label}</span>{zip_note}</p>
 {''.join(blocks)}
-<p class="muted">没有打包：<code>kinetics_cache/</code>（{cache_size_label()}，<code>python kinetics.py extract 8</code> 可从原始轨迹重新生成）；
-出版社的 SI 原文件 <code>literature/source/ic1c00662_si_001.pdf</code>（请从 <a href="{SI_URL}" target="_blank" rel="noopener">figshare</a> 下载，<code>literature.py</code> 也会自动下载）；以及日志和 Python 缓存。</p>"""
-    return card("downloads", "8 数据下载", "每个文件都可单独点击下载；CSV 为 UTF-8、逗号分隔，第一行是列名", body)
+<p class="muted">{not_bundled}</p>"""
+    return card("downloads", T("8 数据下载", "8 Data downloads"),
+                T("每个文件都可单独点击下载；CSV 为 UTF-8、逗号分隔，第一行是列名",
+                  "Every file can be downloaded on its own; CSV files are UTF-8, comma-separated, with column names in the first row"),
+                body)
 
 
 # ------------------------------------------------------------------ 9 sources
@@ -1598,31 +1964,46 @@ python kinetics.py figures
 python literature.py            # 论文表格、SI 结构与 PMF（自动下载 SI PDF）
 python compare.py 8             # 与论文对比
 python build_page.py            # 本网页 + zip"""
+REPRO_EN = """module load python/3.12-26.1.0
+python kinetics.py extract 8    # raw trajectories -> kinetics_cache/ ({cache})
+python kinetics.py screen       # collapse screening -> collapse_screen.csv
+python analyze.py               # tasks (a)(b): g(r), cutoffs, CN, figures (--reuse-rdf reuses the graphite RDF)
+python kinetics.py analyze 8    # rates, ΔG‡, Arrhenius, occupancies, pKa equivalents
+python kinetics.py figures
+python literature.py            # paper tables, SI structures and PMFs (downloads the SI PDF automatically)
+python compare.py 8             # comparison with the paper
+python build_page.py            # these web pages + zip"""
 
 
-SOURCE_ZH = {
+SOURCE_TEXT = Localized({
     "Table 1/2": ("Table 1/2", "转录自博士论文第 5 章 Table 5-1/5-2（与文章 Table 1/2 相同）；用 Table 2 重算 Table 1 的 MAD 核对（lit_table2_mad_check.csv）"),
     "Table S1/S2": ("Table S1/S2", "SI 第 S2、S9 页"),
     "structures": ("SI 优化结构", "SI 第 S10–S39 页（pypdf 读取文字层）"),
     "PMF": ("第一步 PMF", "SI 图 S1–S15：从 PDF 矢量路径读取数据点中心；坐标轴 0.95–1.45 Å、0–60 kJ/mol"),
-}
+}, {
+    "Table 1/2": ("Table 1/2", "Transcribed from Tables 5-1/5-2 in Chapter 5 of the dissertation (identical to Tables 1/2 of the article); "
+                               "checked by recomputing the Table 1 MADs from Table 2 (lit_table2_mad_check.csv)"),
+    "Table S1/S2": ("Table S1/S2", "SI pp. S2 and S9"),
+    "structures": ("SI optimized structures", "SI pp. S10–S39 (text layer read with pypdf)"),
+    "PMF": ("Step-1 PMF", "SI Figures S1–S15: marker centres read from the PDF vector paths; axes 0.95–1.45 Å and 0–60 kJ/mol"),
+})
 
 
 def sec_sources(d) -> str:
     rows = []
     for k, v in d.lmeta.get("table_sources", {}).items():
-        if k not in SOURCE_ZH:
+        if k not in SOURCE_TEXT:
             UNTRANSLATED.add(f"{k}: {v}")
-        key, text = SOURCE_ZH.get(k, (k, v))
+        key, text = SOURCE_TEXT.get(k, (k, v))
         rows.append([esc(key), esc(text)])
     conv = d.lmeta.get("conversion", "")
     m = re.search(r"=\s*([\d.]+)\s*kJ/mol at ([\d.]+) K", conv)
     if m:
-        conv = f"ΔG = RT ln10 · pKa；{m.group(2)} K 时 RT ln10 = {m.group(1)} kJ/mol"
+        conv = T(f"ΔG = RT ln10 · pKa；{m.group(2)} K 时 RT ln10 = {m.group(1)} kJ/mol", f"ΔG = RT ln10 · pKa; RT ln10 = {m.group(1)} kJ/mol at {m.group(2)} K")
     else:
         UNTRANSLATED.add(conv)
-    rows.append(["单位换算", esc(conv)])
-    body = f"""
+    rows.append([T("单位换算", "Unit conversion"), esc(conv)])
+    body = T(f"""
 <ul class="tight">
 <li>文章：R. C. Shiery, K. A. Cooper, D. C. Cantu, “Computational Prediction of All Lanthanide Aqua Ion Acidity Constants”, <i>Inorg. Chem.</i> 2021, 60, 10257–10266，<a href="{ARTICLE_URL}" target="_blank" rel="noopener">doi:10.1021/acs.inorgchem.1c00662</a>。</li>
 <li>SI：<a href="{SI_URL}" target="_blank" rel="noopener">ic1c00662_si_001.pdf</a>（Table S1、S2，图 S1–S15 第一步 PMF，M06 优化结构坐标）。</li>
@@ -1632,8 +2013,18 @@ def sec_sources(d) -> str:
 {table(["内容", "来源与核对"], rows, cls="compact")}
 <h3>复现</h3>
 <p>脚本按相对路径读取 <code>genesis/</code> 下的原始数据：石墨 <code>Graphite-dy-nd-50-denser-dumping/</code>；溶液动力学 <code>md/ln-150ps-denser-dumping/</code>、<code>md/ln-150ps-every-step-dumping/</code>；溶液 CN/g(r) <code>md/dense-gr-cn/</code>。在本目录依次运行：</p>
-<pre>{esc(REPRO.replace("{cache}", cache_size_label()))}</pre>"""
-    return card("sources", "9 来源与复现", "文献链接、转录与核对方式、运行顺序", body)
+<pre>{esc(REPRO.replace("{cache}", cache_size_label()))}</pre>""", f"""
+<ul class="tight">
+<li>Article: R. C. Shiery, K. A. Cooper, D. C. Cantu, “Computational Prediction of All Lanthanide Aqua Ion Acidity Constants”, <i>Inorg. Chem.</i> 2021, 60, 10257–10266, <a href="{ARTICLE_URL}" target="_blank" rel="noopener">doi:10.1021/acs.inorgchem.1c00662</a>.</li>
+<li>SI: <a href="{SI_URL}" target="_blank" rel="noopener">ic1c00662_si_001.pdf</a> (Tables S1 and S2, Figures S1–S15 with the first-step PMF, coordinates of the M06-optimized structures).</li>
+<li>R. C. Shiery, <i>Ab initio molecular dynamics simulations of lanthanide coordination structures in water and in faujasite</i>, PhD dissertation, University of Nevada, Reno, 2022, <a href="{THESIS_URL}" target="_blank" rel="noopener">PDF</a>. Chapter 5 is this article (Tables 5-1/5-2 = Tables 1/2 of the article); the method details are taken from that chapter.</li>
+</ul>
+<h3>How the paper's data were obtained</h3>
+{table(["Contents", "Source and check"], rows, cls="compact")}
+<h3>Reproduction</h3>
+<p>The scripts read the raw data under <code>genesis/</code> by relative path: graphite <code>Graphite-dy-nd-50-denser-dumping/</code>; solution kinetics <code>md/ln-150ps-denser-dumping/</code> and <code>md/ln-150ps-every-step-dumping/</code>; solution CN/g(r) <code>md/dense-gr-cn/</code>. Run in this directory, in order:</p>
+<pre>{esc(REPRO_EN.replace("{cache}", cache_size_label()))}</pre>""")
+    return card("sources", T("9 来源与复现", "9 Sources and reproduction"), T("文献链接、转录与核对方式、运行顺序", "Literature links, transcription and checks, run order"), body)
 
 
 # ------------------------------------------------------------------ assemble
@@ -1641,19 +2032,27 @@ def render(d, files: list[str], zip_label: str, stamp: str) -> str:
     sections = [toc(), metrics(d), notice(d), sec_summary(d), sec_methods(d), sec_cn(d), sec_kinetics(d),
                 sec_occupancy(d), sec_paper(d), sec_limits(d), sec_downloads(files, zip_label), sec_sources(d)]
     body = "\n".join(sections)
+    alternates = "\n".join(f'<link rel="alternate" hreflang="{code}" href="{PAGES[lang].name}">'
+                           for lang, code, _ in LANG_NAMES)
+    title = T("Dy、Nd 水解：配位数、三步表观活化能与 Shiery 2021 对比",
+              "Dy and Nd hydrolysis: coordination numbers, three-step apparent activation energies and comparison with Shiery 2021")
+    foot = T(f"生成于 {stamp}（build_page.py）。网页中的数字全部来自本目录的 CSV/JSON；页面只做取范围、作差之类的简单汇总。",
+             f"Generated {stamp} (build_page.py). Every number on this page comes from the CSV/JSON files in this directory; "
+             f"the page itself only takes ranges, differences and similar simple summaries.")
     return f"""<!doctype html>
-<html lang="zh-CN">
+<html lang="{T('zh-CN', 'en')}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dy、Nd 水解：配位数、三步表观活化能与 Shiery 2021 对比</title>
+<title>{title}</title>
+{alternates}
 <style>{CSS}</style>
 </head>
 <body>
 {page_header(zip_label)}
 <main>
 {body}
-<div class="foot">生成于 {stamp}（build_page.py）。网页中的数字全部来自本目录的 CSV/JSON；页面只做取范围、作差之类的简单汇总。</div>
+<div class="foot">{foot}</div>
 </main>
 </body>
 </html>
@@ -1663,7 +2062,8 @@ def render(d, files: list[str], zip_label: str, stamp: str) -> str:
 def write_zip(files: list[str]) -> None:
     tmp = OUT_ZIP.with_suffix(".zip.tmp")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
-        zf.write(OUT_HTML, f"{ZIP_ROOT}/{OUT_HTML.name}")
+        for path in PAGES.values():
+            zf.write(path, f"{ZIP_ROOT}/{path.name}")
         for rel in files:
             zf.write(HERE / rel, f"{ZIP_ROOT}/{rel}")
     tmp.replace(OUT_ZIP)
@@ -1674,6 +2074,7 @@ VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "met
 NOT_IN_P = {"div", "ul", "ol", "table", "h1", "h2", "h3", "h4", "figure", "details", "pre", "section", "p",
             "header", "main", "nav", "blockquote", "form"}
 SUSPICIOUS = re.compile(r"(?<![A-Za-z])(nan|NaN|None|inf|null)(?![A-Za-z])|[{}]|−0\.0+(?![0-9])")
+CJK = re.compile(r"[\u3000-\u303f\u4e00-\u9fff\uff00-\uffef]+")
 
 
 class PageChecker(HTMLParser):
@@ -1713,12 +2114,11 @@ class PageChecker(HTMLParser):
             self.text.append(data)
 
 
-def validate(page: str, files: list[str]) -> list[str]:
+def validate(page: str, files: list[str], linked: set[str], lang: str) -> list[str]:
     chk = PageChecker()
     chk.feed(page)
     chk.close()
     problems = list(chk.errors)
-    problems += [f"untranslated note: {n}" for n in sorted(UNTRANSLATED)]
     if chk.stack:
         problems.append(f"unclosed tags: {chk.stack}")
     problems += [f"duplicate id {k}" for k, v in chk.ids.items() if v > 1]
@@ -1731,18 +2131,32 @@ def validate(page: str, files: list[str]) -> list[str]:
                 problems.append(f"unexpected external link {link}")
         elif not (HERE / unquote(link.split("#")[0])).is_file():
             problems.append(f"missing file {link}")
-    if set(files) - LINKED:
-        problems.append(f"bundle files without a link: {sorted(set(files) - LINKED)}")
-    if LINKED - set(files):
-        problems.append(f"linked files missing from the bundle: {sorted(LINKED - set(files))}")
+    if set(files) - linked:
+        problems.append(f"bundle files without a link: {sorted(set(files) - linked)}")
+    if linked - set(files):
+        problems.append(f"linked files missing from the bundle: {sorted(linked - set(files))}")
     text = " ".join(" ".join(chk.text).split())
     for m in SUSPICIOUS.finditer(text):
         problems.append(f"suspicious text {m.group(0)!r}: ...{text[max(0, m.start() - 60):m.end() + 30]}...")
+    if lang == "en":
+        # the only Chinese allowed on the English page is the language switch label
+        rest = page.replace(">\u4e2d\u6587</a>", "></a>", 1)
+        hits = list(CJK.finditer(rest))
+        for m in hits[:20]:
+            context = " ".join(rest[max(0, m.start() - 50):m.end() + 30].split())
+            problems.append(f"Chinese on the English page {m.group(0)!r}: ...{context}...")
+        if len(hits) > 20:
+            problems.append(f"... {len(hits) - 20} more Chinese runs on the English page")
+    return problems
+
+
+def validate_bundle(files: list[str]) -> list[str]:
+    problems = [f"untranslated note: {n}" for n in sorted(UNTRANSLATED)]
     with zipfile.ZipFile(OUT_ZIP) as zf:
         bad, names = zf.testzip(), set(zf.namelist())
     if bad:
         problems.append(f"corrupt zip member {bad}")
-    want = {f"{ZIP_ROOT}/{f}" for f in files} | {f"{ZIP_ROOT}/{OUT_HTML.name}"}
+    want = {f"{ZIP_ROOT}/{f}" for f in files} | {f"{ZIP_ROOT}/{p.name}" for p in PAGES.values()}
     if names != want:
         problems.append(f"zip content mismatch: {sorted(names ^ want)[:6]}")
     return problems
@@ -1752,19 +2166,25 @@ def main() -> None:
     d = load()
     files = bundle_files()
     stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    label, page = "…", ""
+    label, pages, linked = "…", {}, {}
     for _ in range(5):
-        LINKED.clear()
-        page = render(d, files, label, stamp)
-        OUT_HTML.write_text(page, encoding="utf-8")
+        for lang, path in PAGES.items():
+            set_lang(lang)
+            LINKED.clear()
+            pages[lang] = render(d, files, label, stamp)
+            linked[lang] = set(LINKED)
+            path.write_text(pages[lang], encoding="utf-8")
         write_zip(files)
         new = size_label(OUT_ZIP.stat().st_size)
         if new == label:
             break
         label = new
-    problems = validate(page, files)
-    print(f"index.html {size_label(OUT_HTML.stat().st_size)} | {OUT_ZIP.name} {label} "
-          f"({len(files) + 1} files) | linked files {len(LINKED)}")
+    problems = validate_bundle(files)
+    for lang, page in pages.items():
+        problems += [f"[{PAGES[lang].name}] {p}" for p in validate(page, files, linked[lang], lang)]
+    sizes = " | ".join(f"{p.name} {size_label(p.stat().st_size)}" for p in PAGES.values())
+    print(f"{sizes} | {OUT_ZIP.name} {label} ({len(files) + len(PAGES)} files) | linked files "
+          + "/".join(str(len(linked[lang])) for lang in PAGES))
     for p in problems:
         print("PROBLEM:", p)
     if problems:

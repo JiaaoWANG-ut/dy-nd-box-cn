@@ -1,184 +1,187 @@
-# Dy、Nd 水解：box-PBC 配位数、三步表观活化能与 Shiery 2021 对比
+# Dy and Nd hydrolysis: box-PBC coordination numbers, three-step apparent activation energies, and comparison with Shiery 2021
 
-- 在线网页：https://jiaaowang-ut.github.io/dy-nd-box-cn/
-- 打包下载（GitHub release v1.0）：https://github.com/JiaaoWANG-ut/dy-nd-box-cn/releases/tag/v1.0
-- 本地：打开 `index.html`，或解压 `dy_nd_box_cn_data.zip` 后打开 `dy_nd_box_cn/index.html`。所有链接都是相对路径，可离线浏览。
+**English** | [中文](README_zh.md)
 
-网页中每个表、每张图下面都有对应原始数据的下载链接，第 8 节列出全部文件。网页数字全部来自本目录的 CSV/JSON，页面只做取范围、作差之类的简单汇总。
+- Web pages: https://jiaaowang-ut.github.io/dy-nd-box-cn/ (English, homepage) and https://jiaaowang-ut.github.io/dy-nd-box-cn/index_zh.html (Chinese)
+- Bundle download (GitHub release): https://github.com/JiaaoWANG-ut/dy-nd-box-cn/releases/latest
+- Offline: open `index.html` (English) or `index_zh.html` (Chinese), or unzip `dy_nd_box_cn_data.zip` and open `dy_nd_box_cn/index.html`. The English / 中文 buttons at the top right of each page switch the language. All links are relative, so the pages also work offline.
 
-## 内容
+Every table and figure on the page has download links to its raw data underneath, and section 8 lists all files. Every number on the page comes from the CSV/JSON files in this directory; the page itself only takes ranges, differences and similar simple summaries.
 
-1. 任务 (a)，REE 中心：REE–O(水)、REE–O(OH)、REE–O(总)。截断取总 REE–O g(r) 第一壳层之后的极小。
-2. 任务 (b)，OH 中心：O–REE、O–H(水)、O–X(总)。分严格截断和壳层截断两种处理，见下文。
-3. 三步表观活化能：先求 committed 跃迁速率，再得 Eyring ΔG‡（300 K）和 Arrhenius Ea（溶液，300–500 K）。
-4. 从占据数得到逐步 pKa 等效值和 ΔG，与 Shiery, Cooper, Cantu, *Inorg. Chem.* 2021, 60, 10257 对比：Table 1、Table 2、SI Table S1/S2、SI 优化结构、SI 第一步 PMF。
+## Contents
 
-只用三维周期 box（box_pbc）轨迹。体系为 Ln(OH)3 + 水，石墨体系另含一层石墨。
+1. Task (a), REE-centred: REE–O(water), REE–O(OH), REE–O(total). The cutoff is the minimum after the first shell of the total REE–O g(r).
+2. Task (b), OH-centred: O–REE, O–H(water), O–X(total). Two treatments, a strict cutoff and a shell cutoff; see below.
+3. Three-step apparent activation energies: committed transition rates first, then the Eyring ΔG‡ (300 K) and the Arrhenius Ea (solution, 300–500 K).
+4. Stepwise pKa equivalents and ΔG from the occupancies, compared with Shiery, Cooper, Cantu, *Inorg. Chem.* 2021, 60, 10257: Table 1, Table 2, SI Tables S1/S2, the SI optimized structures and the SI first-step PMFs.
 
-- 石墨：DPA4C-Plus、UMA-s-1.2.1；300 K；4 种 OH 起始构型（3near / 2near1far / 1near2far / 3far）× 50 条 × 150 ps。
-- 溶液：DPA4-Pro、DPA4C-Plus、MACE-POLAR-1-M、UMA-s-1.2.1；300/350/400/450/500 K；每个温度 1 条 × 150 ps。
+Only three-dimensional periodic box (box_pbc) trajectories are used. The system is Ln(OH)3 + water; the graphite system also contains one graphite layer.
 
-## 运行顺序
+- Graphite: DPA4C-Plus, UMA-s-1.2.1; 300 K; 4 OH starting configurations (3near / 2near1far / 1near2far / 3far) × 50 trajectories × 150 ps.
+- Solution: DPA4-Pro, DPA4C-Plus, MACE-POLAR-1-M, UMA-s-1.2.1; 300/350/400/450/500 K; 1 trajectory × 150 ps per temperature.
 
-在本目录依次运行。数字参数 8 是并行进程数。
+## Run order
+
+Run in this directory, in this order. The numeric argument 8 is the number of parallel processes.
 
 ```
 module load python/3.12-26.1.0
-python kinetics.py extract 8    # 原始轨迹 -> kinetics_cache/（20 fs 时间序列，约 372 MB）
-python kinetics.py screen       # 坍塌筛查 -> collapse_screen.csv
-python analyze.py               # 任务 (a)(b)：g(r)、截断、CN、图
-python kinetics.py analyze 8    # 速率、ΔG‡、Arrhenius、占据数、pKa 等效值 -> kinetics/
-python kinetics.py figures      # 动力学图 -> kinetics/*.svg
-python literature.py            # 论文表格、SI 结构与 PMF -> literature/（会自动下载 SI PDF）
-python compare.py 8             # 与论文对比 -> comparison/
-python build_page.py            # 网页 index.html + dy_nd_box_cn_data.zip，并检查链接和未翻译的说明
+python kinetics.py extract 8    # raw trajectories -> kinetics_cache/ (20 fs time series, ~372 MB)
+python kinetics.py screen       # collapse screening -> collapse_screen.csv
+python analyze.py               # tasks (a)(b): g(r), cutoffs, CN, figures
+python kinetics.py analyze 8    # rates, ΔG‡, Arrhenius, occupancies, pKa equivalents -> kinetics/
+python kinetics.py figures      # kinetics figures -> kinetics/*.svg
+python literature.py            # paper tables, SI structures and PMFs -> literature/ (downloads the SI PDF automatically)
+python compare.py 8             # comparison with the paper -> comparison/
+python build_page.py            # pages index.html (English) and index_zh.html (Chinese) + dy_nd_box_cn_data.zip; checks links and untranslated notes
 ```
 
-`analyze.py` 的选项：
+Options of `analyze.py`:
 
-- `--reuse-rdf`：复用 `graphite_rdf_accumulated.npz`，跳过石墨 RDF 累加。
-- `--rdf-only`：只输出 g(r) 和截断。
-- `--reuse-cn`：复用已有的逐轨迹 CN 表。
+- `--reuse-rdf`: reuse `graphite_rdf_accumulated.npz` and skip the graphite RDF accumulation.
+- `--rdf-only`: write only g(r) and the cutoffs.
+- `--reuse-cn`: reuse the existing per-trajectory CN tables.
 
-原始数据（路径相对于 `genesis/`）：
+Raw data (paths relative to `genesis/`):
 
-- 石墨：`Graphite-dy-nd-50-denser-dumping/`
-- 溶液轨迹：
-  - `md/ln-150ps-denser-dumping/`：DPA4C-Plus、UMA，每 2 fs 一帧；
-  - `md/ln-150ps-every-step-dumping/`：DPA4-Pro、MACE，每 1 fs 一帧。
-- 溶液 CN 和 g(r)：`md/dense-gr-cn/gr_cn.py` 已从上面的溶液轨迹算好（`cn_table.csv`、`results/*_gr.npz`、`results/*.json`），`analyze.py` 直接读取。
+- Graphite: `Graphite-dy-nd-50-denser-dumping/`
+- Solution trajectories:
+  - `md/ln-150ps-denser-dumping/`: DPA4C-Plus and UMA, one frame every 2 fs;
+  - `md/ln-150ps-every-step-dumping/`: DPA4-Pro and MACE, one frame every 1 fs.
+- Solution CN and g(r): already computed from the solution trajectories above by `md/dense-gr-cn/gr_cn.py` (`cn_table.csv`, `results/*_gr.npz`, `results/*.json`); `analyze.py` reads them directly.
 
-## 方法
+## Methods
 
-### 坍塌筛查（`kinetics.py screen` → `collapse_screen.csv`）
+### Collapse screening (`kinetics.py screen` → `collapse_screen.csv`)
 
-部分 UMA 轨迹会坍塌：势能骤降，H/O 被吸到 Ln 上。判据有两条，满足任一即可：
+Some UMA trajectories collapse: the potential energy drops abruptly and H/O are pulled onto Ln. A trajectory is flagged if either criterion holds:
 
-- 势能：每 1 ps 的块平均比前 5 块的最低值低 25 eV（石墨）或 15 eV（溶液）；起点在 −10 eV 处细化。
-- 几何：Ln–O < 1.85 Å 或 Ln–H < 1.90 Å，连续 10 个采样点。
+- Energy: a 1 ps block average falls 25 eV (graphite) or 15 eV (solution) below the lowest of the previous 5 blocks; the onset is refined at −10 eV.
+- Geometry: Ln–O < 1.85 Å or Ln–H < 1.90 Å for 10 consecutive samples.
 
-轨迹截到坍塌起点前 1 ps。剩余 ≥ 20 ps 的记为“截断”，继续使用；否则记为“排除”。
+Trajectories are cut 1 ps before the collapse onset. If ≥ 20 ps remain, the trajectory is marked "truncated" and still used; otherwise it is "excluded".
 
-- 共排除 91 条。
-- 石墨 UMA：Dy 排除 79 条、截断 116 条；Nd 排除 7 条、截断 116 条。
-- 溶液：UMA Dy 的 5 条全部排除，UMA Nd 500 K 截断。
-- DPA4-Pro、DPA4C-Plus、MACE 都没有坍塌。
+- 91 trajectories are excluded in total.
+- Graphite UMA: Dy 79 excluded, 116 truncated; Nd 7 excluded, 116 truncated.
+- Solution: all 5 UMA Dy trajectories are excluded; UMA Nd 500 K is truncated.
+- DPA4-Pro, DPA4C-Plus and MACE never collapse.
 
-石墨的 CN/g(r) 和全部动力学只用可用时间段。溶液 CN/g(r) 取自 `md/dense-gr-cn`，它对坍塌轨迹不给 CN，所以 UMA Nd 500 K 溶液只有动力学结果（用前 66 ps）。
+Graphite CN/g(r) and all kinetics use only the usable time windows. Solution CN/g(r) are taken from `md/dense-gr-cn`, which gives no CN for collapsed trajectories, so UMA Nd 500 K in solution has kinetics results only (from the first 66 ps).
 
-### 配位数（`analyze.py`）
+### Coordination numbers (`analyze.py`)
 
-- **O 物种：** 每帧把每个 H 按最小镜像距离归属到最近的 O。有 2 个 H 的 O 是水，1 个是 OH⁻，0 个或 ≥ 3 个是“其它”（O²⁻/H₃O⁺）。质子转移后 OH 和水的身份会随之交换。
-- **REE–O(其它)：** 石墨中为 0；溶液未坍塌轨迹中 |总 − 水 − OH| ≤ 0.002。
-- **(a) REE 中心：** r_c 取总 REE–O g(r) 第一壳层之后的极小。g(r) 网格 0.02 Å，5 点滑动平均。
-  - 做法：先找主峰（石墨在 1.6–3.4 Å、溶液在 1.8–3.0 Å 内的最高点），再取主峰之后 1.6 Å（溶液 1.5 Å）内的最低点。
-  - 这样可以跳过 OH（约 2.25 Å）与水（约 2.5 Å）两个子峰之间的小凹陷。
-  - 水、OH、总三项都用这一个 r_c 计数。
-- **(b) OH 中心：** 中心是每帧所有 OH 的 O。X 是除中心 O 和它自己的 H 之外的所有原子：REE、水的 O/H、其它 OH 的 O/H、“其它”O/H，石墨体系还包括 C。
-- **采样与误差：**
-  - 石墨：t ≥ 10 ps 起每 1 ps 一帧。误差是轨迹间的标准误：REE 中心的量按帧数加权，OH 中心的量按 OH 中心数加权。`ALL` 行合并 4 种起始构型。
-  - 溶液：`md/dense-gr-cn` 的逐帧计数（t ≥ 10 ps，每 2 fs），误差是 5 段 block 标准误。例外是严格截断下的 O–REE 和 O–H(水)：它们由部分 g(r) 积分得到，没有误差棒；与直接计数最多相差 0.05。
+- **O species:** in every frame each H is assigned to its nearest O (minimum-image distance). An O with 2 H is water, with 1 H it is OH⁻, and with 0 or ≥ 3 H it is "other" (O²⁻/H₃O⁺). After a proton transfer, the OH and water identities swap accordingly.
+- **REE–O(other):** 0 on graphite; |total − water − OH| ≤ 0.002 in the non-collapsed solution trajectories.
+- **(a) REE-centred:** r_c is the minimum after the first shell of the total REE–O g(r). g(r) grid 0.02 Å, 5-point moving average.
+  - Procedure: first find the main peak (the highest point within 1.6–3.4 Å on graphite, 1.8–3.0 Å in solution), then take the lowest point within 1.6 Å (solution: 1.5 Å) after the main peak.
+  - This skips the small dip between the OH (≈ 2.25 Å) and water (≈ 2.5 Å) sub-peaks.
+  - Water, OH and total are all counted with this one r_c.
+- **(b) OH-centred:** the centres are the O atoms of all OH in each frame. X is every atom except the central O and its own H: REE, water O/H, O/H of the other OH, "other" O/H, and C in the graphite system.
+- **Sampling and errors:**
+  - Graphite: one frame every 1 ps from t ≥ 10 ps. Errors are standard errors across trajectories: REE-centred quantities are weighted by frame count, OH-centred quantities by the number of OH centres. The `ALL` row combines the 4 starting configurations.
+  - Solution: per-frame counts from `md/dense-gr-cn` (t ≥ 10 ps, every 2 fs); errors are 5-block standard errors. The exception is O–REE and O–H(water) with the strict cutoff: they are integrated from partial g(r), have no error bars, and differ from direct counts by at most 0.05.
 
-### OH 溶剂化壳层不清晰时的处理
+### When the OH solvation shell is unclear
 
-O–X(总) g(r) 由几个重叠的峰组成：氢键水 H（1.6–1.8 Å；DPA4C-Plus 还有 1.23–1.25 Å 的共享质子）、REE（2.2–2.3 Å）、水 O（2.4–2.7 Å）。所以“总 g(r) 的第一极小”不唯一。处理如下：
+The O–X(total) g(r) is made of several overlapping peaks: hydrogen-bonded water H (1.6–1.8 Å; DPA4C-Plus also has a shared proton at 1.23–1.25 Å), REE (2.2–2.3 Å) and water O (2.4–2.7 Å). The "first minimum of the total g(r)" is therefore not unique. Treatment:
 
-1. **严格截断：** O–X(总) 第一个真实峰（g > 0.5，且之后下降 ≥ 10%）后的第一个极小。它总在 O–REE 峰之前，所以 O–REE ≈ 0。
-2. **壳层截断：** 从 O–REE 峰位置减 0.1 Å 出发（O–REE 峰 g ≤ 0.5 时改用 2.25 Å），沿 O–X(总) 先爬到局部极大，再下降到下一个极小（不超过 3.0 Å），这样 REE 也被计入。
-3. **清晰度：** 峰到谷降幅 1 − g_min/g_peak ≥ 10% 记为清晰（`*_min_clear`）。只有石墨 DPA4C-Plus Nd 的壳层极小不清晰。
-4. **辅助检查：**
-   - 余量：壳层内 X − REE − H(水) 应 ≈ 0。
-   - 对称参考：REE–O(OH)/3 不依赖 OH 中心截断，可以和壳层 O–REE 对照。
+1. **Strict cutoff:** the first minimum after the first real peak of O–X(total) (g > 0.5, followed by a drop of ≥ 10%). It always lies before the O–REE peak, so O–REE ≈ 0.
+2. **Shell cutoff:** start 0.1 Å below the O–REE peak position (2.25 Å if the O–REE peak has g ≤ 0.5), climb along O–X(total) to the local maximum, then descend to the next minimum (at most 3.0 Å), so that the REE is included.
+3. **Clarity:** a peak-to-minimum drop 1 − g_min/g_peak ≥ 10% counts as clear (`*_min_clear`). Only the shell minimum of graphite DPA4C-Plus Nd is unclear.
+4. **Auxiliary checks:**
+   - Remainder: inside the shell, X − REE − H(water) should be ≈ 0.
+   - Reciprocal reference: REE–O(OH)/3 does not depend on the OH-centred cutoff and can be compared with the shell O–REE.
 
-溶液的严格截断和壳层截断由 `md/dense-gr-cn` 按相同规则给出；清晰度由 `analyze.py` 用同样的 10% 标准补算。
+The strict and shell cutoffs for solution come from `md/dense-gr-cn`, which uses the same rules; `analyze.py` adds the clarity flag with the same 10% criterion.
 
-### 动力学（`kinetics.py analyze`）
+### Kinetics (`kinetics.py analyze`)
 
-- **状态：** n(t) = Ln 周围 r_c 内 OH⁻ 的 O 的个数，上限 3，每 20 fs 一帧。r_c 取 Ln–O(OH) 径向数密度第一峰之后的极小（3.03–3.47 Å，见 `kinetics_cutoffs.csv`）。
-- **步骤对应：**
-  - MD 正向 n−1 → n（Ln 得到 OH⁻）对应论文第 n 步酸解离 Ln(OH)ₙ₋₁ + H₂O → Ln(OH)ₙ + H⁺。
-  - MD 逆向 n → n−1（Ln 失去 OH⁻）是它的逆过程。
-- **committed 转变：** 宽 W = 0.5 ps 的居中众数滤波，再把短于 W/2 的片段吸收掉。速率从 t ≥ 10 ps 开始统计。
-- **速率与能垒：**
-  - k = N / T_origin，ΔG‡ = RT ln(k_B T / h k)。
-  - 95% CI 取 bootstrap（2000 次）与 Garwood 泊松区间的包络。石墨按轨迹重采样；溶液每个温度只有 1 条轨迹，按 10 ps 块重采样。
-  - N = 0 时用泊松上限 3.689 / T_origin 给 ΔG‡ 的下限。
-- **Arrhenius/Eyring：** 按 N 加权拟合。拟合质量分级：
-  - 好：≥ 4 个温度、≥ 20 个事件，且每个温度 ≥ 3 个事件；
-  - 尚可：≥ 3 个温度且 ≥ 8 个事件；
-  - 差：其余情况；
-  - 无：有事件的温度少于 2 个。
-- **敏感性：** W = 0.2 / 1.0 / 2.0 ps；r_c = 2.90 / 3.30 Å；起点 t ≥ 1 / 50 / 90 ps。见 `kinetics_rates.csv` 的 `scenario` 列。
+- **State:** n(t) = number of OH⁻ O atoms within r_c of Ln, capped at 3, one frame every 20 fs. r_c is the minimum after the first peak of the Ln–O(OH) radial number density (3.03–3.47 Å, see `kinetics_cutoffs.csv`).
+- **Mapping to the paper's steps:**
+  - MD forward n−1 → n (Ln gains an OH⁻) corresponds to the paper's step-n acid dissociation Ln(OH)ₙ₋₁ + H₂O → Ln(OH)ₙ + H⁺.
+  - MD reverse n → n−1 (Ln loses an OH⁻) is its reverse.
+- **Committed transitions:** a centred mode filter of width W = 0.5 ps, after which segments shorter than W/2 are absorbed. Rates are counted from t ≥ 10 ps.
+- **Rates and barriers:**
+  - k = N / T_origin, ΔG‡ = RT ln(k_B T / h k).
+  - The 95% CI is the envelope of a bootstrap (2000 resamples) and the Garwood Poisson interval. Graphite is resampled by trajectory; solution, with only 1 trajectory per temperature, is resampled in 10 ps blocks.
+  - For N = 0, the Poisson upper limit 3.689 / T_origin gives a lower bound on ΔG‡.
+- **Arrhenius/Eyring:** fits weighted by N. Fit quality:
+  - good: ≥ 4 temperatures, ≥ 20 events, and ≥ 3 events at every temperature;
+  - fair: ≥ 3 temperatures and ≥ 8 events;
+  - poor: everything else;
+  - none: fewer than 2 temperatures with events.
+- **Sensitivity:** W = 0.2 / 1.0 / 2.0 ps; r_c = 2.90 / 3.30 Å; start at t ≥ 1 / 50 / 90 ps. See the `scenario` column of `kinetics_rates.csv`.
 
-### 占据数与 pKa 等效值
+### Occupancies and pKa equivalents
 
-- 占据数 Pₙ 从 t ≥ 10 ps（溶液）或 t ≥ 50 ps（石墨）开始统计。
-- 解离常数：K_d = (Pₙ₋₁/Pₙ)·(4 − n)·c₁。c₁ 是一个分子在 box 中的浓度：溶液 0.4224 M，石墨 0.3594 M。
-- pKaₙ(等效) = pK_w + log₁₀ K_d，取 pK_w = 14，按理想溶液处理，没有活度校正。
-- 状态分类（`compare_pKa_stepwise.csv` 的 `status` 列，括号里是网页上的显示）：
-  - `measured`（加粗数值）：两个状态的 committed 停留都 ≥ 1 ps；
-  - `transient`（“瞬态”）：两个状态都出现过，但其中一个的 committed 停留 < 1 ps，只有量级意义；
-  - `upper_bound` / `lower_bound`（“≤ / ≥ … 界限”）：只出现过一个状态。假设没出现的那个状态的占据数不超过出现的那个，取 Pₙ₋₁ = Pₙ 处的 pKa 作为界限；
-  - `undetermined`（“无法确定”）：两个状态都没出现。
-- 石墨 DPA4C-Plus 的占据数对起始构型有记忆，到约 90 ps 才收敛，见 `start90` 设定。
+- Occupancies Pₙ are counted from t ≥ 10 ps (solution) or t ≥ 50 ps (graphite).
+- Dissociation constant: K_d = (Pₙ₋₁/Pₙ)·(4 − n)·c₁, where c₁ is the concentration of one molecule in the box: 0.4224 M in solution, 0.3594 M on graphite.
+- pKaₙ(equiv.) = pK_w + log₁₀ K_d with pK_w = 14, treated as an ideal solution without activity corrections.
+- Status classes (`status` column of `compare_pKa_stepwise.csv`; the display on the page is given in parentheses):
+  - `measured` (bold value): the committed dwells in both states are ≥ 1 ps;
+  - `transient` ("transient"): both states occur, but one of them has committed dwells < 1 ps, so the value is an order of magnitude only;
+  - `upper_bound` / `lower_bound` ("≤ / ≥ … bound"): only one state occurs. Assuming the unseen state is not more populated than the seen one, the pKa at Pₙ₋₁ = Pₙ is given as a bound;
+  - `undetermined` ("undetermined"): neither state occurs.
+- The graphite DPA4C-Plus occupancies remember the starting configuration and converge only after about 90 ps; see the `start90` setting.
 
-### 与论文对比（`literature.py`、`compare.py`）
+### Comparison with the paper (`literature.py`, `compare.py`)
 
-- **论文方法**（取自 Shiery 博士论文第 5 章，即这篇文章）：
-  - pKa₁：约束 AIMD 得到 PMF，取其终点。
-    - 设置：Bluemoon，CP2K/PBE，64 个水 + 3 个 Cl⁻。
-    - 9 个 r(O–H) 约束点，每点 15 ps NVT，约束力取 5–15 ps 的平均。
-  - pKa₂、pKa₃：M06 团簇（第一层水和 OH 显式）+ CPCM 隐式溶剂（ORCA）的反应自由能，以 pKa₁ 为基准取相对值。
-    - 团簇配位数固定：La–Sm 为 9，Eu–Lu 为 8，即 Nd 9、Dy 8。
-  - 论文只给 298.15 K 的热力学，没有能垒或活化能。第一步 PMF 单调上升，没有过渡态。
-- **Table 1/2：** 转录自博士论文 Table 5-1/5-2，与文章 Table 1/2 相同。用 Table 2 重算 Table 1 的 MAD 来核对：38/39 项一致（±0.05），只有 Yb 第 2 步不一致；另外 6 项没有实验值。
-- **SI：** Table S1/S2、60 个 M06 优化结构，以及图 S1–S15 的 PMF（从 PDF 矢量路径读取）。
-- **单位换算：** ΔG = RT ln10 · pKa。
-- **第 2、3 步实验值的读法：**
-  - Nd 的 Kragten 1984（Table 2 ref 99）为 8.1/16.2/24.3 = 8.1 × n，看起来是累积常数 −log *βₙ，而不是逐步常数。
-  - 第 2、3 步的其它实验值在数值上也更像累积值。
-  - 按哪种读法会决定结论（预测的 ⟨n⟩ ≈ 1 或 3）。`compare_pKa_cumulative.csv` 给出按累积常数读的对比。
+- **Methods of the paper** (from chapter 5 of the first author's PhD dissertation, which is this paper):
+  - pKa₁: constrained AIMD gives a PMF, and its end point is used.
+    - Setup: Bluemoon, CP2K/PBE, 64 waters + 3 Cl⁻.
+    - 9 r(O–H) constraint points, 15 ps NVT each; the constraint force is averaged over 5–15 ps.
+  - pKa₂, pKa₃: reaction free energies of M06 clusters (explicit first-shell water and OH) + CPCM implicit solvent (ORCA), taken relative to pKa₁.
+    - The cluster coordination number is fixed: 9 for La–Sm and 8 for Eu–Lu, i.e. 9 for Nd and 8 for Dy.
+  - The paper gives only 298.15 K thermodynamics, with no barriers or activation energies. The first-step PMF rises monotonically and has no transition state.
+- **Tables 1/2:** transcribed from dissertation Tables 5-1/5-2, which are the same as Tables 1/2 of the article. Check: recomputing the Table 1 MAD from Table 2 gives 38/39 agreeing entries (±0.05); only Yb step 2 disagrees, and another 6 entries have no experimental value.
+- **SI:** Tables S1/S2, the 60 M06-optimized structures, and the PMFs of Figures S1–S15 (read from the PDF vector paths).
+- **Unit conversion:** ΔG = RT ln10 · pKa.
+- **How to read the step-2 and step-3 experimental values:**
+  - For Nd, Kragten 1984 (Table 2 ref 99) lists 8.1/16.2/24.3 = 8.1 × n, which looks like cumulative constants −log *βₙ rather than stepwise constants.
+  - The other experimental values for steps 2 and 3 are also numerically closer to cumulative values.
+  - The reading decides the conclusion (predicted ⟨n⟩ ≈ 1 or 3). `compare_pKa_cumulative.csv` gives the comparison read as cumulative constants.
 
-## 输出文件
+## Output files
 
-- 本目录：
-  - CN 汇总：`cn_summary_300K.csv`
-  - 石墨：`graphite_cn_summary_box_pbc.csv`、`graphite_cn_by_replica_box_pbc.csv`、`graphite_cutoffs_box_pbc.csv`、`graphite_gr_box_pbc.csv`、`graphite_rdf_accumulated.npz/.json`
-  - 溶液：`solution_cn_box_pbc.csv`、`solution_cutoffs_box_pbc_300K.csv`、`solution_gr_box_pbc_300K.csv`
-  - 坍塌筛查：`collapse_screen.csv`
-  - 图：`*_box_pbc_300K.svg`
-- `kinetics/`：
-  - 速率与能垒：`kinetics_rates.csv`、`kinetics_arrhenius.csv`
-  - 热力学：`kinetics_occupancy.csv`、`kinetics_thermo.csv`、`kinetics_vanthoff.csv`
-  - 截断与诊断：`kinetics_cutoffs.csv`、`kinetics_oh_density.csv`、`kinetics_events_by_traj.csv`、`kinetics_occupancy_vs_time.csv`、`kinetics_traces_example.csv`
-  - 设定：`kinetics_metadata.json`
-  - 图：`fig_*.svg`
-- `comparison/`：
-  - `compare_activation.csv`（三步 ΔG‡ 与 Ea 总表）
-  - `compare_pKa_stepwise.csv`（逐步 pKa、ΔG、ΔΔG）
-  - `compare_pKa_cumulative.csv`、`compare_box_occupancy.csv`、`compare_structure_by_nOH.csv`、`compare_PMF_step1.csv`
-  - 图：`fig_compare_*.svg`
-- `literature/`：论文 Table 1/2、S1/S2 的转录，SI 结构与几何指标，PMF 数字化与终点核对，`lit_metadata.json`。
+- This directory:
+  - Pages: `index.html` (English, homepage), `index_zh.html` (Chinese); documentation: `README.md` (English), `README_zh.md` (Chinese)
+  - CN summary: `cn_summary_300K.csv`
+  - Graphite: `graphite_cn_summary_box_pbc.csv`, `graphite_cn_by_replica_box_pbc.csv`, `graphite_cutoffs_box_pbc.csv`, `graphite_gr_box_pbc.csv`, `graphite_rdf_accumulated.npz/.json`
+  - Solution: `solution_cn_box_pbc.csv`, `solution_cutoffs_box_pbc_300K.csv`, `solution_gr_box_pbc_300K.csv`
+  - Collapse screening: `collapse_screen.csv`
+  - Figures: `*_box_pbc_300K.svg`
+- `kinetics/`:
+  - Rates and barriers: `kinetics_rates.csv`, `kinetics_arrhenius.csv`
+  - Thermodynamics: `kinetics_occupancy.csv`, `kinetics_thermo.csv`, `kinetics_vanthoff.csv`
+  - Cutoffs and diagnostics: `kinetics_cutoffs.csv`, `kinetics_oh_density.csv`, `kinetics_events_by_traj.csv`, `kinetics_occupancy_vs_time.csv`, `kinetics_traces_example.csv`
+  - Settings: `kinetics_metadata.json`
+  - Figures: `fig_*.svg`
+- `comparison/`:
+  - `compare_activation.csv` (master table of the three-step ΔG‡ and Ea)
+  - `compare_pKa_stepwise.csv` (stepwise pKa, ΔG, ΔΔG)
+  - `compare_pKa_cumulative.csv`, `compare_box_occupancy.csv`, `compare_structure_by_nOH.csv`, `compare_PMF_step1.csv`
+  - Figures: `fig_compare_*.svg`
+- `literature/`: transcriptions of the paper's Tables 1/2 and S1/S2, SI structures and geometry metrics, PMF digitization and end-point check, `lit_metadata.json`.
 
-每个文件的一句话说明见网页第 8 节。
+Section 8 of the page gives a one-line description of every file.
 
-## 没有打包的内容
+## Not included in the bundle
 
-- `kinetics_cache/`（约 372 MB）：用 `python kinetics.py extract 8` 从原始轨迹重新生成。
-- 出版社的 SI 原文件 `literature/source/ic1c00662_si_001.pdf`：`literature.py` 会自动下载。
-- 日志和 Python 缓存。
+- `kinetics_cache/` (~372 MB): regenerate it from the raw trajectories with `python kinetics.py extract 8`.
+- The publisher's SI file `literature/source/ic1c00662_si_001.pdf`: `literature.py` downloads it automatically.
+- Logs and Python caches.
 
-## 主要局限
+## Main limitations
 
-详见网页第 7 节。
+See section 7 of the page for details.
 
-- **表观量：** ΔG‡ 和 Ea 依赖滤波窗口和截断。
-  - 例如石墨 DPA4C-Plus Dy 3→2 的 ΔG‡ 在 W = 0.2 / 2.0 ps 时为 6.2 / 10.1 kJ/mol。
-  - 三步的相对顺序（正向第 1 < 2 < 3 步，逆向相反）在 9 种设定 × 2 种金属下都成立，比绝对值可靠。
-- **溶液统计量少：** 每个温度只有 1 条 150 ps 轨迹，Ea 的 95% CI 很宽。部分 Ea 为负，说明这是复合的表观速率常数，不是单一基元步骤。
-- **pKa 等效值的假设：** pK_w = 14、理想溶液、标准态用 c₁ = 1 个分子 / box。游离 OH⁻ 浓度 (4 − n)c₁ 可达约 1 M，没有活度与离子对校正。
-- **起始构型记忆：** 石墨 DPA4C-Plus 的占据数到约 90 ps 才收敛。
-- **UMA 坍塌：** UMA 轨迹常坍塌，UMA 的结果只作参考。
-- **势函数之间定性不同：** DPA4-Pro、MACE、UMA 中 3 个 OH 基本始终在 Ln 上，DPA4C-Plus 中 OH 会频繁离开。哪个更接近真实，需要 AIMD 或实验结构独立验证。
-- **论文的可比性：** 论文只有 298 K 热力学，没有能垒，所以我们的 Ea 只能和论文的 ΔG 比量级。
-- **OH 溶剂化壳层：** 石墨 DPA4C-Plus Nd 的 O–X(总) 壳层极小不清晰，不宜下结论，建议改看 O–REE(壳层) 与 REE–O(OH)/3。
+- **Apparent quantities:** ΔG‡ and Ea depend on the filter window and the cutoff.
+  - For example, ΔG‡ of graphite DPA4C-Plus Dy 3→2 is 6.2 / 10.1 kJ/mol at W = 0.2 / 2.0 ps.
+  - The relative order of the three steps (forward step 1 < 2 < 3, reverse the opposite) holds in all 9 settings × 2 metals and is more reliable than the absolute values.
+- **Few statistics in solution:** only one 150 ps trajectory per temperature, so the 95% CIs of Ea are wide. Some Ea values are negative, which shows that these are composite apparent rate constants rather than single elementary steps.
+- **Assumptions behind the pKa equivalents:** pK_w = 14, ideal solution, and a standard state of c₁ = 1 molecule per box. The free OH⁻ concentration (4 − n)c₁ reaches about 1 M, with no activity or ion-pair corrections.
+- **Starting-configuration memory:** the graphite DPA4C-Plus occupancies converge only after about 90 ps.
+- **UMA collapse:** UMA trajectories often collapse, so the UMA results are for reference only.
+- **Qualitative differences between potentials:** with DPA4-Pro, MACE and UMA the 3 OH stay on Ln almost all the time, whereas with DPA4C-Plus OH leaves frequently. Which is closer to reality needs independent validation by AIMD or experimental structures.
+- **Comparability with the paper:** the paper has only 298 K thermodynamics and no barriers, so our Ea can be compared with the paper's ΔG only in order of magnitude.
+- **OH solvation shell:** the O–X(total) shell minimum of graphite DPA4C-Plus Nd is unclear, so its shell O–X(total) should not be used for conclusions; use O–REE(shell) and REE–O(OH)/3 instead.
