@@ -804,10 +804,10 @@ The shell cutoff is slightly smaller than the REE–O r<sub>c</sub>, so O–REE(
 {details("溶液：300–500 K 全部温度的 CN", solution_all_t_table(d))}
 <h3>3.4 图</h3>
 <div class="grid2">
-{figure("graphite_REE_O_total_box_pbc_300K.svg", "石墨：REE–O g(r)（水 / OH / 总）与 r<sub>c</sub>", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
-{figure("solution_REE_O_total_box_pbc_300K.svg", "溶液：REE–O g(r)（水 / OH / 总）与 r<sub>c</sub>", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
-{figure("graphite_OH_X_total_box_pbc_300K.svg", "石墨：OH 中心 O–X(总)、O–REE、O–H(水) g(r) 与两种截断", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
-{figure("solution_OH_X_total_box_pbc_300K.svg", "溶液：OH 中心 O–X(总)、O–REE、O–H(水) g(r) 与两种截断", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_REE_O_total_box_pbc_300K.svg", "石墨：总 REE–O g(r)，虚线为各势函数的 r<sub>c</sub>（水、OH 分量 g(r) 在 gr CSV 中）", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_REE_O_total_box_pbc_300K.svg", "溶液：总 REE–O g(r)（r<sub>c</sub> 见 cutoffs CSV；水、OH 分量 g(r) 在 gr CSV 中）", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_OH_X_total_box_pbc_300K.svg", "石墨：OH 中心 O–X(总) g(r)，虚线为壳层截断（严格截断见 cutoffs CSV；O–REE、O–H(水) 分量 g(r) 在 gr CSV 中）", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_OH_X_total_box_pbc_300K.svg", "溶液：OH 中心 O–X(总) g(r)（两种截断见 cutoffs CSV；O–REE、O–H(水) 分量 g(r) 在 gr CSV 中）", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
 {figure("graphite_CN_box_pbc_300K.svg", "石墨：各配位数汇总", ("graphite_cn_summary_box_pbc.csv",))}
 {figure("solution_CN_box_pbc_300K.svg", "溶液：各配位数汇总", ("solution_cn_box_pbc.csv",))}
 </div>
@@ -827,10 +827,10 @@ The shell cutoff is slightly smaller than the REE–O r<sub>c</sub>, so O–REE(
 {details("Solution: CN at every temperature, 300–500 K", solution_all_t_table(d))}
 <h3>3.4 Figures</h3>
 <div class="grid2">
-{figure("graphite_REE_O_total_box_pbc_300K.svg", "Graphite: REE–O g(r) (water / OH / total) and r<sub>c</sub>", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
-{figure("solution_REE_O_total_box_pbc_300K.svg", "Solution: REE–O g(r) (water / OH / total) and r<sub>c</sub>", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
-{figure("graphite_OH_X_total_box_pbc_300K.svg", "Graphite: OH-centred O–X(total), O–REE and O–H(water) g(r) with both cutoffs", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
-{figure("solution_OH_X_total_box_pbc_300K.svg", "Solution: OH-centred O–X(total), O–REE and O–H(water) g(r) with both cutoffs", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_REE_O_total_box_pbc_300K.svg", "Graphite: total REE–O g(r); dashed lines mark the r<sub>c</sub> of each potential (water and OH partial g(r) are in the gr CSV)", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_REE_O_total_box_pbc_300K.svg", "Solution: total REE–O g(r) (r<sub>c</sub> values are in the cutoffs CSV; water and OH partial g(r) are in the gr CSV)", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
+{figure("graphite_OH_X_total_box_pbc_300K.svg", "Graphite: OH-centred O–X(total) g(r); dashed lines mark the shell cutoff (strict cutoffs are in the cutoffs CSV; O–REE and O–H(water) partial g(r) are in the gr CSV)", ("graphite_gr_box_pbc.csv", "graphite_cutoffs_box_pbc.csv"))}
+{figure("solution_OH_X_total_box_pbc_300K.svg", "Solution: OH-centred O–X(total) g(r) (both cutoffs are in the cutoffs CSV; O–REE and O–H(water) partial g(r) are in the gr CSV)", ("solution_gr_box_pbc_300K.csv", "solution_cutoffs_box_pbc_300K.csv"))}
 {figure("graphite_CN_box_pbc_300K.svg", "Graphite: summary of all coordination numbers", ("graphite_cn_summary_box_pbc.csv",))}
 {figure("solution_CN_box_pbc_300K.svg", "Solution: summary of all coordination numbers", ("solution_cn_box_pbc.csv",))}
 </div>
@@ -1755,11 +1755,11 @@ FILE_INFO_ZH = {
     "solution_gr_box_pbc_300K.csv": "溶液 300 K g(r)：REE–O 与 OH 中心各原子对",
     "solution_cutoffs_box_pbc_300K.csv": "溶液 300 K 截断与清晰度（峰→谷降幅）",
     "collapse_screen.csv": "每条轨迹的坍塌筛查：势能/几何起点、可用时长、状态",
-    "graphite_REE_O_total_box_pbc_300K.svg": "图：石墨 REE–O g(r) 与截断",
-    "graphite_OH_X_total_box_pbc_300K.svg": "图：石墨 OH 中心 O–X g(r) 与截断",
+    "graphite_REE_O_total_box_pbc_300K.svg": "图：石墨总 REE–O g(r) 与 r<sub>c</sub>",
+    "graphite_OH_X_total_box_pbc_300K.svg": "图：石墨 OH 中心 O–X(总) g(r) 与壳层截断",
     "graphite_CN_box_pbc_300K.svg": "图：石墨 CN",
-    "solution_REE_O_total_box_pbc_300K.svg": "图：溶液 REE–O g(r) 与截断",
-    "solution_OH_X_total_box_pbc_300K.svg": "图：溶液 OH 中心 O–X g(r) 与截断",
+    "solution_REE_O_total_box_pbc_300K.svg": "图：溶液总 REE–O g(r)",
+    "solution_OH_X_total_box_pbc_300K.svg": "图：溶液 OH 中心 O–X(总) g(r)",
     "solution_CN_box_pbc_300K.svg": "图：溶液 CN",
     "kinetics/kinetics_rates.csv": "全部设定 × 体系 × 势函数 × 金属 × 温度 × 步 × 方向：事件数、停留时间、k、ΔG‡ 与 95% CI",
     "kinetics/kinetics_arrhenius.csv": "Arrhenius / Eyring 拟合：E<sub>a</sub>、ln A、ΔH‡、ΔS‡（含 95% CI）与拟合质量",
@@ -1822,11 +1822,11 @@ FILE_INFO_EN = {
     "solution_gr_box_pbc_300K.csv": "Solution g(r) at 300 K: REE–O and every OH-centred atom pair",
     "solution_cutoffs_box_pbc_300K.csv": "Solution cutoffs at 300 K and shell clarity (peak-to-minimum drop)",
     "collapse_screen.csv": "Collapse screening of every trajectory: onset by energy/geometry, usable length, status",
-    "graphite_REE_O_total_box_pbc_300K.svg": "Figure: graphite REE–O g(r) and cutoffs",
-    "graphite_OH_X_total_box_pbc_300K.svg": "Figure: graphite OH-centred O–X g(r) and cutoffs",
+    "graphite_REE_O_total_box_pbc_300K.svg": "Figure: graphite total REE–O g(r) and r<sub>c</sub>",
+    "graphite_OH_X_total_box_pbc_300K.svg": "Figure: graphite OH-centred O–X(total) g(r) and shell cutoff",
     "graphite_CN_box_pbc_300K.svg": "Figure: graphite CN",
-    "solution_REE_O_total_box_pbc_300K.svg": "Figure: solution REE–O g(r) and cutoffs",
-    "solution_OH_X_total_box_pbc_300K.svg": "Figure: solution OH-centred O–X g(r) and cutoffs",
+    "solution_REE_O_total_box_pbc_300K.svg": "Figure: solution total REE–O g(r)",
+    "solution_OH_X_total_box_pbc_300K.svg": "Figure: solution OH-centred O–X(total) g(r)",
     "solution_CN_box_pbc_300K.svg": "Figure: solution CN",
     "kinetics/kinetics_rates.csv": "All settings × system × potential × metal × temperature × step × direction: event counts, dwell times, k, ΔG‡ with 95% CI",
     "kinetics/kinetics_arrhenius.csv": "Arrhenius / Eyring fits: E<sub>a</sub>, ln A, ΔH‡, ΔS‡ (with 95% CI) and fit quality",
