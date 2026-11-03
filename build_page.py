@@ -322,7 +322,7 @@ CSS = """
 :root{--ink:#17263b;--muted:#607086;--line:#dce4ee;--paper:#f5f8fc;--card:#fff;--nd:#d95f02;--dy:#0072b2;--accent:#2459a6;--warn:#fff5df;--warnline:#e6b950}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.58 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 header{background:linear-gradient(120deg,#132b49,#244b78);color:#fff;padding:30px max(24px,calc((100vw - 1200px)/2));}
-.head{max-width:1200px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;opacity:.78}
+.head{max-width:1200px;margin:auto}.eyebrow{font-size:12px;letter-spacing:.13em;opacity:.78}
 h1{font-size:clamp(24px,3.6vw,34px);line-height:1.25;margin:13px 0 8px}header p{max-width:900px;margin:0;color:#e3edf8}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-block;background:#fff;color:#183558;padding:9px 15px;border-radius:9px;font-weight:650;text-decoration:none}
 .btn.ghost{background:transparent;color:#fff;border:1px solid #ffffff88}
