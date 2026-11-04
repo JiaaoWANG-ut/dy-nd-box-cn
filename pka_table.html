@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nd/Dy stepwise hydrolysis pKa: Shiery 2021 vs this work</title>
+<style>
+body{font-family:-apple-system,"Segoe UI","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+ color:#222;max-width:1100px;margin:32px auto;padding:0 20px;line-height:1.55;font-size:15px}
+h1{font-size:20px;margin:0 0 4px}
+.ref{color:#666;font-size:13px;margin:0 0 18px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 10px;border-bottom:1px solid #e3e3e3;text-align:left;vertical-align:top}
+thead th{border-bottom:2px solid #333;background:#fafafa}
+tbody td:nth-last-child(-n+4),thead th:nth-last-child(-n+4){text-align:right;white-space:nowrap}
+tr.paper td{background:#f4f7fb}
+tr.grp td{border-top:1px solid #bbb}
+th.metal{font-size:17px;vertical-align:middle;text-align:center;border-right:1px solid #e3e3e3;background:#fff}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:2px solid #333}
+.ci{display:block;color:#777;font-size:12px}
+.n{display:block;color:#999;font-size:11px}
+.na{color:#aaa}
+.bound{color:#555}
+h2{font-size:16px;margin:28px 0 6px;border-bottom:1px solid #ddd;padding-bottom:3px}
+h3{font-size:14.5px;margin:16px 0 4px}
+.rx{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:4px 0 4px 18px}
+math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",math}
+math[display=block]{margin:8px 0 8px 18px;font-size:16px}
+ul{margin:4px 0;padding-left:22px}
+li{margin:2px 0}
+.note{font-size:13px;color:#555}
+.lang{float:right;font-size:13px;margin-top:4px}
+.lang a,.lang b{margin-left:8px}
+</style></head><body>
+<div class="lang"><b>English</b><a href="pka_table_zh.html">中文</a></div>
+<h1>Nd and Dy stepwise hydrolysis pKa: Shiery 2021 vs this work</h1>
+<p class="ref">Shiery, Cooper, Cantu, <i>Inorg. Chem.</i> <b>2021</b>, 60, 10257 · <a href="https://doi.org/10.1021/acs.inorgchem.1c00662">doi:10.1021/acs.inorgchem.1c00662</a></p>
+<table>
+<thead><tr><th>Ln</th><th>Source</th><th>Method / system</th><th>T (K)</th><th>pK<sub>a1</sub></th><th>pK<sub>a2</sub></th><th>pK<sub>a3</sub></th></tr></thead>
+<tbody>
+<tr class="paper"><th rowspan="8" class="metal">Nd</th><td>Shiery 2021 Table 1</td><td>calculated (DFT)</td><td>298.15</td><td>8.3 ± 0.5</td><td>12.9</td><td>17.8</td></tr>
+<tr class="paper"><td>Shiery 2021 Table 2</td><td>experiment (median)</td><td>298.15</td><td>8.21<span class="ci">[7.00, 9.46]</span><span class="n">n = 14</span></td><td>16.20<span class="ci">[9.20, 17.35]</span><span class="n">n = 3</span></td><td>24.00<span class="ci">[23.54, 26.20]</span><span class="n">n = 7</span></td></tr>
+<tr class="grp"><td>This work, MD · DPA4C-Plus</td><td>graphite/water (200 traj.)</td><td>300</td><td><b>13.63</b><span class="ci">[13.56, 13.70]</span></td><td><b>14.07</b><span class="ci">[14.02, 14.13]</span></td><td><b>14.40</b><span class="ci">[14.26, 14.57]</span></td></tr>
+<tr><td>This work, MD · UMA-s-1.2.1</td><td>graphite/water (193 traj.)</td><td>300</td><td class="bound">≤ 14.03<sup>‡</sup></td><td><b>12.70</b><span class="ci">[12.45, 13.47]</span></td><td><b>11.95</b><span class="ci">[11.49, 12.24]</span></td></tr>
+<tr><td>This work, MD · DPA4C-Plus</td><td>bulk solution (1 traj.)</td><td>300</td><td><b>14.73</b><span class="ci">[14.38, 15.18]</span></td><td><b>14.00</b><span class="ci">[13.76, 14.44]</span></td><td><b>14.58</b><span class="ci">[14.11, 15.70]</span></td></tr>
+<tr><td>This work, MD · DPA4-Pro</td><td>bulk solution (1 traj.)</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.93<sup>‡</sup></td><td><b>9.78</b><sup>†</sup><span class="ci">[9.78, 10.26]</span></td></tr>
+<tr><td>This work, MD · MACE-POLAR-1-M</td><td>bulk solution (1 traj.)</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.93<sup>‡</sup></td><td><b>11.70</b><span class="ci">[9.78, 12.17]</span></td></tr>
+<tr><td>This work, MD · UMA-s-1.2.1</td><td>bulk solution (1 traj.)</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+<tr class="paper"><th rowspan="7" class="metal">Dy</th><td>Shiery 2021 Table 1</td><td>calculated (DFT)</td><td>298.15</td><td>9.1 ± 0.1</td><td>16.1</td><td>21.2</td></tr>
+<tr class="paper"><td>Shiery 2021 Table 2</td><td>experiment (median)</td><td>298.15</td><td>7.59<span class="ci">[5.60, 8.37]</span><span class="n">n = 7</span></td><td class="na">no exp. value</td><td>22.92<span class="n">n = 1</span></td></tr>
+<tr class="grp"><td>This work, MD · DPA4C-Plus</td><td>graphite/water (200 traj.)</td><td>300</td><td><b>13.46</b><span class="ci">[13.37, 13.54]</span></td><td><b>13.95</b><span class="ci">[13.88, 14.01]</span></td><td><b>14.65</b><span class="ci">[14.53, 14.78]</span></td></tr>
+<tr><td>This work, MD · UMA-s-1.2.1</td><td>graphite/water (121 traj.)</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.86<sup>‡</sup></td><td><b>12.45</b><span class="ci">[11.78, 12.84]</span></td></tr>
+<tr><td>This work, MD · DPA4C-Plus</td><td>bulk solution (1 traj.)</td><td>300</td><td><b>12.74</b><sup>†</sup><span class="ci">[12.36, 13.00]</span></td><td><b>13.66</b><span class="ci">[13.31, 13.95]</span></td><td><b>13.84</b><span class="ci">[13.46, 14.40]</span></td></tr>
+<tr><td>This work, MD · DPA4-Pro</td><td>bulk solution (1 traj.)</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+<tr><td>This work, MD · MACE-POLAR-1-M</td><td>bulk solution (1 traj.)</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+</tbody></table>
+
+<p class="note">
+This-work values are point estimates with bootstrap 95% CIs in grey brackets. Experiment rows give the median of all Table 2 experimental values,
+with [min, max] in brackets and n = number of values.
+† Both states occur, but one has committed dwells &lt; 1 ps; order of magnitude only.
+‡ Only one state occurs; an upper bound is given (see below). n.d.: neither state occurs, not determinable.
+Each trajectory is 150 ps. All UMA-s-1.2.1 Dy solution trajectories collapsed (no data); collapsed graphite UMA trajectories were excluded or truncated.</p>
+
+<h2>Reactions and definitions</h2>
+<p>Step-n acid dissociation (n = 1, 2, 3; spectator waters omitted):</p>
+<div class="rx">n = 1:&nbsp; Ln<sup>3+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>1</sub><sup>2+</sup> + H<sup>+</sup></div>
+<div class="rx">n = 2:&nbsp; Ln(OH)<sub>1</sub><sup>2+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>2</sub><sup>+</sup> + H<sup>+</sup></div>
+<div class="rx">n = 3:&nbsp; Ln(OH)<sub>2</sub><sup>+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>3</sub><sup></sup> + H<sup>+</sup></div>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo>
+<mfrac><mrow><mo>[</mo><msup><mrow><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mi>n</mi></msub></mrow><mrow><mo>(</mo><mn>3</mn><mo>−</mo><mi>n</mi><mo>)</mo><mo>+</mo></mrow></msup><mo>]</mo><mo>[</mo><msup><mi mathvariant="normal">H</mi><mo>+</mo></msup><mo>]</mo></mrow>
+<mrow><mo>[</mo><msup><mrow><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><mrow><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><mo>+</mo></mrow></msup><mo>]</mo></mrow></mfrac>
+<mo>,</mo><mspace width="1em"/><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><mo>−</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub>
+<mo>,</mo><mspace width="1em"/><mi>Δ</mi><msub><mi>G</mi><mi>n</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn><mo>·</mo><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub></math>
+
+<h2>Methods</h2>
+<h3>Shiery 2021, calculated (Table 1, 298.15 K)</h3>
+<ul>
+<li><b>pK<sub>a1</sub></b>: constrained AIMD (Bluemoon, CP2K/PBE, 64 H<sub>2</sub>O + 3 Cl<sup>−</sup>). The r(O–H) of a coordinated water is the reaction coordinate, with 9 constraint points from 0.99 to 1.40 Å and 15 ps NVT each; integrating the mean constraint force ⟨f⟩ gives the PMF, whose end-point free energy is converted to pK<sub>a1</sub> (error as given in Table 1).</li>
+</ul>
+<math display="block"><mi>A</mi><mo>(</mo><mi>r</mi><mo>)</mo><mo>=</mo><mo>−</mo><msubsup><mo>∫</mo><msub><mi>r</mi><mn>0</mn></msub><mi>r</mi></msubsup>
+<msub><mrow><mo>⟨</mo><mi>f</mi><mo>⟩</mo></mrow><msup><mi>r</mi><mo>′</mo></msup></msub><mspace width="0.2em"/><mi>d</mi><msup><mi>r</mi><mo>′</mo></msup>
+<mo>,</mo><mspace width="1em"/><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>=</mo>
+<mfrac><mrow><mi>A</mi><mo>(</mo><msub><mi>r</mi><mi>end</mi></msub><mo>)</mo><mo>−</mo><mi>A</mi><mo>(</mo><msub><mi>r</mi><mn>0</mn></msub><mo>)</mo></mrow><mrow><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn></mrow></mfrac></math>
+<ul>
+<li><b>pK<sub>a2</sub>, pK<sub>a3</sub></b>: reaction free energies of the three steps from M06 clusters (explicit first-shell water and OH) + CPCM implicit solvent, taken relative to pK<sub>a1</sub>; the cluster coordination number is fixed at 9 for Nd and 8 for Dy.</li>
+</ul>
+<math display="block"><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>+</mo>
+<mfrac><mrow><mi>Δ</mi><msubsup><mi>G</mi><mi>n</mi><mtext>M06/CPCM</mtext></msubsup><mo>−</mo><mi>Δ</mi><msubsup><mi>G</mi><mn>1</mn><mtext>M06/CPCM</mtext></msubsup></mrow><mrow><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn></mrow></mfrac>
+<mo>,</mo><mspace width="1em"/><mi>n</mi><mo>=</mo><mn>2</mn><mo>,</mo><mn>3</mn></math>
+<h3>Shiery 2021, experiment (Table 2)</h3>
+<ul><li>Compilation of literature values; the median is listed. Note: the step-2 and step-3 values are numerically closer to cumulative constants −log*β<sub>n</sub> (Ln<sup>3+</sup> + n H<sub>2</sub>O ⇌ Ln(OH)<sub>n</sub><sup>(3−n)+</sup> + n H<sup>+</sup>), whereas the paper uses them as stepwise constants.</li></ul>
+
+<h3>This work: MD occupancy → pK<sub>a</sub> equivalent (300 K)</h3>
+<ul>
+<li>Systems: Ln<sup>3+</sup> + 3 OH<sup>−</sup> + water (solution: 128 H<sub>2</sub>O; graphite/water interface: 4 initial OH configurations × 50 trajectories), 3D-periodic box.</li>
+<li>State n = number of OH<sup>−</sup> in the first shell of Ln (OH = an O with exactly one nearest H; cutoff r<sub>c</sub> = first minimum of the Ln–O(OH) radial density, 3.03–3.47 Å), sampled every 20 fs.</li>
+<li>P<sub>n</sub>: equilibrium probability of state n (t ≥ 10 ps for solution, t ≥ 50 ps for graphite); there are (4 − n) unbound OH<sup>−</sup>.</li>
+<li>c<sub>1</sub>: concentration of one molecule in the box, 0.4224 M (solution) and 0.3594 M (graphite); c° = 1 M. Ideal solution, no activity corrections.</li>
+</ul>
+<p>What MD observes directly is OH<sup>−</sup> dissociation:</p>
+<div class="rx">Ln(OH)<sub>n</sub><sup>(3−n)+</sup> ⇌ Ln(OH)<sub>n−1</sub><sup>(4−n)+</sup> + OH<sup>−</sup></div>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo>
+<mfrac><mrow><mo>[</mo><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>]</mo><mo>[</mo><msup><mi>OH</mi><mo>−</mo></msup><mo>]</mo></mrow><mrow><mo>[</mo><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mi>n</mi></msub><mo>]</mo></mrow></mfrac>
+<mo>=</mo><mfrac><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>P</mi><mi>n</mi></msub></mfrac><mo>·</mo>
+<mfrac><mrow><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><mspace width="0.15em"/><msub><mi>c</mi><mn>1</mn></msub></mrow><msup><mi>c</mi><mo>°</mo></msup></mfrac>
+<mo>,</mo><mspace width="1em"/><msub><mi>c</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>1</mn><mrow><msub><mi>N</mi><mi mathvariant="normal">A</mi></msub><mi>V</mi></mrow></mfrac></math>
+<p>Adding water autoionization H<sub>2</sub>O ⇌ H<sup>+</sup> + OH<sup>−</sup> (K<sub>w</sub>, pK<sub>w</sub> = 14) gives the acid dissociation above:</p>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>K</mi><mi mathvariant="normal">w</mi></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub></mfrac>
+<mspace width="0.6em"/><mo>⇒</mo><mspace width="0.6em"/>
+<msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><msub><mi>pK</mi><mi mathvariant="normal">w</mi></msub><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub>
+<mo>=</mo><mn>14</mn><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><mrow><mo>[</mo><mfrac><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>P</mi><mi>n</mi></msub></mfrac><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><msub><mi>c</mi><mn>1</mn></msub><mo>]</mo></mrow></math>
+<p>If only state n occurs (state n − 1 never seen), assuming the unseen state is not more populated than the seen one and setting P<sub>n−1</sub> = P<sub>n</sub> gives an upper bound:</p>
+<math display="block"><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>≤</mo><mn>14</mn><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><mrow><mo>[</mo><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><msub><mi>c</mi><mn>1</mn></msub><mo>]</mo></mrow>
+<mspace width="1em"/><mo>(</mo><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>:=</mo><msub><mi>P</mi><mi>n</mi></msub><mo>)</mo></math>
+<ul>
+<li>95% CI: 2000 bootstrap resamples (graphite: by trajectory, stratified by initial configuration; solution: 10 ps blocks).</li>
+<li>Conversion: ΔG = RT ln10 · pK<sub>a</sub>; RT ln10 = 5.708 kJ/mol at 298.15 K and 5.743 kJ/mol at 300 K.</li>
+</ul>
+
+</body></html>

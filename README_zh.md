@@ -3,6 +3,7 @@
 [English](README.md) | **中文**
 
 - 在线网页：英文首页 https://jiaaowang-ut.github.io/dy-nd-box-cn/ ，中文页面 https://jiaaowang-ut.github.io/dy-nd-box-cn/index_zh.html
+- 独立的 pKa₁/pKa₂/pKa₃ 对比表（Shiery 2021 vs 本工作，含反应方程式与公式）：中文 https://jiaaowang-ut.github.io/dy-nd-box-cn/pka_table_zh.html ，英文 https://jiaaowang-ut.github.io/dy-nd-box-cn/pka_table.html ；由 `python build_pka_table.py` 从 `comparison/compare_pKa_stepwise.csv` 生成
 - 打包下载（GitHub release）：https://github.com/JiaaoWANG-ut/dy-nd-box-cn/releases/latest
 - 本地：打开 `index.html`（英文）或 `index_zh.html`（中文），或解压 `dy_nd_box_cn_data.zip` 后打开 `dy_nd_box_cn/index.html`。页面右上角的 English / 中文 按钮可切换语言。所有链接都是相对路径，可离线浏览。
 

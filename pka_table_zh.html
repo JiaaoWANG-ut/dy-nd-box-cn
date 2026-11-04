@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nd/Dy 逐步水解 pKa：Shiery 2021 vs 本工作</title>
+<style>
+body{font-family:-apple-system,"Segoe UI","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+ color:#222;max-width:1100px;margin:32px auto;padding:0 20px;line-height:1.55;font-size:15px}
+h1{font-size:20px;margin:0 0 4px}
+.ref{color:#666;font-size:13px;margin:0 0 18px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 10px;border-bottom:1px solid #e3e3e3;text-align:left;vertical-align:top}
+thead th{border-bottom:2px solid #333;background:#fafafa}
+tbody td:nth-last-child(-n+4),thead th:nth-last-child(-n+4){text-align:right;white-space:nowrap}
+tr.paper td{background:#f4f7fb}
+tr.grp td{border-top:1px solid #bbb}
+th.metal{font-size:17px;vertical-align:middle;text-align:center;border-right:1px solid #e3e3e3;background:#fff}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:2px solid #333}
+.ci{display:block;color:#777;font-size:12px}
+.n{display:block;color:#999;font-size:11px}
+.na{color:#aaa}
+.bound{color:#555}
+h2{font-size:16px;margin:28px 0 6px;border-bottom:1px solid #ddd;padding-bottom:3px}
+h3{font-size:14.5px;margin:16px 0 4px}
+.rx{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:4px 0 4px 18px}
+math{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",math}
+math[display=block]{margin:8px 0 8px 18px;font-size:16px}
+ul{margin:4px 0;padding-left:22px}
+li{margin:2px 0}
+.note{font-size:13px;color:#555}
+.lang{float:right;font-size:13px;margin-top:4px}
+.lang a,.lang b{margin-left:8px}
+</style></head><body>
+<div class="lang"><a href="pka_table.html">English</a><b>中文</b></div>
+<h1>Nd、Dy 逐步水解 pKa：Shiery 2021 与本工作对比</h1>
+<p class="ref">Shiery, Cooper, Cantu, <i>Inorg. Chem.</i> <b>2021</b>, 60, 10257 · <a href="https://doi.org/10.1021/acs.inorgchem.1c00662">doi:10.1021/acs.inorgchem.1c00662</a></p>
+<table>
+<thead><tr><th>Ln</th><th>来源</th><th>方法 / 体系</th><th>T (K)</th><th>pK<sub>a1</sub></th><th>pK<sub>a2</sub></th><th>pK<sub>a3</sub></th></tr></thead>
+<tbody>
+<tr class="paper"><th rowspan="8" class="metal">Nd</th><td>Shiery 2021 Table 1</td><td>计算（DFT）</td><td>298.15</td><td>8.3 ± 0.5</td><td>12.9</td><td>17.8</td></tr>
+<tr class="paper"><td>Shiery 2021 Table 2</td><td>实验（中位数）</td><td>298.15</td><td>8.21<span class="ci">[7.00, 9.46]</span><span class="n">n = 14</span></td><td>16.20<span class="ci">[9.20, 17.35]</span><span class="n">n = 3</span></td><td>24.00<span class="ci">[23.54, 26.20]</span><span class="n">n = 7</span></td></tr>
+<tr class="grp"><td>本工作 MD · DPA4C-Plus</td><td>石墨/水界面（200 条轨迹）</td><td>300</td><td><b>13.63</b><span class="ci">[13.56, 13.70]</span></td><td><b>14.07</b><span class="ci">[14.02, 14.13]</span></td><td><b>14.40</b><span class="ci">[14.26, 14.57]</span></td></tr>
+<tr><td>本工作 MD · UMA-s-1.2.1</td><td>石墨/水界面（193 条轨迹）</td><td>300</td><td class="bound">≤ 14.03<sup>‡</sup></td><td><b>12.70</b><span class="ci">[12.45, 13.47]</span></td><td><b>11.95</b><span class="ci">[11.49, 12.24]</span></td></tr>
+<tr><td>本工作 MD · DPA4C-Plus</td><td>体相溶液（1 条轨迹）</td><td>300</td><td><b>14.73</b><span class="ci">[14.38, 15.18]</span></td><td><b>14.00</b><span class="ci">[13.76, 14.44]</span></td><td><b>14.58</b><span class="ci">[14.11, 15.70]</span></td></tr>
+<tr><td>本工作 MD · DPA4-Pro</td><td>体相溶液（1 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.93<sup>‡</sup></td><td><b>9.78</b><sup>†</sup><span class="ci">[9.78, 10.26]</span></td></tr>
+<tr><td>本工作 MD · MACE-POLAR-1-M</td><td>体相溶液（1 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.93<sup>‡</sup></td><td><b>11.70</b><span class="ci">[9.78, 12.17]</span></td></tr>
+<tr><td>本工作 MD · UMA-s-1.2.1</td><td>体相溶液（1 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+<tr class="paper"><th rowspan="7" class="metal">Dy</th><td>Shiery 2021 Table 1</td><td>计算（DFT）</td><td>298.15</td><td>9.1 ± 0.1</td><td>16.1</td><td>21.2</td></tr>
+<tr class="paper"><td>Shiery 2021 Table 2</td><td>实验（中位数）</td><td>298.15</td><td>7.59<span class="ci">[5.60, 8.37]</span><span class="n">n = 7</span></td><td class="na">无实验值</td><td>22.92<span class="n">n = 1</span></td></tr>
+<tr class="grp"><td>本工作 MD · DPA4C-Plus</td><td>石墨/水界面（200 条轨迹）</td><td>300</td><td><b>13.46</b><span class="ci">[13.37, 13.54]</span></td><td><b>13.95</b><span class="ci">[13.88, 14.01]</span></td><td><b>14.65</b><span class="ci">[14.53, 14.78]</span></td></tr>
+<tr><td>本工作 MD · UMA-s-1.2.1</td><td>石墨/水界面（121 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="bound">≤ 13.86<sup>‡</sup></td><td><b>12.45</b><span class="ci">[11.78, 12.84]</span></td></tr>
+<tr><td>本工作 MD · DPA4C-Plus</td><td>体相溶液（1 条轨迹）</td><td>300</td><td><b>12.74</b><sup>†</sup><span class="ci">[12.36, 13.00]</span></td><td><b>13.66</b><span class="ci">[13.31, 13.95]</span></td><td><b>13.84</b><span class="ci">[13.46, 14.40]</span></td></tr>
+<tr><td>本工作 MD · DPA4-Pro</td><td>体相溶液（1 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+<tr><td>本工作 MD · MACE-POLAR-1-M</td><td>体相溶液（1 条轨迹）</td><td>300</td><td class="na">n.d.</td><td class="na">n.d.</td><td class="bound">≤ 13.63<sup>‡</sup></td></tr>
+</tbody></table>
+
+<p class="note">
+本工作数值为点估计，灰色方括号为 bootstrap 95% CI；实验行为 Table 2 所列全部实验值的中位数，方括号为 [最小, 最大]，n 为实验值个数。
+† 两个态都出现，但其中一个态的 committed 停留 &lt; 1 ps，仅作数量级参考。
+‡ 只出现一个态，给出上界（见下文）。n.d.：两个态都未出现，无法确定。
+每条轨迹 150 ps。Dy 的 UMA-s-1.2.1 溶液轨迹全部坍塌，无数据；石墨 UMA 已剔除或截断坍塌轨迹。</p>
+
+<h2>化学反应与定义</h2>
+<p>第 n 步酸解离（n = 1, 2, 3；省略配位水）：</p>
+<div class="rx">n = 1:&nbsp; Ln<sup>3+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>1</sub><sup>2+</sup> + H<sup>+</sup></div>
+<div class="rx">n = 2:&nbsp; Ln(OH)<sub>1</sub><sup>2+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>2</sub><sup>+</sup> + H<sup>+</sup></div>
+<div class="rx">n = 3:&nbsp; Ln(OH)<sub>2</sub><sup>+</sup>(H<sub>2</sub>O) ⇌ Ln(OH)<sub>3</sub><sup></sup> + H<sup>+</sup></div>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo>
+<mfrac><mrow><mo>[</mo><msup><mrow><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mi>n</mi></msub></mrow><mrow><mo>(</mo><mn>3</mn><mo>−</mo><mi>n</mi><mo>)</mo><mo>+</mo></mrow></msup><mo>]</mo><mo>[</mo><msup><mi mathvariant="normal">H</mi><mo>+</mo></msup><mo>]</mo></mrow>
+<mrow><mo>[</mo><msup><mrow><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><mrow><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><mo>+</mo></mrow></msup><mo>]</mo></mrow></mfrac>
+<mo>,</mo><mspace width="1em"/><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><mo>−</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub>
+<mo>,</mo><mspace width="1em"/><mi>Δ</mi><msub><mi>G</mi><mi>n</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn><mo>·</mo><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub></math>
+
+<h2>计算方法</h2>
+<h3>Shiery 2021 — 计算值（Table 1，298.15 K）</h3>
+<ul>
+<li><b>pK<sub>a1</sub></b>：约束 AIMD（Bluemoon，CP2K/PBE，64 H<sub>2</sub>O + 3 Cl<sup>−</sup>）。以配位水的 r(O–H) 为反应坐标，0.99 → 1.40 Å 取 9 个约束点，每点 NVT 15 ps；对约束力 ⟨f⟩ 积分得 PMF，取端点自由能换算 pK<sub>a1</sub>（误差为 Table 1 所给）。</li>
+</ul>
+<math display="block"><mi>A</mi><mo>(</mo><mi>r</mi><mo>)</mo><mo>=</mo><mo>−</mo><msubsup><mo>∫</mo><msub><mi>r</mi><mn>0</mn></msub><mi>r</mi></msubsup>
+<msub><mrow><mo>⟨</mo><mi>f</mi><mo>⟩</mo></mrow><msup><mi>r</mi><mo>′</mo></msup></msub><mspace width="0.2em"/><mi>d</mi><msup><mi>r</mi><mo>′</mo></msup>
+<mo>,</mo><mspace width="1em"/><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>=</mo>
+<mfrac><mrow><mi>A</mi><mo>(</mo><msub><mi>r</mi><mi>end</mi></msub><mo>)</mo><mo>−</mo><mi>A</mi><mo>(</mo><msub><mi>r</mi><mn>0</mn></msub><mo>)</mo></mrow><mrow><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn></mrow></mfrac></math>
+<ul>
+<li><b>pK<sub>a2</sub>、pK<sub>a3</sub></b>：M06 团簇（第一壳层水与 OH 显式）+ CPCM 隐式溶剂计算三步反应自由能，以 pK<sub>a1</sub> 为锚点取相对值；团簇配位数固定：Nd 为 9，Dy 为 8。</li>
+</ul>
+<math display="block"><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>+</mo>
+<mfrac><mrow><mi>Δ</mi><msubsup><mi>G</mi><mi>n</mi><mtext>M06/CPCM</mtext></msubsup><mo>−</mo><mi>Δ</mi><msubsup><mi>G</mi><mn>1</mn><mtext>M06/CPCM</mtext></msubsup></mrow><mrow><mi>R</mi><mi>T</mi><mi>ln</mi><mn>10</mn></mrow></mfrac>
+<mo>,</mo><mspace width="1em"/><mi>n</mi><mo>=</mo><mn>2</mn><mo>,</mo><mn>3</mn></math>
+<h3>Shiery 2021 — 实验值（Table 2）</h3>
+<ul><li>文献实验值汇编，表中取中位数。注意：第 2、3 步的实验值在数值上更接近累积常数 −log*β<sub>n</sub>（Ln<sup>3+</sup> + n H<sub>2</sub>O ⇌ Ln(OH)<sub>n</sub><sup>(3−n)+</sup> + n H<sup>+</sup>），而论文按逐步常数使用。</li></ul>
+
+<h3>本工作 — MD 占据数 → pK<sub>a</sub> 等效值（300 K）</h3>
+<ul>
+<li>体系：Ln<sup>3+</sup> + 3 OH<sup>−</sup> + 水（溶液 128 H<sub>2</sub>O；石墨/水界面 4 种 OH 起始构型 × 50 条），三维周期盒子。</li>
+<li>状态 n = Ln 第一壳层内 OH<sup>−</sup> 的个数（OH = 恰有 1 个最近邻 H 的 O；截断 r<sub>c</sub> = Ln–O(OH) 径向密度第一极小，3.03–3.47 Å），每 20 fs 取一帧。</li>
+<li>P<sub>n</sub>：n 态的平衡占据概率（溶液取 t ≥ 10 ps，石墨取 t ≥ 50 ps）；未结合的 OH<sup>−</sup> 有 (4 − n) 个。</li>
+<li>c<sub>1</sub>：盒子中 1 个分子对应的浓度，溶液 0.4224 M，石墨 0.3594 M；c° = 1 M。理想溶液，无活度修正。</li>
+</ul>
+<p>MD 中直接观测的是 OH<sup>−</sup> 解离：</p>
+<div class="rx">Ln(OH)<sub>n</sub><sup>(3−n)+</sup> ⇌ Ln(OH)<sub>n−1</sub><sup>(4−n)+</sup> + OH<sup>−</sup></div>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo>
+<mfrac><mrow><mo>[</mo><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>]</mo><mo>[</mo><msup><mi>OH</mi><mo>−</mo></msup><mo>]</mo></mrow><mrow><mo>[</mo><mi>Ln</mi><msub><mrow><mo>(</mo><mi>OH</mi><mo>)</mo></mrow><mi>n</mi></msub><mo>]</mo></mrow></mfrac>
+<mo>=</mo><mfrac><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>P</mi><mi>n</mi></msub></mfrac><mo>·</mo>
+<mfrac><mrow><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><mspace width="0.15em"/><msub><mi>c</mi><mn>1</mn></msub></mrow><msup><mi>c</mi><mo>°</mo></msup></mfrac>
+<mo>,</mo><mspace width="1em"/><msub><mi>c</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>1</mn><mrow><msub><mi>N</mi><mi mathvariant="normal">A</mi></msub><mi>V</mi></mrow></mfrac></math>
+<p>与水的自电离 H<sub>2</sub>O ⇌ H<sup>+</sup> + OH<sup>−</sup>（K<sub>w</sub>，pK<sub>w</sub> = 14）相加即得上面的酸解离反应：</p>
+<math display="block"><msub><mi>K</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>K</mi><mi mathvariant="normal">w</mi></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub></mfrac>
+<mspace width="0.6em"/><mo>⇒</mo><mspace width="0.6em"/>
+<msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>=</mo><msub><mi>pK</mi><mi mathvariant="normal">w</mi></msub><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>K</mi><mrow><mi mathvariant="normal">d</mi><mo>,</mo><mi>n</mi></mrow></msub>
+<mo>=</mo><mn>14</mn><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><mrow><mo>[</mo><mfrac><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><msub><mi>P</mi><mi>n</mi></msub></mfrac><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><msub><mi>c</mi><mn>1</mn></msub><mo>]</mo></mrow></math>
+<p>若只出现 n 态（n − 1 态从未出现），假设未出现的态不比出现的态更多，取 P<sub>n−1</sub> = P<sub>n</sub> 得上界：</p>
+<math display="block"><msub><mi>pK</mi><mrow><mi mathvariant="normal">a</mi><mo>,</mo><mi>n</mi></mrow></msub><mo>≤</mo><mn>14</mn><mo>+</mo><msub><mi>log</mi><mn>10</mn></msub><mrow><mo>[</mo><mo>(</mo><mn>4</mn><mo>−</mo><mi>n</mi><mo>)</mo><msub><mi>c</mi><mn>1</mn></msub><mo>]</mo></mrow>
+<mspace width="1em"/><mo>(</mo><msub><mi>P</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>:=</mo><msub><mi>P</mi><mi>n</mi></msub><mo>)</mo></math>
+<ul>
+<li>95% CI：2000 次 bootstrap（石墨按轨迹、按起始构型分层重采样；溶液按 10 ps 块重采样）。</li>
+<li>换算：ΔG = RT ln10 · pK<sub>a</sub>，298.15 K 时 RT ln10 = 5.708 kJ/mol，300 K 时 5.743 kJ/mol。</li>
+</ul>
+
+</body></html>
